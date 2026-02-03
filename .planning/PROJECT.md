@@ -35,7 +35,8 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 
 - VS Code Marketplace 배포 — v1에서는 로컬 .vsix 설치만 지원
 - 영어 튜토리얼 — 한국어 독자 대상
-- 고급 LSP 기능 (Rename, Find References, Code Actions) — 기본 4가지에 집중
+- 멀티 파일 분석 — 싱글 파일 MVP에 집중
+- Semantic Tokens, Inlay Hints — LSP 3.16+ 고급 기능, 기본 완성 후 고려
 
 ## Context
 
@@ -55,7 +56,8 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 ## Constraints
 
 - **Tech Stack**: F# — FunLang이 F#으로 구현되어 있어 재사용 용이
-- **LSP Library**: 리서치 후 결정 (OmniSharp LSP 또는 Ionide.LanguageServerProtocol 후보)
+- **LSP Library**: Ionide.LanguageServerProtocol 0.7.0 — F# 네이티브, LSP 3.17 지원
+- **Runtime**: .NET 10 LTS + F# 10
 - **Target Editor**: VS Code — 가장 널리 사용되는 에디터
 
 ## Key Decisions
@@ -63,8 +65,9 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | F#로 LSP 서버 구현 | FunLang이 F#로 구현되어 있어 타입 체커 등 재사용 가능 | — Pending |
+| Ionide.LanguageServerProtocol 사용 | F# 네이티브, 경량, FsAutoComplete에서 검증됨. OmniSharp은 C# 중심으로 DI 오버헤드 | — Pending |
 | 한국어 튜토리얼 | 한국어 LSP 튜토리얼 부족, 대상 독자 명확 | — Pending |
-| 4가지 핵심 LSP 기능에 집중 | 입문자에게 적절한 범위, 튜토리얼로서 완결성 | — Pending |
+| 8가지 LSP 기능 구현 | Table stakes 4개 + Find References, Rename, Code Actions로 실용적 범위 | — Pending |
 
 ---
 *Last updated: 2025-02-03 after initialization*
