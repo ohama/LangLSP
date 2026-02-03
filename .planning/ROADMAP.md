@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Depends on**: Nothing (first phase)
 
-**Requirements**: LSP-01, LSP-02, LSP-03, DIAG-01, DIAG-02, DIAG-03, TEST-01, TEST-02, TEST-03
+**Requirements**: LSP-01, LSP-02, LSP-03, DIAG-01, DIAG-02, DIAG-03, TEST-01, TEST-02, TEST-03, TEST-11
 
 **Success Criteria** (what must be TRUE):
   1. User opens .fun file in VS Code and LSP server starts automatically
@@ -34,8 +34,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User sees red squiggles under syntax errors with error messages
   4. User sees red squiggles under type errors with type mismatch details
   5. User types in document and diagnostics update without saving file
-  6. All Document Sync unit tests pass
-  7. All Diagnostics unit tests pass
+  6. All Document Sync unit tests pass (Expecto)
+  7. All Diagnostics unit tests pass (Expecto)
+  8. FsCheck property-based tests pass (position/range calculations)
 
 **Plans**: TBD
 

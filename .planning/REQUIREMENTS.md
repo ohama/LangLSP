@@ -61,9 +61,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **EXT-03**: 코드 스니펫 (let, match, fun 등)
 - [ ] **EXT-04**: .vsix 파일로 패키징
 
-### Testing
+### Testing (Expecto + FsCheck)
 
-- [ ] **TEST-01**: 테스트 프레임워크 설정 (Expecto)
+- [ ] **TEST-01**: 테스트 프레임워크 설정 (Expecto 10.2.3+, Expecto.FsCheck 10.2.3+)
 - [ ] **TEST-02**: Document Sync 단위 테스트
 - [ ] **TEST-03**: Diagnostics 단위 테스트 (문법 오류, 타입 오류)
 - [ ] **TEST-04**: Hover 단위 테스트
@@ -73,6 +73,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **TEST-08**: Rename Symbol 단위 테스트
 - [ ] **TEST-09**: Code Actions 단위 테스트
 - [ ] **TEST-10**: LSP 통합 테스트 (mock client)
+- [ ] **TEST-11**: FsCheck 속성 기반 테스트 (위치 변환, 범위 계산 등)
 
 ### Tutorial
 
@@ -167,6 +168,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-08 | Phase 4 | Pending |
 | TEST-09 | Phase 4 | Pending |
 | TEST-10 | Phase 5 | Pending |
+| TEST-11 | Phase 1 | Pending |
 | TUT-01 | Phase 6 | Pending |
 | TUT-02 | Phase 6 | Pending |
 | TUT-03 | Phase 6 | Pending |
@@ -181,8 +183,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TUT-12 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 49 total
-- Mapped to phases: 49
+- v1 requirements: 50 total
+- Mapped to phases: 50
 - Unmapped: 0
 
 ---
