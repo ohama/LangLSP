@@ -60,6 +60,7 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 - **Runtime**: .NET 10 LTS + F# 10
 - **Testing**: Expecto + FsCheck — F# 네이티브, 속성 기반 테스트 지원
 - **Logging**: Serilog — 구조화된 로깅, .NET 생태계 표준
+- **Error Handling**: Option/Result 타입 사용 — Exception 대신 함수형 에러 처리
 - **Target Editor**: VS Code — 가장 널리 사용되는 에디터
 
 ## Key Decisions
