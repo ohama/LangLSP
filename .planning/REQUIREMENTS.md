@@ -117,51 +117,51 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LSP-01 | TBD | Pending |
-| LSP-02 | TBD | Pending |
-| LSP-03 | TBD | Pending |
-| DIAG-01 | TBD | Pending |
-| DIAG-02 | TBD | Pending |
-| DIAG-03 | TBD | Pending |
-| HOVER-01 | TBD | Pending |
-| HOVER-02 | TBD | Pending |
-| HOVER-03 | TBD | Pending |
-| COMP-01 | TBD | Pending |
-| COMP-02 | TBD | Pending |
-| COMP-03 | TBD | Pending |
-| GOTO-01 | TBD | Pending |
-| GOTO-02 | TBD | Pending |
-| GOTO-03 | TBD | Pending |
-| REF-01 | TBD | Pending |
-| REF-02 | TBD | Pending |
-| REF-03 | TBD | Pending |
-| RENAME-01 | TBD | Pending |
-| RENAME-02 | TBD | Pending |
-| RENAME-03 | TBD | Pending |
-| ACTION-01 | TBD | Pending |
-| ACTION-02 | TBD | Pending |
-| EXT-01 | TBD | Pending |
-| EXT-02 | TBD | Pending |
-| EXT-03 | TBD | Pending |
-| EXT-04 | TBD | Pending |
-| TUT-01 | TBD | Pending |
-| TUT-02 | TBD | Pending |
-| TUT-03 | TBD | Pending |
-| TUT-04 | TBD | Pending |
-| TUT-05 | TBD | Pending |
-| TUT-06 | TBD | Pending |
-| TUT-07 | TBD | Pending |
-| TUT-08 | TBD | Pending |
-| TUT-09 | TBD | Pending |
-| TUT-10 | TBD | Pending |
-| TUT-11 | TBD | Pending |
-| TUT-12 | TBD | Pending |
+| LSP-01 | Phase 1 | Pending |
+| LSP-02 | Phase 1 | Pending |
+| LSP-03 | Phase 1 | Pending |
+| DIAG-01 | Phase 1 | Pending |
+| DIAG-02 | Phase 1 | Pending |
+| DIAG-03 | Phase 1 | Pending |
+| HOVER-01 | Phase 2 | Pending |
+| HOVER-02 | Phase 2 | Pending |
+| HOVER-03 | Phase 2 | Pending |
+| GOTO-01 | Phase 2 | Pending |
+| GOTO-02 | Phase 2 | Pending |
+| GOTO-03 | Phase 2 | Pending |
+| COMP-01 | Phase 3 | Pending |
+| COMP-02 | Phase 3 | Pending |
+| COMP-03 | Phase 3 | Pending |
+| REF-01 | Phase 4 | Pending |
+| REF-02 | Phase 4 | Pending |
+| REF-03 | Phase 4 | Pending |
+| RENAME-01 | Phase 4 | Pending |
+| RENAME-02 | Phase 4 | Pending |
+| RENAME-03 | Phase 4 | Pending |
+| ACTION-01 | Phase 4 | Pending |
+| ACTION-02 | Phase 4 | Pending |
+| EXT-01 | Phase 5 | Pending |
+| EXT-02 | Phase 5 | Pending |
+| EXT-03 | Phase 5 | Pending |
+| EXT-04 | Phase 5 | Pending |
+| TUT-01 | Phase 6 | Pending |
+| TUT-02 | Phase 6 | Pending |
+| TUT-03 | Phase 6 | Pending |
+| TUT-04 | Phase 6 | Pending |
+| TUT-05 | Phase 6 | Pending |
+| TUT-06 | Phase 6 | Pending |
+| TUT-07 | Phase 6 | Pending |
+| TUT-08 | Phase 6 | Pending |
+| TUT-09 | Phase 6 | Pending |
+| TUT-10 | Phase 6 | Pending |
+| TUT-11 | Phase 6 | Pending |
+| TUT-12 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 39 total
-- Mapped to phases: 0
-- Unmapped: 39 (will be mapped during roadmap creation)
+- Mapped to phases: 39
+- Unmapped: 0
 
 ---
 *Requirements defined: 2025-02-03*
-*Last updated: 2025-02-03 after initial definition*
+*Last updated: 2025-02-03 after roadmap creation*
