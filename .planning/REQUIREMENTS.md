@@ -61,6 +61,19 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **EXT-03**: 코드 스니펫 (let, match, fun 등)
 - [ ] **EXT-04**: .vsix 파일로 패키징
 
+### Testing
+
+- [ ] **TEST-01**: 테스트 프레임워크 설정 (Expecto)
+- [ ] **TEST-02**: Document Sync 단위 테스트
+- [ ] **TEST-03**: Diagnostics 단위 테스트 (문법 오류, 타입 오류)
+- [ ] **TEST-04**: Hover 단위 테스트
+- [ ] **TEST-05**: Completion 단위 테스트
+- [ ] **TEST-06**: Go to Definition 단위 테스트
+- [ ] **TEST-07**: Find References 단위 테스트
+- [ ] **TEST-08**: Rename Symbol 단위 테스트
+- [ ] **TEST-09**: Code Actions 단위 테스트
+- [ ] **TEST-10**: LSP 통합 테스트 (mock client)
+
 ### Tutorial
 
 - [ ] **TUT-01**: LSP 기초 개념 설명 (프로토콜, 아키텍처)
@@ -144,6 +157,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXT-02 | Phase 5 | Pending |
 | EXT-03 | Phase 5 | Pending |
 | EXT-04 | Phase 5 | Pending |
+| TEST-01 | Phase 1 | Pending |
+| TEST-02 | Phase 1 | Pending |
+| TEST-03 | Phase 1 | Pending |
+| TEST-04 | Phase 2 | Pending |
+| TEST-05 | Phase 3 | Pending |
+| TEST-06 | Phase 2 | Pending |
+| TEST-07 | Phase 4 | Pending |
+| TEST-08 | Phase 4 | Pending |
+| TEST-09 | Phase 4 | Pending |
+| TEST-10 | Phase 5 | Pending |
 | TUT-01 | Phase 6 | Pending |
 | TUT-02 | Phase 6 | Pending |
 | TUT-03 | Phase 6 | Pending |
@@ -158,8 +181,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TUT-12 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 39 total
-- Mapped to phases: 39
+- v1 requirements: 49 total
+- Mapped to phases: 49
 - Unmapped: 0
 
 ---

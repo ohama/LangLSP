@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Depends on**: Nothing (first phase)
 
-**Requirements**: LSP-01, LSP-02, LSP-03, DIAG-01, DIAG-02, DIAG-03
+**Requirements**: LSP-01, LSP-02, LSP-03, DIAG-01, DIAG-02, DIAG-03, TEST-01, TEST-02, TEST-03
 
 **Success Criteria** (what must be TRUE):
   1. User opens .fun file in VS Code and LSP server starts automatically
@@ -34,6 +34,8 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User sees red squiggles under syntax errors with error messages
   4. User sees red squiggles under type errors with type mismatch details
   5. User types in document and diagnostics update without saving file
+  6. All Document Sync unit tests pass
+  7. All Diagnostics unit tests pass
 
 **Plans**: TBD
 
@@ -47,7 +49,7 @@ Plans:
 
 **Depends on**: Phase 1
 
-**Requirements**: HOVER-01, HOVER-02, HOVER-03, GOTO-01, GOTO-02, GOTO-03
+**Requirements**: HOVER-01, HOVER-02, HOVER-03, GOTO-01, GOTO-02, GOTO-03, TEST-04, TEST-06
 
 **Success Criteria** (what must be TRUE):
   1. User hovers over variable and sees its inferred type from Hindley-Milner type checker
@@ -55,6 +57,8 @@ Plans:
   3. User hovers over keyword (let, if, match) and sees explanation in Korean
   4. User clicks variable and "Go to Definition" jumps to where variable was bound
   5. User clicks function call and jumps to function definition in same file
+  6. All Hover unit tests pass
+  7. All Go to Definition unit tests pass
 
 **Plans**: TBD
 
@@ -68,7 +72,7 @@ Plans:
 
 **Depends on**: Phase 2
 
-**Requirements**: COMP-01, COMP-02, COMP-03
+**Requirements**: COMP-01, COMP-02, COMP-03, TEST-05
 
 **Success Criteria** (what must be TRUE):
   1. User types "l" and sees "let" keyword suggestion with autocomplete popup
@@ -76,6 +80,7 @@ Plans:
   3. User types variable name prefix and sees matching variables from current scope
   4. User sees completion items with type annotations (e.g., "myVar: int")
   5. User selects completion item and it inserts correctly at cursor position
+  6. All Completion unit tests pass
 
 **Plans**: TBD
 
@@ -89,7 +94,7 @@ Plans:
 
 **Depends on**: Phase 3
 
-**Requirements**: REF-01, REF-02, REF-03, RENAME-01, RENAME-02, RENAME-03, ACTION-01, ACTION-02
+**Requirements**: REF-01, REF-02, REF-03, RENAME-01, RENAME-02, RENAME-03, ACTION-01, ACTION-02, TEST-07, TEST-08, TEST-09
 
 **Success Criteria** (what must be TRUE):
   1. User invokes "Find All References" on variable and sees all usage locations in References panel
@@ -98,6 +103,9 @@ Plans:
   4. User confirms rename and all occurrences update simultaneously
   5. User sees lightbulb icon on unused variable with "Remove unused variable" suggestion
   6. User sees lightbulb icon on type error with fix suggestion
+  7. All Find References unit tests pass
+  8. All Rename Symbol unit tests pass
+  9. All Code Actions unit tests pass
 
 **Plans**: TBD
 
@@ -111,7 +119,7 @@ Plans:
 
 **Depends on**: Phase 4
 
-**Requirements**: EXT-01, EXT-02, EXT-03, EXT-04
+**Requirements**: EXT-01, EXT-02, EXT-03, EXT-04, TEST-10
 
 **Success Criteria** (what must be TRUE):
   1. User opens .fun file and sees syntax highlighting (keywords, strings, comments)
@@ -120,6 +128,7 @@ Plans:
   4. User types "let" snippet trigger and gets template with placeholders
   5. User installs .vsix file with "code --install-extension funlang.vsix" successfully
   6. Extension appears in VS Code Extensions panel with icon and description
+  7. All LSP integration tests pass (mock client end-to-end)
 
 **Plans**: TBD
 
