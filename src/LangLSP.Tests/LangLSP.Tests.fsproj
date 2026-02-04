@@ -13,6 +13,9 @@
     <Compile Include="DefinitionTests.fs" />
     <Compile Include="HoverTests.fs" />
     <Compile Include="CompletionTests.fs" />
+    <Compile Include="ReferencesTests.fs" />
+    <Compile Include="RenameTests.fs" />
+    <Compile Include="CodeActionsTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

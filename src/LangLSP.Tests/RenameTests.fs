@@ -19,8 +19,6 @@ let makePrepareRenameParams uri line char : TextDocumentPositionParams =
     {
         TextDocument = { Uri = uri }
         Position = { Line = uint32 line; Character = uint32 char }
-        WorkDoneToken = None
-        PartialResultToken = None
     }
 
 /// Create DidOpenTextDocumentParams for testing
