@@ -169,18 +169,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-09 | Phase 4 | Pending |
 | TEST-10 | Phase 5 | Pending |
 | TEST-11 | Phase 1 | Pending |
-| TUT-01 | Phase 6 | Pending |
-| TUT-02 | Phase 6 | Pending |
-| TUT-03 | Phase 6 | Pending |
-| TUT-04 | Phase 6 | Pending |
-| TUT-05 | Phase 6 | Pending |
-| TUT-06 | Phase 6 | Pending |
-| TUT-07 | Phase 6 | Pending |
-| TUT-08 | Phase 6 | Pending |
-| TUT-09 | Phase 6 | Pending |
-| TUT-10 | Phase 6 | Pending |
-| TUT-11 | Phase 6 | Pending |
-| TUT-12 | Phase 6 | Pending |
+| TUT-01 | Phase 1 | Pending |
+| TUT-02 | Phase 1 | Pending |
+| TUT-03 | Phase 1 | Pending |
+| TUT-04 | Phase 1 | Pending |
+| TUT-05 | Phase 1 | Pending |
+| TUT-06 | Phase 2 | Pending |
+| TUT-07 | Phase 3 | Pending |
+| TUT-08 | Phase 2 | Pending |
+| TUT-09 | Phase 4 | Pending |
+| TUT-10 | Phase 4 | Pending |
+| TUT-11 | Phase 4 | Pending |
+| TUT-12 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 50 total
@@ -189,4 +189,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-02-03*
-*Last updated: 2025-02-03 after roadmap creation*
+*Last updated: 2025-02-04 after tutorial requirements redistributed to phases 1-5*

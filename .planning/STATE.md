@@ -2,17 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2025-02-03)
+See: .planning/PROJECT.md (updated 2025-02-04)
 
 **Core value:** LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념을 이해할 수 있는 실용적인 튜토리얼
 **Current focus:** Phase 1 - LSP Foundation
 
 ## Current Position
 
-Phase: 1 of 6 (LSP Foundation)
+Phase: 1 of 5 (LSP Foundation)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2025-02-03 — Roadmap created with 6 phases covering 39 requirements
+Last activity: 2025-02-04 — Roadmap restructured (tutorials integrated into each phase)
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -46,6 +46,7 @@ Recent decisions affecting current work:
 - Ionide.LanguageServerProtocol 사용: F# 네이티브, 경량, FsAutoComplete 검증됨
 - 한국어 튜토리얼: 한국어 LSP 튜토리얼 부족, 대상 독자 명확
 - 8가지 LSP 기능 구현: Table stakes 4개 + Find References, Rename, Code Actions
+- FunLang v5.0/v6.0 활용: Span, Diagnostic 모듈로 LSP Diagnostics 구현 단순화
 
 ### Pending Todos
 

@@ -44,6 +44,8 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 - LangTutorial 서브모듈에 F#으로 구현된 ML 계열 함수형 언어
 - Hindley-Milner 타입 추론, Let-polymorphism, 패턴 매칭 지원
 - Lexer, Parser, Type Checker, Evaluator 모두 구현 완료
+- **v5.0**: Span 타입 (모든 AST 노드에 소스 위치), Diagnostic 모듈 (에러 표현/변환)
+- **v6.0**: TypeExpr (타입 어노테이션 AST), Bidir.fs (양방향 타입 체커)
 
 **튜토리얼 대상:**
 - LSP 입문자 (언어/프레임워크 무관)
@@ -73,4 +75,4 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 | 8가지 LSP 기능 구현 | Table stakes 4개 + Find References, Rename, Code Actions로 실용적 범위 | — Pending |
 
 ---
-*Last updated: 2025-02-03 after initialization*
+*Last updated: 2025-02-04 after LangTutorial v5.0/v6.0 submodule update*
