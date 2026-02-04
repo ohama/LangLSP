@@ -3,11 +3,12 @@ module LangLSP.Server.AstLookup
 open Ast
 open Ionide.LanguageServerProtocol.Types
 
-/// Check if LSP Position (0-based) is within FunLang Span (1-based)
+/// Check if LSP Position (0-based) is within FunLang Span (0-based in practice)
+/// Note: FsLexYacc Position.Line is documented as 1-based, but LexBuffer.FromString creates 0-based positions
 let positionInSpan (lspPos: Position) (span: Span) : bool =
-    // Convert LSP 0-based to FunLang 1-based
-    let line = int lspPos.Line + 1
-    let col = int lspPos.Character + 1
+    // Both LSP and FunLang use 0-based line and column (LexBuffer.FromString default)
+    let line = int lspPos.Line
+    let col = int lspPos.Character
 
     // Check if position is within span
     if line < span.StartLine || line > span.EndLine then
