@@ -15,6 +15,8 @@
     <Compile Include="Definition.fs" />
     <Compile Include="Completion.fs" />
     <Compile Include="References.fs" />
+    <Compile Include="Rename.fs" />
+    <Compile Include="CodeActions.fs" />
     <Compile Include="Diagnostics.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
