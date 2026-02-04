@@ -22,8 +22,28 @@ LangLSP/
 ├── docs/                 # 문서
 │   ├── howto/            # 개발 지식 문서
 │   └── LangLSP-setup.md  # 프로젝트 설정 가이드
+├── tutorial/             # LSP 구현 튜토리얼
 └── src/                  # LSP 서버 구현 (예정)
 ```
+
+## 튜토리얼
+
+`tutorial/` 디렉토리에서 VS Code LSP 구현 튜토리얼을 단계별로 진행합니다.
+
+- **대상 언어**: [LangTutorial](https://github.com/ohama/LangTutorial)에서 정의한 FunLang
+- **구현 언어**: F#
+- **목표**: FunLang을 위한 완전한 VS Code Language Server 구축
+
+### 튜토리얼 내용 (예정)
+
+1. **LSP 기초** — Language Server Protocol 개념과 아키텍처
+2. **프로젝트 설정** — F# LSP 서버 프로젝트 구성
+3. **텍스트 동기화** — 문서 열기/변경/닫기 처리
+4. **진단(Diagnostics)** — 실시간 문법 오류 표시
+5. **자동 완성** — 키워드 및 심볼 자동 완성
+6. **호버** — 타입 정보 및 문서 표시
+7. **정의로 이동** — Go to Definition 구현
+8. **VS Code 확장** — 클라이언트 확장 패키징
 
 ## FunLang 소개
 
