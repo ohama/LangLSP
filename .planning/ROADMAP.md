@@ -13,9 +13,9 @@ FunLang LSP 프로젝트는 F#으로 구현된 함수형 언어 FunLang을 위�
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: LSP Foundation** - Protocol setup, document sync, diagnostics + 기초 튜토리얼
-- [ ] **Phase 2: Core Navigation** - Hover and Go to Definition + 튜토리얼
-- [ ] **Phase 3: Completion** - Keyword and symbol autocomplete + 튜토리얼
-- [ ] **Phase 4: Advanced Features** - Find References, Rename, Code Actions + 튜토리얼
+- [x] **Phase 2: Core Navigation** - Hover and Go to Definition + 튜토리얼
+- [x] **Phase 3: Completion** - Keyword and symbol autocomplete + 튜토리얼
+- [x] **Phase 4: Advanced Features** - Find References, Rename, Code Actions + 튜토리얼
 - [ ] **Phase 5: VS Code Extension** - Extension packaging + 튜토리얼
 
 ## Phase Details
@@ -134,12 +134,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Find References module with scope-aware reference collection (REF-01, REF-02, REF-03)
-- [ ] 04-02-PLAN.md — Rename Symbol + Code Actions modules with unused variable detection (RENAME-01, RENAME-02, RENAME-03, ACTION-01, ACTION-02)
-- [ ] 04-03-PLAN.md — Unit tests for References, Rename, and Code Actions (TEST-07, TEST-08, TEST-09)
-- [ ] 04-04-PLAN.md — Find References tutorial in Korean (TUT-09)
-- [ ] 04-05-PLAN.md — Rename Symbol tutorial in Korean (TUT-10)
-- [ ] 04-06-PLAN.md — Code Actions tutorial in Korean (TUT-11)
+- [x] 04-01-PLAN.md — Find References module with scope-aware reference collection (REF-01, REF-02, REF-03)
+- [x] 04-02-PLAN.md — Rename Symbol + Code Actions modules with unused variable detection (RENAME-01, RENAME-02, RENAME-03, ACTION-01, ACTION-02)
+- [x] 04-03-PLAN.md — Unit tests for References, Rename, and Code Actions (TEST-07, TEST-08, TEST-09)
+- [x] 04-04-PLAN.md — Find References tutorial in Korean (TUT-09)
+- [x] 04-05-PLAN.md — Rename Symbol tutorial in Korean (TUT-10)
+- [x] 04-06-PLAN.md — Code Actions tutorial in Korean (TUT-11)
 
 ---
 
@@ -177,8 +177,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. LSP Foundation | 8/8 | Complete | 2026-02-04 |
 | 2. Core Navigation | 5/5 | Complete | 2026-02-04 |
 | 3. Completion | 3/3 | Complete | 2026-02-05 |
-| 4. Advanced Features | 0/6 | In progress | - |
+| 4. Advanced Features | 6/6 | Complete | 2026-02-05 |
 | 5. VS Code Extension | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-05 — Phase 4 planned (6 plans in 4 waves)*
+*Last updated: 2026-02-05 — Phase 4 complete (6/6 plans, 116 tests, verified)*

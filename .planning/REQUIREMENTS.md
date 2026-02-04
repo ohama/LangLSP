@@ -146,14 +146,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMP-01 | Phase 3 | Complete |
 | COMP-02 | Phase 3 | Complete |
 | COMP-03 | Phase 3 | Complete |
-| REF-01 | Phase 4 | Pending |
-| REF-02 | Phase 4 | Pending |
-| REF-03 | Phase 4 | Pending |
-| RENAME-01 | Phase 4 | Pending |
-| RENAME-02 | Phase 4 | Pending |
-| RENAME-03 | Phase 4 | Pending |
-| ACTION-01 | Phase 4 | Pending |
-| ACTION-02 | Phase 4 | Pending |
+| REF-01 | Phase 4 | Complete |
+| REF-02 | Phase 4 | Complete |
+| REF-03 | Phase 4 | Complete |
+| RENAME-01 | Phase 4 | Complete |
+| RENAME-02 | Phase 4 | Complete |
+| RENAME-03 | Phase 4 | Complete |
+| ACTION-01 | Phase 4 | Complete |
+| ACTION-02 | Phase 4 | Complete |
 | EXT-01 | Phase 5 | Pending |
 | EXT-02 | Phase 5 | Pending |
 | EXT-03 | Phase 5 | Pending |
@@ -164,9 +164,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-04 | Phase 2 | Complete |
 | TEST-05 | Phase 3 | Complete |
 | TEST-06 | Phase 2 | Complete |
-| TEST-07 | Phase 4 | Pending |
-| TEST-08 | Phase 4 | Pending |
-| TEST-09 | Phase 4 | Pending |
+| TEST-07 | Phase 4 | Complete |
+| TEST-08 | Phase 4 | Complete |
+| TEST-09 | Phase 4 | Complete |
 | TEST-10 | Phase 5 | Pending |
 | TEST-11 | Phase 1 | Complete |
 | TUT-01 | Phase 1 | Complete |
@@ -177,9 +177,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TUT-06 | Phase 2 | Complete |
 | TUT-07 | Phase 3 | Complete |
 | TUT-08 | Phase 2 | Complete |
-| TUT-09 | Phase 4 | Pending |
-| TUT-10 | Phase 4 | Pending |
-| TUT-11 | Phase 4 | Pending |
+| TUT-09 | Phase 4 | Complete |
+| TUT-10 | Phase 4 | Complete |
+| TUT-11 | Phase 4 | Complete |
 | TUT-12 | Phase 5 | Pending |
 
 **Coverage:**
@@ -189,4 +189,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-02-03*
-*Last updated: 2025-02-04 after tutorial requirements redistributed to phases 1-5*
+*Last updated: 2026-02-05 — Phase 4 requirements marked Complete (44/50 complete)*
