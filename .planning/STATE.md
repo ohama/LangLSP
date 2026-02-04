@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 1 of 5 (LSP Foundation)
-Plan: 4 of 8 in current phase (01-01, 01-03, 01-04, 01-05 complete)
+Plan: 5 of 8 in current phase (01-01, 01-03, 01-04, 01-05, 01-06 complete)
 Status: In progress
-Last activity: 2026-02-04 — Completed 01-05-PLAN.md (Diagnostics Publishing)
+Last activity: 2026-02-04 — Completed 01-06-PLAN.md (VS Code Extension Client)
 
-Progress: [█░░░░░░░░░] 50.0%
+Progress: [██████░░░░] 62.5%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 4min
-- Total execution time: 0.28 hours
+- Total plans completed: 5
+- Average duration: 3min
+- Total execution time: 0.29 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-lsp-foundation | 4 | 16min | 4min |
+| 01-lsp-foundation | 5 | 17min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4min), 01-03 (5min), 01-04 (2min), 01-05 (5min)
-- Trend: Implementation phases take 4-5min; documentation takes 2min
+- Last 5 plans: 01-03 (5min), 01-04 (2min), 01-05 (5min), 01-06 (1min)
+- Trend: TypeScript/client tasks faster (1-2min); F# implementation 4-5min
 
 *Updated after each plan completion*
 
@@ -55,6 +55,8 @@ Recent decisions affecting current work:
 - Sequential test execution (01-03): Expecto tests with shared state need testSequenced
 - Clamp invalid spans instead of wrapping (01-05): FunLang (0,0) spans clamped to prevent uint.MaxValue wrap-around
 - FsCheck with 500 iterations (01-05): Property-based testing for position conversion invariants
+- dotnet run for development (01-06): VS Code extension uses dotnet run for easy server debugging
+- Auto-activation via empty activationEvents (01-06): VS Code 1.74+ auto-activates for contributed languages
 
 ### Pending Todos
 
@@ -66,6 +68,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-04 (plan 01-05 execution)
-Stopped at: Completed 01-05-PLAN.md (Diagnostics Publishing) - 5 tasks, 7 files created/modified
+Last session: 2026-02-04 (plan 01-06 execution)
+Stopped at: Completed 01-06-PLAN.md (VS Code Extension Client) - 3 tasks, 5 files created
 Resume file: None
