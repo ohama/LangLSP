@@ -3,15 +3,13 @@ module LangLSP.Server.Protocol
 open Ionide.LanguageServerProtocol.Types
 open Ast  // FunLang's Span type
 
-/// Convert FunLang Span (1-based) to LSP Range (0-based)
-/// FunLang: StartLine=1 means first line
-/// LSP: line=0 means first line
-/// Edge case: if span is (0,0), clamp to (0,0) instead of wrapping to uint.MaxValue
+/// Convert FunLang Span to LSP Range
+/// Note: LexBuffer.FromString creates 0-based positions, matching LSP
+/// So no conversion needed (contrary to FsLexYacc documentation)
 let spanToLspRange (span: Span) : Range =
-    let clamp x = max 0 (x - 1)
     {
-        Start = { Line = uint32 (clamp span.StartLine); Character = uint32 (clamp span.StartColumn) }
-        End = { Line = uint32 (clamp span.EndLine); Character = uint32 (clamp span.EndColumn) }
+        Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+        End = { Line = uint32 span.EndLine; Character = uint32 span.EndColumn }
     }
 
 /// Convert FunLang Diagnostic to LSP Diagnostic

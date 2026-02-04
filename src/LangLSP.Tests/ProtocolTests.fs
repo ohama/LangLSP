@@ -6,11 +6,11 @@ open FsCheck
 open LangLSP.Server.Protocol
 
 /// Generator for valid Span values
-/// FunLang Span is 1-based, positive, and start <= end
+/// Note: LexBuffer.FromString produces 0-based spans (contrary to FsLexYacc docs)
 let validSpanGen : Gen<Ast.Span> =
     gen {
-        let! startLine = Gen.choose(1, 1000)
-        let! startColumn = Gen.choose(1, 200)
+        let! startLine = Gen.choose(0, 1000)
+        let! startColumn = Gen.choose(0, 200)
         let! endLine = Gen.choose(startLine, 1000)
         // If on same line, endColumn >= startColumn
         // If on different line, endColumn can be anything
@@ -18,7 +18,7 @@ let validSpanGen : Gen<Ast.Span> =
             if endLine = startLine then
                 Gen.choose(startColumn, 200)
             else
-                Gen.choose(1, 200)
+                Gen.choose(0, 200)
 
         let span : Ast.Span = {
             FileName = "test.fun"
@@ -41,14 +41,14 @@ let protocolTests =
 
     testList "Protocol" [
 
-        testPropertyWithConfig fsCheckConfig "spanToLspRange converts to 0-based" <| fun (span: Ast.Span) ->
+        testPropertyWithConfig fsCheckConfig "spanToLspRange direct conversion (both 0-based)" <| fun (span: Ast.Span) ->
             let range = spanToLspRange span
-            // LSP is 0-based, FunLang is 1-based
-            // Line numbers should be decremented by 1
-            Expect.equal range.Start.Line (uint32 (max 0 (span.StartLine - 1))) "Start line should be 0-based"
-            Expect.equal range.Start.Character (uint32 (max 0 (span.StartColumn - 1))) "Start char should be 0-based"
-            Expect.equal range.End.Line (uint32 (max 0 (span.EndLine - 1))) "End line should be 0-based"
-            Expect.equal range.End.Character (uint32 (max 0 (span.EndColumn - 1))) "End char should be 0-based"
+            // Both FunLang (from LexBuffer.FromString) and LSP are 0-based
+            // No conversion needed
+            Expect.equal range.Start.Line (uint32 span.StartLine) "Start line should match"
+            Expect.equal range.Start.Character (uint32 span.StartColumn) "Start char should match"
+            Expect.equal range.End.Line (uint32 span.EndLine) "End line should match"
+            Expect.equal range.End.Character (uint32 span.EndColumn) "End char should match"
 
         testPropertyWithConfig fsCheckConfig "spanToLspRange preserves line ordering" <| fun (span: Ast.Span) ->
             let range = spanToLspRange span
@@ -62,33 +62,32 @@ let protocolTests =
                 Expect.isLessThanOrEqual range.Start.Character range.End.Character
                     "On same line, start char should be <= end char"
 
-        testCase "spanToLspRange edge case: first line first column" <| fun _ ->
-            let span : Ast.Span = {
-                FileName = "test.fun"
-                StartLine = 1
-                StartColumn = 1
-                EndLine = 1
-                EndColumn = 1
-            }
-            let range = spanToLspRange span
-            // First line, first column in FunLang (1,1) should become (0,0) in LSP
-            Expect.equal range.Start.Line 0u "First line should be 0"
-            Expect.equal range.Start.Character 0u "First column should be 0"
-            Expect.equal range.End.Line 0u "End line should be 0"
-            Expect.equal range.End.Character 0u "End column should be 0"
-
-        testCase "spanToLspRange edge case: invalid (0,0) span clamped" <| fun _ ->
+        testCase "spanToLspRange: (0,0) is valid first position" <| fun _ ->
             let span : Ast.Span = {
                 FileName = "test.fun"
                 StartLine = 0
                 StartColumn = 0
                 EndLine = 0
-                EndColumn = 0
+                EndColumn = 5
             }
             let range = spanToLspRange span
-            // Invalid (0,0) span should be clamped to (0,0) instead of wrapping to uint.MaxValue
-            Expect.equal range.Start.Line 0u "Invalid span start line should clamp to 0"
-            Expect.equal range.Start.Character 0u "Invalid span start char should clamp to 0"
-            Expect.equal range.End.Line 0u "Invalid span end line should clamp to 0"
-            Expect.equal range.End.Character 0u "Invalid span end char should clamp to 0"
+            // (0,0) is a valid position in both FunLang and LSP
+            Expect.equal range.Start.Line 0u "First line is 0"
+            Expect.equal range.Start.Character 0u "First column is 0"
+            Expect.equal range.End.Line 0u "End line is 0"
+            Expect.equal range.End.Character 5u "End column is 5"
+
+        testCase "spanToLspRange typical span" <| fun _ ->
+            let span : Ast.Span = {
+                FileName = "test.fun"
+                StartLine = 5
+                StartColumn = 10
+                EndLine = 5
+                EndColumn = 20
+            }
+            let range = spanToLspRange span
+            Expect.equal range.Start.Line 5u "Line preserved"
+            Expect.equal range.Start.Character 10u "Column preserved"
+            Expect.equal range.End.Line 5u "End line preserved"
+            Expect.equal range.End.Character 20u "End column preserved"
     ]
