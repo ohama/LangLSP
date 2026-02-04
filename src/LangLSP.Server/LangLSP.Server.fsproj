@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="Protocol.fs" />
     <Compile Include="DocumentSync.fs" />
+    <Compile Include="Diagnostics.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
