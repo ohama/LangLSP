@@ -7,6 +7,8 @@ open LangLSP.Server.Definition
 open LangLSP.Server.Hover
 open LangLSP.Server.Completion
 open LangLSP.Server.References
+open LangLSP.Server.Rename
+open LangLSP.Server.CodeActions
 open LangLSP.Server.Diagnostics
 
 /// Server capabilities declaration
@@ -29,6 +31,15 @@ let serverCapabilities : ServerCapabilities =
             CompletionItem = None
         }
         ReferencesProvider = Some (U2.C1 true)
+        RenameProvider = Some (U2.C2 {
+            PrepareProvider = Some true
+            WorkDoneProgress = None
+        })
+        CodeActionProvider = Some (U2.C2 {
+            CodeActionKinds = Some [| "quickfix" |]
+            ResolveProvider = Some false
+            WorkDoneProgress = None
+        })
     }
 
 /// Create the initialize result
@@ -99,3 +110,15 @@ module Handlers =
     /// Handle textDocument/references request
     let textDocumentReferences (p: ReferenceParams) : Async<Location[] option> =
         References.handleReferences p
+
+    /// Handle textDocument/prepareRename request
+    let textDocumentPrepareRename (p: TextDocumentPositionParams) : Async<PrepareRenameResult option> =
+        Rename.handlePrepareRename p
+
+    /// Handle textDocument/rename request
+    let textDocumentRename (p: RenameParams) : Async<WorkspaceEdit option> =
+        Rename.handleRename p
+
+    /// Handle textDocument/codeAction request
+    let textDocumentCodeAction (p: CodeActionParams) : Async<CodeAction[] option> =
+        CodeActions.handleCodeAction p
