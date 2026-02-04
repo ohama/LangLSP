@@ -5,33 +5,33 @@
 See: .planning/PROJECT.md (updated 2025-02-04)
 
 **Core value:** LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념을 이해할 수 있는 실용적인 튜토리얼
-**Current focus:** Phase 2 - Core Navigation (COMPLETE)
+**Current focus:** Phase 2 - Core Navigation (COMPLETE + Tutorials)
 
 ## Current Position
 
 Phase: 2 of 5 (Core Navigation) — COMPLETE
-Plan: 4 of 4 in current phase (all complete, including tutorial)
+Plan: 5 of 5 in current phase (all complete, including tutorials)
 Status: Phase 2 complete - Ready for Phase 3
-Last activity: 2026-02-04 — Completed 02-04-PLAN.md (Hover Tutorial)
+Last activity: 2026-02-04 — Completed 02-05-PLAN.md (Go to Definition Tutorial)
 
-Progress: [████████████████████] 100% (Phase 2: 4/4 plans complete)
+Progress: [████████████████████] 100% (Phase 2: 5/5 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 12
-- Average duration: 4.8min
-- Total execution time: 0.97 hours
+- Total plans completed: 13
+- Average duration: 4.6min
+- Total execution time: 1.0 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-lsp-foundation | 8 | 32min | 4min |
-| 02-core-navigation | 4 | 29min | 7.3min |
+| 02-core-navigation | 5 | 32min | 6.4min |
 
 **Recent Trend:**
-- Last 5 plans: 02-01 (8min), 02-02 (7min), 02-03 (11min), 02-04 (3min)
+- Last 5 plans: 02-02 (7min), 02-03 (11min), 02-04 (3min), 02-05 (3min)
 - Trend: Documentation plans faster than implementation plans
 
 *Updated after each plan completion*
@@ -71,6 +71,7 @@ Recent decisions affecting current work:
 - Position-based shadowing resolution (02-03): Closest preceding definition wins for shadowed variables
 - 0-based coordinate passthrough (02-03): Protocol.fs no longer subtracts 1 (matches LexBuffer.FromString)
 - Comprehensive tutorial coverage (02-04): 677 lines exceeds target, includes full function implementations
+- Korean tutorial style (02-05): Follow existing 05-diagnostics.md format with code examples
 
 ### Pending Todos
 
@@ -83,6 +84,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 02-04-PLAN.md - Hover tutorial with 677 lines of Korean content
+Stopped at: Completed 02-05-PLAN.md - Go to Definition Tutorial with 783 lines of Korean content
 Resume file: None
 Next action: Proceed to Phase 3 (Find References, Rename, Code Actions)
