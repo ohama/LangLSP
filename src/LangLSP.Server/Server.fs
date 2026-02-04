@@ -5,6 +5,7 @@ open Ionide.LanguageServerProtocol.Types
 open LangLSP.Server.DocumentSync
 open LangLSP.Server.Definition
 open LangLSP.Server.Hover
+open LangLSP.Server.Completion
 open LangLSP.Server.Diagnostics
 
 /// Server capabilities declaration
@@ -19,6 +20,13 @@ let serverCapabilities : ServerCapabilities =
             })
         DefinitionProvider = Some (U2.C1 true)
         HoverProvider = Some (U2.C1 true)
+        CompletionProvider = Some {
+            ResolveProvider = Some false
+            TriggerCharacters = None
+            AllCommitCharacters = None
+            WorkDoneProgress = None
+            CompletionItem = None
+        }
     }
 
 /// Create the initialize result
@@ -80,3 +88,8 @@ module Handlers =
     /// Shows type information or keyword explanations
     let textDocumentHover (p: HoverParams) : Async<Hover option> =
         Hover.handleHover p
+
+    /// Handle textDocument/completion request
+    /// Returns completion items for keywords and in-scope symbols
+    let textDocumentCompletion (p: CompletionParams) : Async<CompletionList option> =
+        Completion.handleCompletion p
