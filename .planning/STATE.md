@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2025-02-04)
 
 **Core value:** LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념을 이해할 수 있는 실용적인 튜토리얼
-**Current focus:** Phase 2 - Core Navigation
+**Current focus:** Phase 2 - Core Navigation (COMPLETE)
 
 ## Current Position
 
-Phase: 2 of 5 (Core Navigation) — IN PROGRESS
-Plan: 2 of 3 in current phase (02-01, 02-02 complete; 02-03 in parallel)
-Status: Phase 2 in progress - Hover implementation complete
-Last activity: 2026-02-04 — Completed 02-02-PLAN.md (Hover Implementation)
+Phase: 2 of 5 (Core Navigation) — COMPLETE
+Plan: 3 of 3 in current phase (all complete)
+Status: Phase 2 complete - Ready for Phase 3
+Last activity: 2026-02-04 — Completed 02-03-PLAN.md (Go to Definition)
 
-Progress: [██████████████░░░░░░] 70% (Phase 2: 2/3 plans, 02-03 also done in parallel)
+Progress: [████████████████████] 100% (Phase 2: 3/3 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 4.7min
-- Total execution time: 0.78 hours
+- Total plans completed: 11
+- Average duration: 5.2min
+- Total execution time: 0.95 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-lsp-foundation | 8 | 32min | 4min |
-| 02-core-navigation | 2 | 15min | 7.5min |
+| 02-core-navigation | 3 | 26min | 8.7min |
 
 **Recent Trend:**
-- Last 5 plans: 01-07 (4min), 01-08 (10min), 02-01 (8min), 02-02 (7min)
-- Trend: Hover implementation 7min (includes variable type lookup fix)
+- Last 5 plans: 01-08 (10min), 02-01 (8min), 02-02 (7min), 02-03 (11min)
+- Trend: Navigation features averaging 8.7min (includes coordinate system fixes)
 
 *Updated after each plan completion*
 
@@ -68,6 +68,8 @@ Recent decisions affecting current work:
 - Whole-AST typecheck validation (02-02): Typecheck whole AST first, then extract node types for context
 - findVarTypeInAst for variable types (02-02): Search binding sites and typecheck bound values
 - U3.C1 for MarkupContent (02-02): Ionide 0.7.0 uses U3<MarkupContent, MarkedString, MarkedString[]>
+- Position-based shadowing resolution (02-03): Closest preceding definition wins for shadowed variables
+- 0-based coordinate passthrough (02-03): Protocol.fs no longer subtracts 1 (matches LexBuffer.FromString)
 
 ### Pending Todos
 
@@ -80,6 +82,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-04
-Stopped at: Completed 02-02-PLAN.md - Hover implementation with 15 tests passing
+Stopped at: Completed 02-03-PLAN.md - Go to Definition with 14 tests passing
 Resume file: None
-Next action: Verify 02-03 completion (parallel execution) or proceed to Phase 3
+Next action: Proceed to Phase 3 (Find References, Rename, Code Actions)
