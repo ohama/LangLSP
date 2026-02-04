@@ -13,6 +13,7 @@
     <Compile Include="DocumentSync.fs" />
     <Compile Include="Hover.fs" />
     <Compile Include="Definition.fs" />
+    <Compile Include="Completion.fs" />
     <Compile Include="Diagnostics.fs" />
     <Compile Include="Server.fs" />
     <Compile Include="Program.fs" />
