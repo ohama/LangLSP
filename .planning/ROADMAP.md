@@ -77,11 +77,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Shared AST position lookup module with tests
-- [ ] 02-02-PLAN.md — Hover implementation with type display and Korean keyword explanations
-- [ ] 02-03-PLAN.md — Go to Definition implementation with symbol table
-- [ ] 02-04-PLAN.md — Hover tutorial in Korean (TUT-06)
-- [ ] 02-05-PLAN.md — Go to Definition tutorial in Korean (TUT-08)
+- [x] 02-01-PLAN.md — Shared AST position lookup module with tests
+- [x] 02-02-PLAN.md — Hover implementation with type display and Korean keyword explanations
+- [x] 02-03-PLAN.md — Go to Definition implementation with symbol table
+- [x] 02-04-PLAN.md — Hover tutorial in Korean (TUT-06)
+- [x] 02-05-PLAN.md — Go to Definition tutorial in Korean (TUT-08)
 
 ---
 
@@ -168,10 +168,10 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. LSP Foundation | 8/8 | Complete | 2026-02-04 |
-| 2. Core Navigation | 0/5 | In progress | - |
+| 2. Core Navigation | 5/5 | Complete | 2026-02-04 |
 | 3. Completion | 0/TBD | Not started | - |
 | 4. Advanced Features | 0/TBD | Not started | - |
 | 5. VS Code Extension | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-04 — Phase 2 planned*
+*Last updated: 2026-02-04 — Phase 2 complete*
