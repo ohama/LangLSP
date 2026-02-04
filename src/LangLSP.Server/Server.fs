@@ -4,6 +4,7 @@ open Ionide.LanguageServerProtocol
 open Ionide.LanguageServerProtocol.Types
 open LangLSP.Server.DocumentSync
 open LangLSP.Server.Definition
+open LangLSP.Server.Hover
 open LangLSP.Server.Diagnostics
 
 /// Server capabilities declaration
@@ -17,6 +18,7 @@ let serverCapabilities : ServerCapabilities =
                     Save = Some (U2.C2 { IncludeText = Some false })
             })
         DefinitionProvider = Some (U2.C1 true)
+        HoverProvider = Some (U2.C1 true)
     }
 
 /// Create the initialize result
@@ -73,3 +75,8 @@ module Handlers =
     /// Navigates to definition of variable/function at cursor position
     let textDocumentDefinition (p: DefinitionParams) : Async<Definition option> =
         handleDefinition p
+
+    /// Handle textDocument/hover request
+    /// Shows type information or keyword explanations
+    let textDocumentHover (p: HoverParams) : Async<Hover option> =
+        Hover.handleHover p
