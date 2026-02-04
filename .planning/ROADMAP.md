@@ -12,7 +12,7 @@ FunLang LSP 프로젝트는 F#으로 구현된 함수형 언어 FunLang을 위�
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: LSP Foundation** - Protocol setup, document sync, diagnostics + 기초 튜토리얼
+- [x] **Phase 1: LSP Foundation** - Protocol setup, document sync, diagnostics + 기초 튜토리얼
 - [ ] **Phase 2: Core Navigation** - Hover and Go to Definition + 튜토리얼
 - [ ] **Phase 3: Completion** - Keyword and symbol autocomplete + 튜토리얼
 - [ ] **Phase 4: Advanced Features** - Find References, Rename, Code Actions + 튜토리얼
@@ -45,14 +45,14 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 8 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — F# LSP Server project setup with Protocol module
-- [ ] 01-02-PLAN.md — LSP concepts and library choice tutorials (TUT-01, TUT-02)
-- [ ] 01-03-PLAN.md — Document Sync implementation with tests (LSP-02, TEST-02)
-- [ ] 01-04-PLAN.md — Project setup tutorial (TUT-03)
-- [ ] 01-05-PLAN.md — Diagnostics implementation with tests (DIAG-01-03, TEST-03, TEST-11)
-- [ ] 01-06-PLAN.md — VS Code extension client (LSP-01 completion)
-- [ ] 01-07-PLAN.md — Document Sync and Diagnostics tutorials (TUT-04, TUT-05)
-- [ ] 01-08-PLAN.md — Integration verification checkpoint
+- [x] 01-01-PLAN.md — F# LSP Server project setup with Protocol module
+- [x] 01-02-PLAN.md — LSP concepts and library choice tutorials (TUT-01, TUT-02)
+- [x] 01-03-PLAN.md — Document Sync implementation with tests (LSP-02, TEST-02)
+- [x] 01-04-PLAN.md — Project setup tutorial (TUT-03)
+- [x] 01-05-PLAN.md — Diagnostics implementation with tests (DIAG-01-03, TEST-03, TEST-11)
+- [x] 01-06-PLAN.md — VS Code extension client (LSP-01 completion)
+- [x] 01-07-PLAN.md — Document Sync and Diagnostics tutorials (TUT-04, TUT-05)
+- [x] 01-08-PLAN.md — Integration verification checkpoint
 
 ---
 
@@ -74,10 +74,14 @@ Plans:
   8. Tutorial shows how to implement Hover with code examples
   9. Tutorial shows how to implement Go to Definition with code examples
 
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- TBD (created during plan-phase)
+- [ ] 02-01-PLAN.md — Shared AST position lookup module with tests
+- [ ] 02-02-PLAN.md — Hover implementation with type display and Korean keyword explanations
+- [ ] 02-03-PLAN.md — Go to Definition implementation with symbol table
+- [ ] 02-04-PLAN.md — Hover tutorial in Korean (TUT-06)
+- [ ] 02-05-PLAN.md — Go to Definition tutorial in Korean (TUT-08)
 
 ---
 
@@ -163,11 +167,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. LSP Foundation | 0/8 | Planned | - |
-| 2. Core Navigation | 0/TBD | Not started | - |
+| 1. LSP Foundation | 8/8 | Complete | 2026-02-04 |
+| 2. Core Navigation | 0/5 | In progress | - |
 | 3. Completion | 0/TBD | Not started | - |
 | 4. Advanced Features | 0/TBD | Not started | - |
 | 5. VS Code Extension | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-04 after Phase 1 planning*
+*Last updated: 2026-02-04 — Phase 2 planned*
