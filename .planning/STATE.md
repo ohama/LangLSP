@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 1 of 5 (LSP Foundation)
-Plan: 3 of 8 in current phase (01-01, 01-03, 01-04 complete)
+Plan: 4 of 8 in current phase (01-01, 01-03, 01-04, 01-05 complete)
 Status: In progress
-Last activity: 2026-02-04 — Completed 01-03-PLAN.md (Document Synchronization)
+Last activity: 2026-02-04 — Completed 01-05-PLAN.md (Diagnostics Publishing)
 
-Progress: [█░░░░░░░░░] 37.5%
+Progress: [█░░░░░░░░░] 50.0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 4min
-- Total execution time: 0.19 hours
+- Total execution time: 0.28 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-lsp-foundation | 3 | 11min | 4min |
+| 01-lsp-foundation | 4 | 16min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4min), 01-03 (5min), 01-04 (2min)
-- Trend: Implementation phases take longer than documentation
+- Last 5 plans: 01-01 (4min), 01-03 (5min), 01-04 (2min), 01-05 (5min)
+- Trend: Implementation phases take 4-5min; documentation takes 2min
 
 *Updated after each plan completion*
 
@@ -53,6 +53,8 @@ Recent decisions affecting current work:
 - ConcurrentDictionary for document storage (01-03): Thread-safe storage for concurrent LSP notifications
 - U2 union type handling (01-03): Ionide 0.7.0 uses U2<C1,C2> for incremental vs full sync
 - Sequential test execution (01-03): Expecto tests with shared state need testSequenced
+- Clamp invalid spans instead of wrapping (01-05): FunLang (0,0) spans clamped to prevent uint.MaxValue wrap-around
+- FsCheck with 500 iterations (01-05): Property-based testing for position conversion invariants
 
 ### Pending Todos
 
@@ -64,6 +66,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-04 (plan 01-03 execution)
-Stopped at: Completed 01-03-PLAN.md (Document Synchronization) - 3 tasks, 6 files created/modified
+Last session: 2026-02-04 (plan 01-05 execution)
+Stopped at: Completed 01-05-PLAN.md (Diagnostics Publishing) - 5 tasks, 7 files created/modified
 Resume file: None
