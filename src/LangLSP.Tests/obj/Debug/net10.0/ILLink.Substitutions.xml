@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="LangLSP.Tests">
+    <resource name="FSharpSignatureData.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedData.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureDataB.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureCompressedDataB.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationData.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedData.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationDataB.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationCompressedDataB.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpOptimizationInfo.LangLSP.Tests" action="remove"></resource>
+    <resource name="FSharpSignatureInfo.LangLSP.Tests" action="remove"></resource>
+  </assembly>
+</linker>
