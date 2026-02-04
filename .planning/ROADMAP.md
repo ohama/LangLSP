@@ -42,10 +42,17 @@ Decimal phases appear between their surrounding integers in numeric order.
   12. Tutorial shows how to implement Document Sync with code examples
   13. Tutorial shows how to implement Diagnostics with code examples
 
-**Plans**: TBD
+**Plans**: 8 plans
 
 Plans:
-- TBD (created during plan-phase)
+- [ ] 01-01-PLAN.md — F# LSP Server project setup with Protocol module
+- [ ] 01-02-PLAN.md — LSP concepts and library choice tutorials (TUT-01, TUT-02)
+- [ ] 01-03-PLAN.md — Document Sync implementation with tests (LSP-02, TEST-02)
+- [ ] 01-04-PLAN.md — Project setup tutorial (TUT-03)
+- [ ] 01-05-PLAN.md — Diagnostics implementation with tests (DIAG-01-03, TEST-03, TEST-11)
+- [ ] 01-06-PLAN.md — VS Code extension client (LSP-01 completion)
+- [ ] 01-07-PLAN.md — Document Sync and Diagnostics tutorials (TUT-04, TUT-05)
+- [ ] 01-08-PLAN.md — Integration verification checkpoint
 
 ---
 
@@ -156,11 +163,11 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. LSP Foundation | 0/TBD | Not started | - |
+| 1. LSP Foundation | 0/8 | Planned | - |
 | 2. Core Navigation | 0/TBD | Not started | - |
 | 3. Completion | 0/TBD | Not started | - |
 | 4. Advanced Features | 0/TBD | Not started | - |
 | 5. VS Code Extension | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2025-02-04 after restructuring tutorials into each phase*
+*Last updated: 2026-02-04 after Phase 1 planning*
