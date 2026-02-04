@@ -38,3 +38,18 @@ let diagnosticToLsp (diag: Diagnostic.Diagnostic) : Diagnostic =
                 |> Some
         Data = None
     }
+
+/// Create TextEdit from span and new text
+let createTextEdit (span: Span) (newText: string) : TextEdit =
+    {
+        Range = spanToLspRange span
+        NewText = newText
+    }
+
+/// Create WorkspaceEdit for single-file changes
+let createWorkspaceEdit (uri: string) (edits: TextEdit[]) : WorkspaceEdit =
+    {
+        Changes = Some (Map.ofList [ (uri, edits) ])
+        DocumentChanges = None
+        ChangeAnnotations = None
+    }

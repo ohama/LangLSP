@@ -6,6 +6,7 @@ open LangLSP.Server.DocumentSync
 open LangLSP.Server.Definition
 open LangLSP.Server.Hover
 open LangLSP.Server.Completion
+open LangLSP.Server.References
 open LangLSP.Server.Diagnostics
 
 /// Server capabilities declaration
@@ -27,6 +28,7 @@ let serverCapabilities : ServerCapabilities =
             WorkDoneProgress = None
             CompletionItem = None
         }
+        ReferencesProvider = Some (U2.C1 true)
     }
 
 /// Create the initialize result
@@ -93,3 +95,7 @@ module Handlers =
     /// Returns completion items for keywords and in-scope symbols
     let textDocumentCompletion (p: CompletionParams) : Async<CompletionList option> =
         Completion.handleCompletion p
+
+    /// Handle textDocument/references request
+    let textDocumentReferences (p: ReferenceParams) : Async<Location[] option> =
+        References.handleReferences p
