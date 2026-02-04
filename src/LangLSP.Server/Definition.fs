@@ -133,7 +133,7 @@ let handleDefinition (p: DefinitionParams) : Async<Definition option> =
                                 Uri = uri
                                 Range = spanToLspRange defSpan
                             }
-                            return Some (Definition.C1 location)
+                            return Some (U2.C1 location)
                     | _ ->
                         // Not a variable reference
                         return None
