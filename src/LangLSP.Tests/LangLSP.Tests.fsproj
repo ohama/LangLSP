@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="DocumentSyncTests.fs" />
+    <Compile Include="DiagnosticsTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
