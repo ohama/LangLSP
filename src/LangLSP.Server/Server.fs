@@ -3,6 +3,7 @@ module LangLSP.Server.Server
 open Ionide.LanguageServerProtocol
 open Ionide.LanguageServerProtocol.Types
 open LangLSP.Server.DocumentSync
+open LangLSP.Server.Definition
 open LangLSP.Server.Diagnostics
 
 /// Server capabilities declaration
@@ -15,6 +16,7 @@ let serverCapabilities : ServerCapabilities =
                     Change = Some TextDocumentSyncKind.Incremental
                     Save = Some (U2.C2 { IncludeText = Some false })
             })
+        DefinitionProvider = Some (U2.C1 true)
     }
 
 /// Create the initialize result
@@ -66,3 +68,8 @@ module Handlers =
             // Remove document
             handleDidClose p
         }
+
+    /// Handle textDocument/definition request
+    /// Navigates to definition of variable/function at cursor position
+    let textDocumentDefinition (p: DefinitionParams) : Async<Definition option> =
+        handleDefinition p
