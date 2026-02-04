@@ -131,10 +131,15 @@ Plans:
   11. Tutorial shows how to implement Rename Symbol with code examples
   12. Tutorial shows how to implement Code Actions with code examples
 
-**Plans**: TBD
+**Plans**: 6 plans
 
 Plans:
-- TBD (created during plan-phase)
+- [ ] 04-01-PLAN.md — Find References module with scope-aware reference collection (REF-01, REF-02, REF-03)
+- [ ] 04-02-PLAN.md — Rename Symbol + Code Actions modules with unused variable detection (RENAME-01, RENAME-02, RENAME-03, ACTION-01, ACTION-02)
+- [ ] 04-03-PLAN.md — Unit tests for References, Rename, and Code Actions (TEST-07, TEST-08, TEST-09)
+- [ ] 04-04-PLAN.md — Find References tutorial in Korean (TUT-09)
+- [ ] 04-05-PLAN.md — Rename Symbol tutorial in Korean (TUT-10)
+- [ ] 04-06-PLAN.md — Code Actions tutorial in Korean (TUT-11)
 
 ---
 
@@ -172,8 +177,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. LSP Foundation | 8/8 | Complete | 2026-02-04 |
 | 2. Core Navigation | 5/5 | Complete | 2026-02-04 |
 | 3. Completion | 3/3 | Complete | 2026-02-05 |
-| 4. Advanced Features | 0/TBD | Not started | - |
+| 4. Advanced Features | 0/6 | In progress | - |
 | 5. VS Code Extension | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-05 — Phase 3 complete*
+*Last updated: 2026-02-05 — Phase 4 planned (6 plans in 4 waves)*
