@@ -1,6 +1,7 @@
 module LangLSP.Server.Server
 
 open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.DocumentSync
 
 /// Server capabilities declaration
 let serverCapabilities : ServerCapabilities =
@@ -19,3 +20,15 @@ let initializeResult : InitializeResult = {
     Capabilities = serverCapabilities
     ServerInfo = Some { Name = "funlang-lsp"; Version = Some "0.1.0" }
 }
+
+/// Document synchronization handlers
+/// These will be registered when the full LSP message loop is implemented
+module Handlers =
+    /// Handle textDocument/didOpen notification
+    let textDocumentDidOpen = handleDidOpen
+
+    /// Handle textDocument/didChange notification
+    let textDocumentDidChange = handleDidChange
+
+    /// Handle textDocument/didClose notification
+    let textDocumentDidClose = handleDidClose
