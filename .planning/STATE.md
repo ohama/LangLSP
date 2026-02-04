@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 1 of 5 (LSP Foundation)
-Plan: 1 of TBD in current phase
+Plan: 4 of 8 in current phase (01-01, 01-04 complete)
 Status: In progress
-Last activity: 2026-02-04 — Completed 01-01-PLAN.md (LSP Server Foundation)
+Last activity: 2026-02-04 — Completed 01-04-PLAN.md (F# Project Setup Tutorial)
 
-Progress: [█░░░░░░░░░] 10%
+Progress: [█░░░░░░░░░] 25%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 4min
-- Total execution time: 0.07 hours
+- Total plans completed: 2
+- Average duration: 3min
+- Total execution time: 0.10 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-lsp-foundation | 1 | 4min | 4min |
+| 01-lsp-foundation | 2 | 6min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (4min)
-- Trend: Starting execution phase
+- Last 5 plans: 01-01 (4min), 01-04 (2min)
+- Trend: Efficient documentation phase
 
 *Updated after each plan completion*
 
@@ -49,6 +49,7 @@ Recent decisions affecting current work:
 - FunLang v5.0/v6.0 활용: Span, Diagnostic 모듈로 LSP Diagnostics 구현 단순화
 - Simplified server skeleton (01-01): Full LSP message loop deferred to next phase per investigation needs
 - Serilog file logging (01-01): LSP uses stdout, so file logging to /tmp for debugging
+- Korean tutorial with actual code snippets (01-04): Tutorial references real implementation for actionability
 
 ### Pending Todos
 
@@ -60,6 +61,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-04 (plan 01-01 execution)
-Stopped at: Completed 01-01-PLAN.md (LSP Server Foundation) - 3 tasks, 5 files created
+Last session: 2026-02-04 (plan 01-04 execution)
+Stopped at: Completed 01-04-PLAN.md (F# Project Setup Tutorial) - 1 task, 1 file created
 Resume file: None
