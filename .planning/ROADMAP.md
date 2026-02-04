@@ -101,10 +101,12 @@ Plans:
   6. All Completion unit tests pass
   7. Tutorial shows how to implement Completion with code examples
 
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- TBD (created during plan-phase)
+- [ ] 03-01-PLAN.md — Completion module with keyword and symbol completion
+- [ ] 03-02-PLAN.md — Completion unit tests (TEST-05)
+- [ ] 03-03-PLAN.md — Completion tutorial in Korean (TUT-07)
 
 ---
 
@@ -169,9 +171,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. LSP Foundation | 8/8 | Complete | 2026-02-04 |
 | 2. Core Navigation | 5/5 | Complete | 2026-02-04 |
-| 3. Completion | 0/TBD | Not started | - |
+| 3. Completion | 0/3 | Planned | - |
 | 4. Advanced Features | 0/TBD | Not started | - |
 | 5. VS Code Extension | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-02-04 — Phase 2 complete*
+*Last updated: 2026-02-04 — Phase 3 planned (3 plans)*
