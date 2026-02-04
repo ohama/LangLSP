@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2025-02-04)
 
 **Core value:** LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념을 이해할 수 있는 실용적인 튜토리얼
-**Current focus:** Phase 1 - LSP Foundation
+**Current focus:** Phase 2 - Core Navigation
 
 ## Current Position
 
-Phase: 1 of 5 (LSP Foundation)
-Plan: 6 of 8 in current phase (01-01, 01-03, 01-04, 01-05, 01-06, 01-07 complete)
-Status: In progress
-Last activity: 2026-02-04 — Completed 01-07-PLAN.md (Document Sync and Diagnostics Tutorials)
+Phase: 2 of 5 (Core Navigation) — IN PROGRESS
+Plan: 1 of 3 in current phase (02-01 complete)
+Status: Phase 2 in progress - AST lookup foundation complete
+Last activity: 2026-02-04 — Completed 02-01-PLAN.md (AST Position Lookup)
 
-Progress: [███████░░░] 75.0%
+Progress: [██████████░░░░░░░░░░] 50% (Phase 2: 1/3 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 3.5min
-- Total execution time: 0.35 hours
+- Total plans completed: 9
+- Average duration: 4min
+- Total execution time: 0.67 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-lsp-foundation | 6 | 21min | 3.5min |
+| 01-lsp-foundation | 8 | 32min | 4min |
+| 02-core-navigation | 1 | 8min | 8min |
 
 **Recent Trend:**
-- Last 5 plans: 01-04 (2min), 01-05 (5min), 01-06 (1min), 01-07 (4min)
-- Trend: Documentation tasks 2-4min; F# implementation 4-5min; TypeScript/client 1min
+- Last 5 plans: 01-06 (1min), 01-07 (4min), 01-08 (10min), 02-01 (8min)
+- Trend: AST position lookup 8min (includes coordinate system debugging)
 
 *Updated after each plan completion*
 
@@ -59,6 +60,10 @@ Recent decisions affecting current work:
 - Auto-activation via empty activationEvents (01-06): VS Code 1.74+ auto-activates for contributed languages
 - Actual code examples in tutorials (01-07): Reference real implementation to ensure accuracy and actionability
 - In-depth Korean documentation (01-07): Target audience needs deep understanding, not surface-level overview
+- Suppress NU1902 warning (01-08): NuGet security warnings corrupt LSP protocol by printing to stdout
+- LexBuffer.FromString 0-based coordinates (02-01): LexBuffer.FromString uses 0-based lines/columns, matching LSP exactly
+- Inclusive EndColumn in spans (02-01): Position at column N matches span ending at column N
+- Innermost node traversal (02-01): Recursive AST traversal checks children first, returns most specific match
 
 ### Pending Todos
 
@@ -70,6 +75,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-04 (plan 01-07 execution)
-Stopped at: Completed 01-07-PLAN.md (Document Sync and Diagnostics Tutorials) - 2 tasks, 2 files created
+Last session: 2026-02-04
+Stopped at: Completed 02-01-PLAN.md - AST position lookup with 16 tests passing
 Resume file: None
+Next action: Execute 02-02-PLAN.md (Hover implementation) or 02-03-PLAN.md (Go to Definition)
