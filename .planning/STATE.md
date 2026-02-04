@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 1 of 5 (LSP Foundation)
-Plan: 2 of TBD in current phase
+Plan: 1 of TBD in current phase
 Status: In progress
-Last activity: 2026-02-04 — Completed 01-02-PLAN.md (LSP Tutorials)
+Last activity: 2026-02-04 — Completed 01-01-PLAN.md (LSP Server Foundation)
 
 Progress: [█░░░░░░░░░] 10%
 
@@ -20,17 +20,17 @@ Progress: [█░░░░░░░░░] 10%
 
 **Velocity:**
 - Total plans completed: 1
-- Average duration: 3min
-- Total execution time: 0.05 hours
+- Average duration: 4min
+- Total execution time: 0.07 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-lsp-foundation | 1 | 3min | 3min |
+| 01-lsp-foundation | 1 | 4min | 4min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (3min)
+- Last 5 plans: 01-01 (4min)
 - Trend: Starting execution phase
 
 *Updated after each plan completion*
@@ -47,6 +47,8 @@ Recent decisions affecting current work:
 - 한국어 튜토리얼: 한국어 LSP 튜토리얼 부족, 대상 독자 명확
 - 8가지 LSP 기능 구현: Table stakes 4개 + Find References, Rename, Code Actions
 - FunLang v5.0/v6.0 활용: Span, Diagnostic 모듈로 LSP Diagnostics 구현 단순화
+- Simplified server skeleton (01-01): Full LSP message loop deferred to next phase per investigation needs
+- Serilog file logging (01-01): LSP uses stdout, so file logging to /tmp for debugging
 
 ### Pending Todos
 
@@ -58,6 +60,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-04 (plan 01-02 execution)
-Stopped at: Completed 01-02-PLAN.md (LSP Tutorials) - 2 tasks, 2 files created
+Last session: 2026-02-04 (plan 01-01 execution)
+Stopped at: Completed 01-01-PLAN.md (LSP Server Foundation) - 3 tasks, 5 files created
 Resume file: None
