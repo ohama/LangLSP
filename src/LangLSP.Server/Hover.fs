@@ -106,10 +106,9 @@ let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
         None
     | Lambda(_, body, _) ->
         findVarTypeInAst varName body
-    | LambdaAnnot(param, _, body, _) when param = varName ->
-        // Annotated lambda parameter - would need to convert TypeExpr to Type
-        // For now, skip this edge case
-        None
+    | LambdaAnnot(param, typeAnnot, body, _) when param = varName ->
+        // Annotated lambda parameter - convert TypeExpr to Type
+        Some (elaborateTypeExpr typeAnnot)
     | LambdaAnnot(_, _, body, _) ->
         findVarTypeInAst varName body
     | If(_, thenExpr, elseExpr, _) ->
