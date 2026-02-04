@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 4 of 5 (Advanced Features)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-04 — Completed 04-01-PLAN.md (Find References Implementation)
+Last activity: 2026-02-04 — Completed 04-02-PLAN.md (Rename Symbol and Code Actions)
 
-Progress: [█████████████████░░░] 85% (17 of 20 total plans complete)
+Progress: [██████████████████░░] 90% (18 of 20 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
-- Average duration: 4.0min
+- Total plans completed: 18
+- Average duration: 3.9min
 - Total execution time: 1.2 hours
 
 **By Phase:**
@@ -30,10 +30,10 @@ Progress: [█████████████████░░░] 85% (17
 | 01-lsp-foundation | 8 | 32min | 4min |
 | 02-core-navigation | 5 | 32min | 6.4min |
 | 03-completion | 3 | 9min | 3min |
-| 04-advanced-features | 1 | 2min | 2min |
+| 04-advanced-features | 2 | 5min | 2.5min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (3min), 03-02 (3min), 03-03 (3min), 04-01 (2min)
+- Last 5 plans: 03-02 (3min), 03-03 (3min), 04-01 (2min), 04-02 (3min)
 - Trend: Fast execution for implementation-only plans (no tests/tutorials)
 
 *Updated after each plan completion*
@@ -84,6 +84,10 @@ Recent decisions affecting current work:
 - Tutorial exceeds target length (03-03): Comprehensive coverage justified, similar to 06-hover.md pattern
 - Shadowing resolution via definition cross-check (04-01): collectReferencesForBinding uses findDefinitionForVar to verify each Var refers to target definition
 - WorkspaceEdit helpers for Rename (04-01): createTextEdit and createWorkspaceEdit added to Protocol.fs in References plan
+- findNameInSource for tight spans (04-02): Let/LetRec/Lambda spans cover whole expressions, search source text for exact name location for rename edits
+- DiagnosticTag.Unnecessary for unused vars (04-02): Enables VS Code fading/dimming UI treatment for unused variables
+- Warning severity for unused variables (04-02): Yellow squiggle, not red error - allows code to run while signaling cleanup
+- Skip underscore-prefixed variables (04-02): Convention for intentionally unused bindings (e.g., _result for side effects)
 
 ### Pending Todos
 
@@ -96,6 +100,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 04-01-PLAN.md (Find References) - References.fs, Protocol helpers, Server.fs registration
+Stopped at: Completed 04-02-PLAN.md (Rename Symbol and Code Actions) - Rename.fs, CodeActions.fs, updated Diagnostics with unused vars, Server.fs registration
 Resume file: None
-Next action: Continue Phase 4 with 04-02 (Rename Symbol) - reuses collectReferencesForBinding and WorkspaceEdit helpers
+Next action: Continue Phase 4 with 04-03 (Testing and regression verification) - handle test updates for unused variable diagnostics
