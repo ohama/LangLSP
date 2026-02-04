@@ -6,6 +6,7 @@ open LangLSP.Server.DocumentSync
 open LangLSP.Server.Protocol
 open Ast
 open Type
+open Elaborate
 
 /// Korean explanations for FunLang keywords
 let keywordExplanations = Map.ofList [
@@ -67,6 +68,61 @@ let createTypeHover (ty: Type.Type) (span: Span) : Hover =
         Range = Some (spanToLspRange span)
     }
 
+/// Get type for a simple node (literal, direct type inference)
+/// For complex nodes like Var, we need context from the whole AST
+let getNodeType (node: Expr) : Type.Type option =
+    match node with
+    | Number(_, _) -> Some TInt
+    | Bool(_, _) -> Some TBool
+    | String(_, _) -> Some TString
+    | EmptyList _ -> None  // Can't determine element type without context
+    | _ ->
+        // For other nodes, try direct typecheck (works for lambdas, etc.)
+        match TypeCheck.typecheck node with
+        | Ok ty -> Some ty
+        | Error _ -> None
+
+/// Find variable type by searching binding sites in AST
+/// Returns the type of the value bound to the variable
+let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
+    match ast with
+    | Let(name, value, body, _) when name = varName ->
+        // Found the binding - typecheck the value
+        match TypeCheck.typecheck value with
+        | Ok ty -> Some ty
+        | Error _ -> None
+    | Let(_, _, body, _) ->
+        // Not this binding, search in body
+        findVarTypeInAst varName body
+    | LetRec(name, param, fnBody, inExpr, _) when name = varName ->
+        // Recursive function - typecheck the whole let rec to get function type
+        match TypeCheck.typecheck ast with
+        | Ok ty -> Some ty  // This gives us the type of the whole expression
+        | Error _ -> None
+    | LetRec(_, _, _, inExpr, _) ->
+        findVarTypeInAst varName inExpr
+    | Lambda(param, body, _) when param = varName ->
+        // Lambda parameter - need context to determine type
+        None
+    | Lambda(_, body, _) ->
+        findVarTypeInAst varName body
+    | LambdaAnnot(param, _, body, _) when param = varName ->
+        // Annotated lambda parameter - would need to convert TypeExpr to Type
+        // For now, skip this edge case
+        None
+    | LambdaAnnot(_, _, body, _) ->
+        findVarTypeInAst varName body
+    | If(_, thenExpr, elseExpr, _) ->
+        // Search in both branches
+        match findVarTypeInAst varName thenExpr with
+        | Some ty -> Some ty
+        | None -> findVarTypeInAst varName elseExpr
+    | App(fn, arg, _) ->
+        match findVarTypeInAst varName fn with
+        | Some ty -> Some ty
+        | None -> findVarTypeInAst varName arg
+    | _ -> None
+
 /// Handle textDocument/hover request
 let handleHover (p: HoverParams) : Async<Hover option> =
     async {
@@ -85,14 +141,32 @@ let handleHover (p: HoverParams) : Async<Hover option> =
                 try
                     let lexbuf = FSharp.Text.Lexing.LexBuffer<char>.FromString(text)
                     let ast = Parser.start Lexer.tokenize lexbuf
-                    match findNodeAtPosition pos ast with
-                    | None -> return None
-                    | Some node ->
-                        // Type check the specific node to get its type
-                        match TypeCheck.typecheck node with
-                        | Error _ -> return None
-                        | Ok ty ->
-                            return Some (createTypeHover ty (spanOf node))
+
+                    // First, type check the whole AST to ensure it's valid
+                    match TypeCheck.typecheck ast with
+                    | Error _ -> return None
+                    | Ok wholeType ->
+                        // Find the node at position
+                        match findNodeAtPosition pos ast with
+                        | None -> return None
+                        | Some node ->
+                            // Get type based on node kind
+                            let nodeType =
+                                match node with
+                                | Var(name, _) ->
+                                    // For Var, find binding in AST and get its type
+                                    // If it's the result of the whole expression, use wholeType
+                                    match findVarTypeInAst name ast with
+                                    | Some ty -> Some ty
+                                    | None ->
+                                        // Variable might be referenced at the end (result position)
+                                        // Use the whole expression type
+                                        Some wholeType
+                                | _ -> getNodeType node
+
+                            match nodeType with
+                            | None -> return None
+                            | Some ty -> return Some (createTypeHover ty (spanOf node))
                 with _ ->
                     return None
     }
