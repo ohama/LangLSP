@@ -4,6 +4,8 @@ FunLang을 위한 VS Code Language Server Protocol (LSP) 구현.
 
 [LangTutorial](https://github.com/ohama/LangTutorial)에서 구현한 FunLang 언어에 대한 IDE 지원을 제공합니다.
 
+> **v1.0 완성** — 50개 요구사항, 5개 phase 모두 완료
+
 ## Documentation
 
 [FunLang LSP 튜토리얼](https://ohama.github.io/LangLSP/)
@@ -18,23 +20,41 @@ FunLang을 위한 VS Code Language Server Protocol (LSP) 구현.
 | Go to Definition | 정의 위치로 이동 |
 | Find References | 모든 참조 찾기 |
 | Rename Symbol | 심볼 이름 일괄 변경 |
-| Code Actions | 코드 개선 제안 |
+| Code Actions | 미사용 변수 제거, 타입 오류 수정 제안 |
 
 ## 프로젝트 구조
 
 ```
 LangLSP/
 ├── src/
-│   ├── LangLSP/             # LSP 서버 (F#)
-│   └── LangLSP.Tests/       # 테스트 (Expecto + FsCheck)
+│   ├── LangLSP.Server/      # LSP 서버 (F#, 12 모듈)
+│   └── LangLSP.Tests/       # 테스트 (Expecto + FsCheck, 119개)
 ├── client/                   # VS Code Extension (TypeScript)
 │   └── funlang-0.1.0.vsix   # 패키징된 확장
 ├── documentation/
-│   ├── tutorial/             # 12개 LSP 구현 튜토리얼
+│   ├── tutorial/             # 12개 LSP 구현 튜토리얼 (한국어)
 │   └── howto/                # 개발 지식 문서
 ├── LangTutorial/             # FunLang 언어 구현 (submodule)
-└── docs/                     # mdBook 빌드 출력 (GitHub Pages)
+├── docs/                     # mdBook 빌드 출력 (GitHub Pages)
+└── .github/workflows/        # CI (mdBook 자동 빌드)
 ```
+
+### LSP 서버 모듈
+
+| 모듈 | 역할 |
+|------|------|
+| Protocol.fs | LSP 프로토콜 정의 |
+| DocumentSync.fs | 문서 열기/변경/닫기 관리 |
+| AstLookup.fs | AST 위치 기반 조회 |
+| Diagnostics.fs | 오류/경고 보고 |
+| Hover.fs | 타입 정보 제공 |
+| Completion.fs | 자동 완성 |
+| Definition.fs | 정의로 이동 |
+| References.fs | 참조 찾기 |
+| Rename.fs | 심볼 이름 변경 |
+| CodeActions.fs | 코드 개선 제안 |
+| Server.fs | LSP 서버 핸들러 |
+| Program.fs | 진입점 |
 
 ## 튜토리얼
 
@@ -84,9 +104,11 @@ match xs with
 
 - **F#** (.NET 10) — LSP 서버 구현
 - **Ionide.LanguageServerProtocol** 0.7.0 — LSP 라이브러리
-- **Expecto + FsCheck** — 테스트 (119개)
-- **TypeScript** — VS Code Extension 클라이언트
+- **Serilog** — 구조화된 로깅
+- **Expecto + FsCheck** — 테스트 프레임워크 (119개 테스트)
+- **TypeScript** — VS Code Extension 클라이언트 (vscode-languageclient 9.0)
 - **mdBook** — 튜토리얼 문서 사이트
+- **GitHub Actions** — mdBook 자동 빌드 CI
 
 ## 관련 프로젝트
 
