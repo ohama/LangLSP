@@ -1,8 +1,8 @@
 # Code Actions 구현하기
 
-코드 에디터에서 전구 아이콘(💡)을 본 적이 있나요? 문제가 있는 코드에 커서를 놓으면 나타나는 "빠른 수정(Quick Fix)" 메뉴가 바로 Code Actions입니다.
+코드 에디터에서 전구 아이콘(💡)을 본 적이 있는가? 문제가 있는 코드에 커서를 놓으면 나타나는 "빠른 수정(Quick Fix)" 메뉴가 바로 Code Actions이다.
 
-이 튜토리얼에서는 FunLang LSP에 Code Actions 기능을 구현하여, 사용자가 진단(Diagnostics)에 대한 자동 수정을 받을 수 있도록 만듭니다.
+이 튜토리얼에서는 FunLang LSP에 Code Actions 기능을 구현하여, 사용자가 진단(Diagnostics)에 대한 자동 수정을 받을 수 있도록 만든다.
 
 ## 목차
 
@@ -21,7 +21,7 @@
 
 ## Code Actions이란
 
-**Code Actions**는 LSP에서 제공하는 "코드 수정 제안" 기능입니다.
+**Code Actions**는 LSP에서 제공하는 "코드 수정 제안" 기능이다.
 
 ### 사용 사례
 
@@ -74,7 +74,7 @@ LSP 스펙에서 정의한 `CodeActionKind`:
 | `source` | 소스 레벨 액션 (파일 정리, import 정렬) |
 | `source.organizeImports` | Import 정리 |
 
-우리는 `quickfix`를 중점적으로 구현합니다.
+우리는 `quickfix`를 중점적으로 구현한다.
 
 ---
 
@@ -82,7 +82,7 @@ LSP 스펙에서 정의한 `CodeActionKind`:
 
 ### textDocument/codeAction 요청
 
-클라이언트가 서버에 Code Actions를 요청하는 구조입니다.
+클라이언트가 서버에 Code Actions를 요청하는 구조이다.
 
 ```typescript
 interface CodeActionParams {
@@ -104,7 +104,7 @@ interface CodeActionContext {
 
 ### CodeAction 응답
 
-서버가 반환하는 액션 목록입니다.
+서버가 반환하는 액션 목록이다.
 
 ```typescript
 interface CodeAction {
@@ -120,7 +120,7 @@ interface CodeAction {
 
 ### WorkspaceEdit 구조
 
-코드 수정을 표현하는 구조입니다.
+코드 수정을 표현하는 구조이다.
 
 ```typescript
 interface WorkspaceEdit {
@@ -155,7 +155,7 @@ interface TextEdit {
 
 ## Diagnostics와의 관계
 
-Code Actions는 **Diagnostics와 긴밀히 연결**되어 있습니다.
+Code Actions는 **Diagnostics와 긴밀히 연결**되어 있다.
 
 ### 전체 흐름
 
@@ -183,7 +183,7 @@ Code Actions는 **Diagnostics와 긴밀히 연결**되어 있습니다.
 
 ### 진단 코드(Diagnostic Code) 활용
 
-Diagnostics에 `code` 필드를 설정하면, Code Actions에서 진단 종류를 구분할 수 있습니다.
+Diagnostics에 `code` 필드를 설정하면, Code Actions에서 진단 종류를 구분할 수 있다.
 
 ```fsharp
 // Diagnostics.fs - 미사용 변수 진단 생성
@@ -217,7 +217,7 @@ match diag.Code with
 
 ## 미사용 변수 감지 구현
 
-Code Actions를 제공하려면, 먼저 **미사용 변수를 감지**하는 진단이 필요합니다.
+Code Actions를 제공하려면, 먼저 **미사용 변수를 감지**하는 진단이 필요하다.
 
 ### findUnusedVariables 함수
 
@@ -289,7 +289,7 @@ let findUnusedVariables (ast: Ast.Expr) : (string * Ast.Span) list =
 
 ### analyze 함수 확장
 
-기존 `analyze` 함수에 미사용 변수 검사를 추가합니다.
+기존 `analyze` 함수에 미사용 변수 검사를 추가한다.
 
 ```fsharp
 /// Analyze document and return all diagnostics
@@ -336,7 +336,7 @@ let analyze (uri: string) (source: string) : Diagnostic list =
 
 ## QuickFix CodeAction 생성
 
-미사용 변수 진단에 대한 자동 수정 액션을 생성합니다.
+미사용 변수 진단에 대한 자동 수정 액션을 생성한다.
 
 ### createPrefixUnderscoreAction 함수
 
@@ -407,7 +407,7 @@ let createWorkspaceEdit (uri: string) (edits: TextEdit[]) : WorkspaceEdit =
 
 ### createTypeInfoAction 함수
 
-타입 오류에 대한 **정보성 액션**(편집 없음)도 추가할 수 있습니다.
+타입 오류에 대한 **정보성 액션**(편집 없음)도 추가할 수 있다.
 
 ```fsharp
 /// Create informational action showing expected type for type errors
@@ -440,7 +440,7 @@ let createTypeInfoAction (diagnostic: Diagnostic) : CodeAction =
 
 ## handleCodeAction 구현
 
-`textDocument/codeAction` 요청을 처리하는 핸들러입니다.
+`textDocument/codeAction` 요청을 처리하는 핸들러이다.
 
 ### 전체 구현
 
@@ -488,7 +488,7 @@ let handleCodeAction (p: CodeActionParams) : Async<CodeAction[] option> =
 
 ### U2 타입 처리
 
-Ionide LSP 라이브러리는 `Code` 필드를 `U2<int, string>` 타입으로 정의합니다.
+Ionide LSP 라이브러리는 `Code` 필드를 `U2<int, string>` 타입으로 정의한다.
 
 ```fsharp
 // Ionide 타입 정의
@@ -502,13 +502,13 @@ type Diagnostic = {
 - `U2.C1 n`: int 값 (예: `123`)
 - `U2.C2 s`: string 값 (예: `"unused-variable"`)
 
-우리는 string 코드를 사용하므로 `U2.C2` 케이스를 매칭합니다.
+우리는 string 코드를 사용하므로 `U2.C2` 케이스를 매칭한다.
 
 ---
 
 ## Server.fs 통합
 
-LSP 서버에 Code Actions 핸들러를 등록합니다.
+LSP 서버에 Code Actions 핸들러를 등록한다.
 
 ### 서버 초기화 시 Capability 선언
 
@@ -575,7 +575,7 @@ let main argv =
 
 ## 테스트 작성
 
-Expecto를 사용하여 Code Actions 기능을 테스트합니다.
+Expecto를 사용하여 Code Actions 기능을 테스트한다.
 
 ### 기본 테스트 구조
 
@@ -774,7 +774,7 @@ dotnet run --project src/LangLSP.Tests
 
 ## 확장 가능성
 
-Code Actions 시스템은 매우 확장 가능합니다. 다음과 같은 액션을 추가할 수 있습니다:
+Code Actions 시스템은 매우 확장 가능하다. 다음과 같은 액션을 추가할 수 있다:
 
 ### 1. Refactoring Actions
 
@@ -851,7 +851,7 @@ let createOrganizeImportsAction (uri: string) : CodeAction =
 
 ### 5. Command-based Actions
 
-Edit 대신 Command를 사용하면 복잡한 다단계 작업이 가능합니다.
+Edit 대신 Command를 사용하면 복잡한 다단계 작업이 가능하다.
 
 ```fsharp
 /// Run auto-formatter
@@ -878,7 +878,7 @@ let createFormatAction (uri: string) : CodeAction =
 
 ### 1. Range 정확성
 
-**문제:** TextEdit의 Range가 부정확하면 잘못된 위치를 수정합니다. AST Span은 전체 표현식 범위(예: `let x = 42 in x + 1` 전체)이므로, 그대로 사용하면 파일 전체에 노란 밑줄이 그어질 수 있습니다.
+**문제:** TextEdit의 Range가 부정확하면 잘못된 위치를 수정한다. AST Span은 전체 표현식 범위(예: `let x = 42 in x + 1` 전체)이므로, 그대로 사용하면 파일 전체에 노란 밑줄이 그어질 수 있다.
 
 ```fsharp
 // ❌ 잘못된 예: 전체 Let 표현식 범위 사용
@@ -888,7 +888,7 @@ Range = spanToLspRange span  // "let x = 1 in x" 전체에 밑줄!
 Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 ```
 
-**해결:** `Definition.findIdentifierRange`를 사용하여 Span 내에서 식별자 이름의 정확한 위치를 찾습니다. Diagnostics에서 정확한 Range를 설정하면, CodeActions의 TextEdit도 자동으로 정확해집니다.
+**해결:** `Definition.findIdentifierRange`를 사용하여 Span 내에서 식별자 이름의 정확한 위치를 찾는다. Diagnostics에서 정확한 Range를 설정하면, CodeActions의 TextEdit도 자동으로 정확해진다.
 
 ### 2. WorkspaceEdit vs Command
 
@@ -902,7 +902,7 @@ Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 { Edit = None; Command = Some { Command = "funlang.customAction"; Arguments = ... } }
 ```
 
-**주의:** Command 사용 시 클라이언트가 해당 명령을 등록해야 합니다.
+**주의:** Command 사용 시 클라이언트가 해당 명령을 등록해야 한다.
 
 ### 3. IsPreferred 사용
 
@@ -918,7 +918,7 @@ Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 
 ### 4. Multiple Diagnostics
 
-같은 위치에 여러 진단이 있을 수 있습니다.
+같은 위치에 여러 진단이 있을 수 있다.
 
 ```fsharp
 let handleCodeAction (p: CodeActionParams) : Async<CodeAction[] option> =
@@ -940,7 +940,7 @@ let handleCodeAction (p: CodeActionParams) : Async<CodeAction[] option> =
 
 ### 5. 진단 코드 일관성
 
-Diagnostics와 CodeActions에서 같은 코드를 사용해야 합니다.
+Diagnostics와 CodeActions에서 같은 코드를 사용해야 한다.
 
 ```fsharp
 // Diagnostics.fs
@@ -991,7 +991,7 @@ LSP 스펙에서는 액션이 없으면 `null` (F#에서 None) 반환 권장.
 
 ## 다음 단계
 
-Code Actions 구현이 완료되었습니다! 이제 사용자는:
+Code Actions 구현이 완료되었다! 이제 사용자는:
 
 1. **자동 수정**: 미사용 변수를 클릭 한 번으로 수정
 2. **타입 힌트**: 타입 오류에 대한 상세 정보 확인

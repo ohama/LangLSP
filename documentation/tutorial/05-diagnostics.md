@@ -1,6 +1,6 @@
 # 진단(Diagnostics) 구현
 
-이 문서는 LSP 서버에서 **Diagnostics**(진단)를 구현하는 방법을 설명합니다. 진단은 에디터에 빨간 줄로 표시되는 에러와 경고를 말하며, LSP의 가장 중요한 기능 중 하나입니다.
+이 문서는 LSP 서버에서 **Diagnostics**(진단)를 구현하는 방법을 설명한다. 진단은 에디터에 빨간 줄로 표시되는 에러와 경고를 말하며, LSP의 가장 중요한 기능 중 하나이다.
 
 ## 목차
 
@@ -17,7 +17,7 @@
 
 ## 진단이란
 
-**Diagnostics**는 소스 코드의 문제를 사용자에게 알려주는 LSP 메시지입니다.
+**Diagnostics**는 소스 코드의 문제를 사용자에게 알려주는 LSP 메시지이다.
 
 ### 진단의 구성 요소
 
@@ -47,9 +47,9 @@ test.fun
 
 ### publishDiagnostics 알림
 
-LSP 서버는 `textDocument/publishDiagnostics` 알림을 클라이언트(에디터)로 보냅니다.
+LSP 서버는 `textDocument/publishDiagnostics` 알림을 클라이언트(에디터)로 보낸다.
 
-**중요:** 이것은 **알림(Notification)**이지 요청(Request)이 아닙니다. 따라서 응답을 기다리지 않습니다.
+**중요:** 이것은 **알림(Notification)**이지 요청(Request)이 아니다. 따라서 응답을 기다리지 않는다.
 
 ```fsharp
 // 진단 발행 예시
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ## FunLang의 Diagnostic 시스템
 
-FunLang 컴파일러는 이미 풍부한 진단 시스템을 갖추고 있습니다.
+FunLang 컴파일러는 이미 풍부한 진단 시스템을 갖추고 있다.
 
 ### FunLang Diagnostic 타입
 
@@ -106,7 +106,7 @@ type Span = {
 }
 ```
 
-**참고:** `LexBuffer.FromString`으로 파싱하면 Position이 **0-based**로 생성됩니다. LSP도 0-based이므로 **변환이 필요 없습니다**.
+**참고:** `LexBuffer.FromString`으로 파싱하면 Position이 **0-based**로 생성된다. LSP도 0-based이므로 **변환이 필요 없다**.
 
 | 인덱싱 | 첫 번째 라인 | 첫 번째 문자 |
 |--------|------------|------------|
@@ -115,7 +115,7 @@ type Span = {
 
 ### TypeCheck 모듈과의 통합
 
-FunLang의 `TypeCheck` 모듈은 타입 체킹 결과를 `Result<Type, Diagnostic>`로 반환합니다.
+FunLang의 `TypeCheck` 모듈은 타입 체킹 결과를 `Result<Type, Diagnostic>`로 반환한다.
 
 ```fsharp
 // TypeCheck.fs (FunLang 프로젝트)
@@ -129,13 +129,13 @@ let typecheckWithDiagnostic (expr: Expr) : Result<Type, Diagnostic> =
         Error diag
 ```
 
-이것을 LSP 서버에서 그대로 활용할 수 있습니다!
+이것을 LSP 서버에서 그대로 활용할 수 있다!
 
 ---
 
 ## 위치 변환: Span → LSP Range
 
-`LexBuffer.FromString`을 사용하면 Span이 이미 0-based이므로, 변환 없이 직접 사용합니다.
+`LexBuffer.FromString`을 사용하면 Span이 이미 0-based이므로, 변환 없이 직접 사용한다.
 
 ### 변환 로직
 
@@ -211,7 +211,7 @@ let diagnosticToLsp (diag: Diagnostic.Diagnostic) : Diagnostic =
 
 ## 문법 오류 처리
 
-파싱 단계에서 발생하는 문법 오류를 처리합니다.
+파싱 단계에서 발생하는 문법 오류를 처리한다.
 
 ### 파싱 로직
 
@@ -287,7 +287,7 @@ let result = parseFunLang source "file:///test.fun"
 
 ## 타입 오류 처리
 
-AST를 파싱한 후 타입 체킹을 수행합니다.
+AST를 파싱한 후 타입 체킹을 수행한다.
 
 ### 타입 체킹 로직
 
@@ -328,7 +328,7 @@ match result with
 
 ### FunLang의 풍부한 타입 에러
 
-FunLang의 Diagnostic 시스템은 다음을 제공합니다:
+FunLang의 Diagnostic 시스템은 다음을 제공한다:
 
 1. **PrimarySpan**: 주 에러 위치
 2. **SecondarySpans**: 관련 위치 (예: 타입 annotation이 있는 곳)
@@ -345,13 +345,13 @@ error[E0301]: Type mismatch: expected int but got bool
    = hint: Check that all branches of your expression return the same type
 ```
 
-이 모든 정보가 LSP Diagnostic의 `Message`와 `RelatedInformation`으로 변환됩니다!
+이 모든 정보가 LSP Diagnostic의 `Message`와 `RelatedInformation`으로 변환된다!
 
 ---
 
 ## publishDiagnostics 호출
 
-전체 분석 파이프라인을 구성합니다.
+전체 분석 파이프라인을 구성한다.
 
 ### analyze 함수
 
@@ -422,7 +422,7 @@ let handleDidChangeWithDiagnostics (lspClient: ILspClient) (p: DidChangeTextDocu
 
 ## 진단 클리어
 
-문서를 닫거나 에러가 수정되었을 때 진단을 클리어해야 합니다.
+문서를 닫거나 에러가 수정되었을 때 진단을 클리어해야 한다.
 
 ### clearDiagnostics 함수
 
@@ -432,7 +432,7 @@ let clearDiagnostics (lspClient: ILspClient) (uri: string) : Async<unit> =
     publishDiagnostics lspClient uri []
 ```
 
-**핵심 아이디어:** 빈 진단 배열을 발행하면 기존 진단이 모두 제거됩니다.
+**핵심 아이디어:** 빈 진단 배열을 발행하면 기존 진단이 모두 제거된다.
 
 ### 사용 시나리오
 
@@ -456,7 +456,7 @@ let clearDiagnostics (lspClient: ILspClient) (uri: string) : Async<unit> =
 
 ## 테스트 작성
 
-Expecto와 FsCheck를 활용하여 진단 기능을 테스트합니다.
+Expecto와 FsCheck를 활용하여 진단 기능을 테스트한다.
 
 ### 기본 테스트
 
@@ -626,9 +626,9 @@ dotnet run --project src/LangLSP.Tests
 
 ## 다음 단계
 
-진단 시스템이 완료되었으므로, 이제 사용자는 에디터에서 실시간 에러 피드백을 받을 수 있습니다!
+진단 시스템이 완료되었으므로, 이제 사용자는 에디터에서 실시간 에러 피드백을 받을 수 있다!
 
-**Phase 1 완료!** 다음 Phase에서는 더 고급 기능을 구현합니다:
+**Phase 1 완료!** 다음 Phase에서는 더 고급 기능을 구현한다:
 
 ### Phase 2 - LSP 기능 확장
 1. **Hover**: 커서 위치의 타입 정보 표시

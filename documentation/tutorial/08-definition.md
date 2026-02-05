@@ -1,6 +1,6 @@
 # Go to Definition 구현하기
 
-이 문서는 LSP 서버에서 **Go to Definition** 기능을 구현하는 방법을 설명합니다. 변수나 함수를 클릭하고 "Go to Definition"을 실행하면 해당 심볼이 정의된 위치로 이동합니다. 이 기능은 코드 네비게이션의 핵심으로, 대규모 코드베이스에서 특히 유용합니다.
+이 문서는 LSP 서버에서 **Go to Definition** 기능을 구현하는 방법을 설명한다. 변수나 함수를 클릭하고 "Go to Definition"을 실행하면 해당 심볼이 정의된 위치로 이동한다. 이 기능은 코드 네비게이션의 핵심으로, 대규모 코드베이스에서 특히 유용하다.
 
 ## 목차
 
@@ -20,7 +20,7 @@
 
 ## Go to Definition이란
 
-**Go to Definition**은 변수나 함수 이름 위에서 트리거하면 해당 심볼이 **처음 정의된 위치**로 이동하는 기능입니다.
+**Go to Definition**은 변수나 함수 이름 위에서 트리거하면 해당 심볼이 **처음 정의된 위치**로 이동하는 기능이다.
 
 ### VS Code에서의 사용
 
@@ -84,7 +84,7 @@ interface DefinitionParams {
 
 ### 응답 형식
 
-LSP는 세 가지 응답 형식을 지원합니다:
+LSP는 세 가지 응답 형식을 지원한다:
 
 | 형식 | 언제 사용 | 예시 |
 |------|----------|------|
@@ -92,7 +92,7 @@ LSP는 세 가지 응답 형식을 지원합니다:
 | `Location[]` | 정의가 여러 개일 때 | 오버로딩, 여러 파일 |
 | `LocationLink[]` | 추가 컨텍스트 필요할 때 | 정의 범위 강조 |
 
-FunLang은 **싱글 파일 + 단일 정의**이므로 `Location`만 사용합니다.
+FunLang은 **싱글 파일 + 단일 정의**이므로 `Location`만 사용한다.
 
 ### Location 구조
 
@@ -122,11 +122,11 @@ interface Location {
 
 ## 심볼 테이블
 
-Go to Definition을 구현하려면 **"어떤 변수가 어디서 정의되었는지"** 알아야 합니다. 이를 위해 **심볼 테이블(Symbol Table)**을 구축합니다.
+Go to Definition을 구현하려면 **"어떤 변수가 어디서 정의되었는지"** 알아야 한다. 이를 위해 **심볼 테이블(Symbol Table)**을 구축한다.
 
 ### 개념
 
-심볼 테이블은 변수/함수 이름을 정의 위치에 매핑하는 자료구조입니다:
+심볼 테이블은 변수/함수 이름을 정의 위치에 매핑하는 자료구조이다:
 
 ```
 | 이름   | 정의 위치 (Span)       |
@@ -139,7 +139,7 @@ Go to Definition을 구현하려면 **"어떤 변수가 어디서 정의되었�
 
 ### 구현 방식
 
-FunLang LSP에서는 AST를 순회하며 모든 바인딩 위치를 수집합니다:
+FunLang LSP에서는 AST를 순회하며 모든 바인딩 위치를 수집한다:
 
 ```fsharp
 // (변수명, Span) 쌍의 리스트
@@ -154,7 +154,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list
 
 ## FunLang의 바인딩 위치
 
-FunLang에서 변수가 **정의**되는 곳을 모두 파악해야 합니다.
+FunLang에서 변수가 **정의**되는 곳을 모두 파악해야 한다.
 
 ### 1. let 바인딩
 
@@ -180,7 +180,7 @@ let rec fact n = if n = 0 then 1 else n * fact (n - 1) in fact 5
              정의 위치 (파라미터)
 ```
 
-`let rec`은 **두 가지** 바인딩을 생성합니다:
+`let rec`은 **두 가지** 바인딩을 생성한다:
 1. 함수 이름 (`fact`)
 2. 파라미터 (`n`)
 
@@ -239,7 +239,7 @@ let rec collectPatternBindings pattern =
 
 ## 정의 수집 구현
 
-실제 구현은 `Definition.fs`에 있습니다.
+실제 구현은 `Definition.fs`에 있다.
 
 ### collectDefinitions 함수
 
@@ -335,7 +335,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list =
 
 ## 변수 섀도잉 처리
 
-같은 이름의 변수가 여러 번 정의될 수 있습니다.
+같은 이름의 변수가 여러 번 정의될 수 있다.
 
 ### 문제 상황
 
@@ -347,11 +347,11 @@ let x = 1 in
     여기서 x는 어느 정의를 가리킬까요?
 ```
 
-**정답:** 가장 가까운(내부) 정의인 `let x = 2`입니다.
+**정답:** 가장 가까운(내부) 정의인 `let x = 2`이다.
 
 ### 스코프 규칙
 
-FunLang은 **렉시컬 스코핑(Lexical Scoping)**을 사용합니다:
+FunLang은 **렉시컬 스코핑(Lexical Scoping)**을 사용한다:
 - 변수 사용 위치에서 가장 가까운 바깥쪽 정의를 참조
 - 내부 정의가 외부 정의를 "가림(shadow)"
 
@@ -401,7 +401,7 @@ let x = 1 in      (* 정의 1: line 0, col 4 *)
 
 ## 식별자 위치 정확히 찾기
 
-`collectDefinitions`가 수집하는 Span은 전체 표현식의 범위입니다 (예: `let x = 42 in x + 1` 전체). Go to Definition에서는 **식별자 이름의 정확한 위치**만 반환해야 합니다.
+`collectDefinitions`가 수집하는 Span은 전체 표현식의 범위이다 (예: `let x = 42 in x + 1` 전체). Go to Definition에서는 **식별자 이름의 정확한 위치**만 반환해야 한다.
 
 ### findIdentifierRange 함수
 
@@ -427,7 +427,7 @@ let findIdentifierRange (text: string) (name: string) (span: Span) : Range =
 3. 찾으면 이름의 정확한 시작/끝 위치 반환
 4. 못 찾으면 fallback으로 전체 Span 사용
 
-이 함수는 Diagnostics의 미사용 변수 범위에서도 재사용됩니다.
+이 함수는 Diagnostics의 미사용 변수 범위에서도 재사용된다.
 
 ---
 
@@ -517,7 +517,7 @@ let handleDefinition (p: DefinitionParams) : Async<Definition option> =
 
 ### AstLookup.findNodeAtPosition 활용
 
-이전 튜토리얼(Hover)에서 구현한 `findNodeAtPosition`을 재사용합니다:
+이전 튜토리얼(Hover)에서 구현한 `findNodeAtPosition`을 재사용한다:
 
 ```fsharp
 // AstLookup.fs
@@ -525,7 +525,7 @@ let handleDefinition (p: DefinitionParams) : Async<Definition option> =
 let rec findNodeAtPosition (lspPos: Position) (expr: Expr) : Expr option
 ```
 
-이 함수는 커서 위치에 해당하는 **가장 구체적인** AST 노드를 반환합니다.
+이 함수는 커서 위치에 해당하는 **가장 구체적인** AST 노드를 반환한다.
 
 ---
 
@@ -661,7 +661,7 @@ dotnet run --project src/LangLSP.Tests
 
 ### FunLang의 현재 범위
 
-FunLang은 **싱글 파일**만 지원합니다 (모듈 시스템 없음).
+FunLang은 **싱글 파일**만 지원한다 (모듈 시스템 없음).
 
 따라서:
 - 정의는 항상 **같은 파일**에 있음
@@ -806,7 +806,7 @@ Go to Definition 구현의 핵심:
 
 ## 다음 단계
 
-Go to Definition을 완성했습니다! 이 기능은 코드 네비게이션의 핵심입니다.
+Go to Definition을 완성했다! 이 기능은 코드 네비게이션의 핵심이다.
 
 다음 Phase에서 구현할 기능들:
 - **Find References**: 변수의 모든 사용처 찾기

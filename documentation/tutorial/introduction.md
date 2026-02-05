@@ -4,7 +4,7 @@ F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국�
 
 ## 이 튜토리얼은
 
-ML 계열 함수형 언어 FunLang을 위한 Language Server를 처음부터 끝까지 구현하는 과정을 다룹니다. LSP(Language Server Protocol)의 기본 개념부터 VS Code Extension 패키징까지, 실제 동작하는 코드를 단계별로 작성하면서 LSP를 이해할 수 있습니다.
+ML 계열 함수형 언어 FunLang을 위한 Language Server를 처음부터 끝까지 구현하는 과정을 다룬다. LSP(Language Server Protocol)의 기본 개념부터 VS Code Extension 패키징까지, 실제 동작하는 코드를 단계별로 작성하면서 LSP를 이해할 수 있다.
 
 ## 구현하는 기능
 
@@ -27,4 +27,4 @@ ML 계열 함수형 언어 FunLang을 위한 Language Server를 처음부터 끝
 
 ## 시작하기
 
-[LSP 개념 소개](01-lsp-concepts.md)부터 시작하세요.
+[LSP 개념 소개](01-lsp-concepts.md)부터 시작하라.

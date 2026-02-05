@@ -1,6 +1,6 @@
 # Rename Symbol 구현하기
 
-이 문서는 LSP 서버에서 **Rename Symbol** 기능을 구현하는 방법을 설명합니다. 변수나 함수 이름을 변경하면 해당 심볼의 정의와 모든 사용처가 동시에 업데이트됩니다. 이 기능은 리팩토링의 핵심으로, 안전하게 코드베이스 전체의 식별자 이름을 변경할 수 있게 해줍니다.
+이 문서는 LSP 서버에서 **Rename Symbol** 기능을 구현하는 방법을 설명한다. 변수나 함수 이름을 변경하면 해당 심볼의 정의와 모든 사용처가 동시에 업데이트된다. 이 기능은 리팩토링의 핵심으로, 안전하게 코드베이스 전체의 식별자 이름을 변경할 수 있게 해준다.
 
 ## 목차
 
@@ -20,7 +20,7 @@
 
 ## Rename Symbol이란
 
-**Rename Symbol**은 변수, 함수, 파라미터의 이름을 변경할 때 해당 심볼의 **정의와 모든 사용처**를 동시에 업데이트하는 기능입니다.
+**Rename Symbol**은 변수, 함수, 파라미터의 이름을 변경할 때 해당 심볼의 **정의와 모든 사용처**를 동시에 업데이트하는 기능이다.
 
 ### VS Code에서의 사용
 
@@ -68,11 +68,11 @@ sequenceDiagram
 
 ## LSP 프로토콜
 
-Rename은 **두 단계**로 구성됩니다:
+Rename은 **두 단계**로 구성된다:
 
 ### 1. textDocument/prepareRename (옵셔널)
 
-Rename 전에 검증 단계입니다. 이 요청으로 다음을 확인합니다:
+Rename 전에 검증 단계이다. 이 요청으로 다음을 확인한다:
 - 커서 위치가 rename 가능한 심볼인가?
 - Rename할 범위와 현재 이름은?
 
@@ -98,7 +98,7 @@ interface TextDocumentPositionParams {
 
 **응답 형식:**
 
-PrepareRenameResult는 세 가지 형태를 지원합니다:
+PrepareRenameResult는 세 가지 형태를 지원한다:
 
 | 형식 | 사용 시기 | 구조 |
 |------|----------|------|
@@ -106,7 +106,7 @@ PrepareRenameResult는 세 가지 형태를 지원합니다:
 | `RangeWithPlaceholder` | 범위 + 현재 이름 | `{ range, placeholder }` |
 | `DefaultBehavior` | 범위 + 이름 + 가이드 | `{ defaultBehavior: true }` |
 
-FunLang은 **RangeWithPlaceholder**를 사용합니다 (가장 일반적).
+FunLang은 **RangeWithPlaceholder**를 사용한다 (가장 일반적).
 
 **응답 예시:**
 ```json
@@ -137,7 +137,7 @@ FunLang은 **RangeWithPlaceholder**를 사용합니다 (가장 일반적).
 
 ### 2. textDocument/rename (필수)
 
-실제 rename 작업을 수행합니다.
+실제 rename 작업을 수행한다.
 
 ```typescript
 interface RenameParams {
@@ -208,7 +208,7 @@ interface TextEdit {
 
 ## WorkspaceEdit 이해하기
 
-`WorkspaceEdit`는 하나 이상의 파일에 적용할 **편집 작업들의 집합**입니다.
+`WorkspaceEdit`는 하나 이상의 파일에 적용할 **편집 작업들의 집합**이다.
 
 ### 구조
 
@@ -220,14 +220,14 @@ type WorkspaceEdit = {
 }
 ```
 
-**FunLang은 `Changes`만 사용합니다:**
+**FunLang은 `Changes`만 사용한다:**
 - 싱글 파일 언어 (모듈 시스템 없음)
 - 텍스트 편집만 필요 (파일 생성/삭제 불필요)
 - 간단하고 충분함
 
 ### TextEdit 구조
 
-각 TextEdit는 **범위 + 새 텍스트**입니다:
+각 TextEdit는 **범위 + 새 텍스트**이다:
 
 ```fsharp
 type TextEdit = {
@@ -267,7 +267,7 @@ VS Code는 이 `WorkspaceEdit`를 받아서:
 
 ## prepareRename 구현
 
-`prepareRename`은 rename 가능 여부를 검증하고, 정확한 범위를 반환합니다.
+`prepareRename`은 rename 가능 여부를 검증하고, 정확한 범위를 반환한다.
 
 ### 왜 필요한가?
 
@@ -291,7 +291,7 @@ Rename **불가능**한 것:
 
 ### findNameInSource 헬퍼 함수
 
-Let/LetRec/Lambda의 span은 **전체 표현식**을 커버합니다:
+Let/LetRec/Lambda의 span은 **전체 표현식**을 커버한다:
 
 ```funlang
 let result = 42 in result
@@ -302,7 +302,7 @@ let result = 42 in result
     이름만의 span이 필요: (0:4)-(0:10)
 ```
 
-`findNameInSource`는 소스 텍스트에서 정확한 이름 위치를 찾습니다:
+`findNameInSource`는 소스 텍스트에서 정확한 이름 위치를 찾는다:
 
 ```fsharp
 // Rename.fs
@@ -463,11 +463,11 @@ RangeWithPlaceholder 반환 (U3.C2)
 
 ## 레퍼런스 수집과 이름 변경
 
-Rename은 **정의 + 모든 레퍼런스**를 동시에 변경해야 합니다.
+Rename은 **정의 + 모든 레퍼런스**를 동시에 변경해야 한다.
 
 ### collectReferencesForBinding (섀도잉 인식)
 
-단순히 이름이 같은 모든 `Var` 노드를 찾으면 안 됩니다:
+단순히 이름이 같은 모든 `Var` 노드를 찾으면 안 된다:
 
 ```funlang
 let x = 1 in
@@ -475,9 +475,9 @@ let x = 1 in
     x + 1
 ```
 
-마지막 `x`는 **내부 `let x = 2`**를 참조합니다. 외부 `x`를 rename하면 내부 `x`는 변경되면 안 됩니다.
+마지막 `x`는 **내부 `let x = 2`**를 참조한다. 외부 `x`를 rename하면 내부 `x`는 변경되면 안 된다.
 
-`collectReferencesForBinding`은 **특정 정의에 속하는** 레퍼런스만 수집합니다:
+`collectReferencesForBinding`은 **특정 정의에 속하는** 레퍼런스만 수집한다:
 
 ```fsharp
 // References.fs (이전 튜토리얼에서 구현)
@@ -529,9 +529,9 @@ let x = 1 in        (* defSpan1: (0, 4) *)
 
 ## 바인딩 사이트 이름 스팬 계산
 
-레퍼런스는 `Var` 노드이므로 정확한 span을 가지지만, **정의 사이트**는 전체 표현식 span을 가집니다.
+레퍼런스는 `Var` 노드이므로 정확한 span을 가지지만, **정의 사이트**는 전체 표현식 span을 가진다.
 
-Rename의 TextEdit는 **이름만** 교체해야 하므로, 정의 사이트에도 `findNameInSource`를 사용합니다:
+Rename의 TextEdit는 **이름만** 교체해야 하므로, 정의 사이트에도 `findNameInSource`를 사용한다:
 
 ```fsharp
 // For definition site, get tight name-only span from source
@@ -563,7 +563,7 @@ let result = 42 in result
 
 ## handleRename 구현
 
-실제 rename 로직입니다.
+실제 rename 로직이다.
 
 ```fsharp
 // Rename.fs
@@ -696,7 +696,7 @@ WorkspaceEdit 생성 (URI → TextEdit[])
 
 ## Protocol.fs 헬퍼 함수
 
-`createTextEdit`와 `createWorkspaceEdit`는 반복 코드를 줄이기 위한 헬퍼입니다.
+`createTextEdit`와 `createWorkspaceEdit`는 반복 코드를 줄이기 위한 헬퍼이다.
 
 ### createTextEdit
 
@@ -777,7 +777,7 @@ type RenameOptions = {
 }
 ```
 
-`PrepareProvider = Some true`로 설정하면 클라이언트는 `prepareRename` 요청을 먼저 보냅니다.
+`PrepareProvider = Some true`로 설정하면 클라이언트는 `prepareRename` 요청을 먼저 보낸다.
 
 ### 핸들러 등록
 
@@ -1025,7 +1025,7 @@ let defNameSpan = findNameInSource text varName defSpan.StartLine defSpan.StartC
 
 ### 3. 중복 제거
 
-`Let(name, ...)`와 `Var(name, ...)`가 AST에 동시에 존재할 수 있습니다.
+`Let(name, ...)`와 `Var(name, ...)`가 AST에 동시에 존재할 수 있다.
 
 **예시:**
 ```funlang
@@ -1067,7 +1067,7 @@ let x = 1 in x
              여기서 F2
 ```
 
-Var 노드는 **사용처**이지 정의가 아닙니다. 먼저 정의를 찾아야 합니다:
+Var 노드는 **사용처**이지 정의가 아니다. 먼저 정의를 찾아야 한다:
 
 ```fsharp
 | Var(name, _) ->
@@ -1076,7 +1076,7 @@ Var 노드는 **사용처**이지 정의가 아닙니다. 먼저 정의를 찾�
     (Some name, def)
 ```
 
-이렇게 해야 정의 + 모든 사용처를 함께 rename할 수 있습니다.
+이렇게 해야 정의 + 모든 사용처를 함께 rename할 수 있다.
 
 ### 6. 파싱 에러 처리
 
@@ -1134,7 +1134,7 @@ Rename Symbol 구현의 핵심:
 
 ## 다음 단계
 
-Rename Symbol을 완성했습니다! 이제 사용자는 안전하게 식별자 이름을 변경할 수 있습니다.
+Rename Symbol을 완성했다! 이제 사용자는 안전하게 식별자 이름을 변경할 수 있다.
 
 다음 Phase에서 구현할 기능들:
 - **Code Actions**: 자동 수정 제안 (미사용 변수 제거, 타입 주석 추가 등)

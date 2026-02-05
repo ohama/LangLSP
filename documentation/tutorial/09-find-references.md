@@ -1,6 +1,6 @@
 # Find References 구현하기
 
-이 문서는 LSP 서버에서 **Find References** 기능을 구현하는 방법을 설명합니다. 변수나 함수를 선택하고 "Find References"를 실행하면 해당 심볼이 사용된 모든 위치를 찾아줍니다. 이 기능은 코드 리팩토링과 영향 분석(Impact Analysis)에 필수적입니다.
+이 문서는 LSP 서버에서 **Find References** 기능을 구현하는 방법을 설명한다. 변수나 함수를 선택하고 "Find References"를 실행하면 해당 심볼이 사용된 모든 위치를 찾아준다. 이 기능은 코드 리팩토링과 영향 분석(Impact Analysis)에 필수적이다.
 
 ## 목차
 
@@ -19,7 +19,7 @@
 
 ## Find References란
 
-**Find References**는 선택한 심볼의 모든 사용처를 찾는 기능입니다. Go to Definition이 "정의 위치" 하나를 찾는다면, Find References는 "사용 위치" 여러 개를 찾습니다.
+**Find References**는 선택한 심볼의 모든 사용처를 찾는 기능이다. Go to Definition이 "정의 위치" 하나를 찾는다면, Find References는 "사용 위치" 여러 개를 찾는다.
 
 ### VS Code에서의 사용
 
@@ -104,7 +104,7 @@ interface ReferenceContext {
 | `true` | 정의 + 사용처 모두 반환 | `let x = 1` 포함 |
 | `false` | 사용처만 반환 | `x + 1`만 포함, 정의는 제외 |
 
-대부분의 경우 `true`가 유용합니다 (전체 영향 범위 파악).
+대부분의 경우 `true`가 유용하다 (전체 영향 범위 파악).
 
 ### 응답 형식
 
@@ -155,7 +155,7 @@ interface Location {
 
 ## Definition과의 관계
 
-Find References는 Go to Definition의 **역방향** 동작입니다.
+Find References는 Go to Definition의 **역방향** 동작이다.
 
 ### 상호 관계
 
@@ -191,7 +191,7 @@ Find References는 Go to Definition의 **역방향** 동작입니다.
 └──────────────────────────────────────────────┘
 ```
 
-Find References 구현 시 **Definition 모듈을 재사용**합니다:
+Find References 구현 시 **Definition 모듈을 재사용**한다:
 1. 커서 위치에서 심볼의 정의를 먼저 찾음 (`findDefinitionForVar`)
 2. 그 정의를 참조하는 모든 Var 노드를 수집
 3. 섀도잉을 고려하여 올바른 레퍼런스만 필터링
@@ -202,7 +202,7 @@ Find References 구현 시 **Definition 모듈을 재사용**합니다:
 
 ### collectReferences 함수 (기본 버전)
 
-먼저 **섀도잉 미고려** 버전을 구현합니다. 단순히 이름이 일치하는 모든 Var 노드를 수집합니다.
+먼저 **섀도잉 미고려** 버전을 구현한다. 단순히 이름이 일치하는 모든 Var 노드를 수집한다.
 
 ```fsharp
 // References.fs
@@ -297,7 +297,7 @@ let x = 1 in
 
 ### 섀도잉 문제
 
-기본 `collectReferences`는 **이름만** 체크하므로 섀도잉 처리가 안 됩니다.
+기본 `collectReferences`는 **이름만** 체크하므로 섀도잉 처리가 안 된다.
 
 ```funlang
 let x = 1 in           (* 정의 A *)
@@ -311,7 +311,7 @@ let x = 1 in           (* 정의 A *)
 
 ### collectReferencesForBinding 함수
 
-**특정 정의**를 참조하는 Var 노드만 찾는 함수입니다.
+**특정 정의**를 참조하는 Var 노드만 찾는 함수이다.
 
 ```fsharp
 // References.fs
@@ -367,12 +367,12 @@ let collectReferencesForBinding (varName: string) (defSpan: Span) (ast: Expr) : 
 
 ### 왜 Definition 모듈을 재사용하는가?
 
-`findDefinitionForVar`는 **섀도잉 해결 로직**을 이미 구현했습니다:
+`findDefinitionForVar`는 **섀도잉 해결 로직**을 이미 구현했다:
 - 사용 위치 이전의 정의만 고려
 - 가장 가까운 (내부) 정의 선택
 - 렉시컬 스코핑 규칙 적용
 
-Find References는 이 로직을 **여러 번 호출**하여 각 Var 노드가 올바른 정의를 참조하는지 검증합니다.
+Find References는 이 로직을 **여러 번 호출**하여 각 Var 노드가 올바른 정의를 참조하는지 검증한다.
 
 ---
 
@@ -831,7 +831,7 @@ dotnet run --project src/LangLSP.Tests
 
 ### 코드 재사용
 
-Find References는 Definition 모듈을 **필수적으로** 재사용합니다:
+Find References는 Definition 모듈을 **필수적으로** 재사용한다:
 
 ```fsharp
 // References.fs에서 Definition 함수 사용
@@ -1047,7 +1047,7 @@ Find References 구현의 핵심:
 
 ## 다음 단계
 
-Find References를 완성했습니다! 이제 사용자가 심볼의 영향 범위를 파악할 수 있습니다.
+Find References를 완성했다! 이제 사용자가 심볼의 영향 범위를 파악할 수 있다.
 
 다음 Phase에서 구현할 기능들:
 - **Rename**: Find References 활용하여 모든 사용처 일괄 변경

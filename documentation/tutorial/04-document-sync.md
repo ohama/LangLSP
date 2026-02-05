@@ -1,6 +1,6 @@
 # 문서 동기화 구현
 
-이 문서는 LSP 서버에서 **Document Sync**(문서 동기화)를 구현하는 방법을 설명합니다. 문서 동기화는 에디터에서 파일을 열고, 수정하고, 닫을 때마다 LSP 서버가 최신 텍스트를 유지하도록 합니다.
+이 문서는 LSP 서버에서 **Document Sync**(문서 동기화)를 구현하는 방법을 설명한다. 문서 동기화는 에디터에서 파일을 열고, 수정하고, 닫을 때마다 LSP 서버가 최신 텍스트를 유지하도록 한다.
 
 ## 목차
 
@@ -16,11 +16,11 @@
 
 ## 문서 동기화란
 
-**Document Sync**는 LSP의 핵심 기능 중 하나로, 에디터와 Language Server 간에 문서 텍스트를 동기화하는 프로세스입니다.
+**Document Sync**는 LSP의 핵심 기능 중 하나로, 에디터와 Language Server 간에 문서 텍스트를 동기화하는 프로세스이다.
 
 ### 왜 필요한가?
 
-LSP 서버는 별도 프로세스로 실행되므로, 에디터가 파일을 읽거나 수정해도 서버는 그 내용을 자동으로 알 수 없습니다. 따라서 에디터는 다음 이벤트를 서버로 전송해야 합니다.
+LSP 서버는 별도 프로세스로 실행되므로, 에디터가 파일을 읽거나 수정해도 서버는 그 내용을 자동으로 알 수 없다. 따라서 에디터는 다음 이벤트를 서버로 전송해야 한다.
 
 | 이벤트 | LSP 메서드 | 설명 |
 |--------|-----------|------|
@@ -43,7 +43,7 @@ sequenceDiagram
 
 ### 문서 동기화가 필요한 LSP 기능
 
-문서 동기화는 거의 모든 LSP 기능의 전제조건입니다.
+문서 동기화는 거의 모든 LSP 기능의 전제조건이다.
 
 - **Diagnostics**: 문서 텍스트를 파싱/타입체킹하여 에러 검출
 - **Hover**: 커서 위치의 텍스트를 분석하여 타입 정보 표시
@@ -54,11 +54,11 @@ sequenceDiagram
 
 ## 동기화 모드
 
-LSP는 두 가지 동기화 모드를 지원합니다.
+LSP는 두 가지 동기화 모드를 지원한다.
 
 ### 1. Full Sync (전체 동기화)
 
-매번 변경 시 **전체 텍스트**를 전송합니다.
+매번 변경 시 **전체 텍스트**를 전송한다.
 
 **장점:**
 - 구현이 간단 (문자열 교체만 하면 됨)
@@ -77,7 +77,7 @@ let handleDidChangeFullSync (p: DidChangeTextDocumentParams) : unit =
 
 ### 2. Incremental Sync (증분 동기화)
 
-변경된 **부분(Range)만** 전송합니다.
+변경된 **부분(Range)만** 전송한다.
 
 **장점:**
 - 대용량 파일에서 효율적 (변경된 10자만 전송)
@@ -93,11 +93,11 @@ let handleDidChangeFullSync (p: DidChangeTextDocumentParams) : unit =
 // Text: "y"
 ```
 
-FunLang LSP는 **Incremental Sync**를 사용합니다. (성능과 실용성의 균형)
+FunLang LSP는 **Incremental Sync**를 사용한다. (성능과 실용성의 균형)
 
 ### Server Capabilities 선언
 
-서버가 어떤 동기화 모드를 지원하는지 `initialize` 응답에서 선언합니다.
+서버가 어떤 동기화 모드를 지원하는지 `initialize` 응답에서 선언한다.
 
 ```fsharp
 // Server.fs
@@ -116,16 +116,16 @@ let serverCapabilities : ServerCapabilities =
 
 ## ConcurrentDictionary로 문서 저장
 
-LSP 서버는 여러 문서를 동시에 추적해야 하므로, 스레드 안전한 저장소가 필요합니다.
+LSP 서버는 여러 문서를 동시에 추적해야 하므로, 스레드 안전한 저장소가 필요하다.
 
 ### 왜 ConcurrentDictionary인가?
 
-LSP 서버는 **다중 스레드 환경**에서 동작합니다:
+LSP 서버는 **다중 스레드 환경**에서 동작한다:
 - 에디터가 `didOpen`, `didChange`, `didClose` 알림을 비동기로 보냄
 - 서버는 여러 요청을 병렬로 처리할 수 있음
 - 단순 `Dictionary`는 스레드 안전하지 않아 Race Condition 발생 가능
 
-`ConcurrentDictionary`는 .NET의 스레드 안전한 해시맵으로, 락 없이 동시 읽기/쓰기가 가능합니다.
+`ConcurrentDictionary`는 .NET의 스레드 안전한 해시맵으로, 락 없이 동시 읽기/쓰기가 가능하다.
 
 ### 구현
 
@@ -155,7 +155,7 @@ let getDocument (uri: string) : string option =
 
 ## didOpen 핸들러
 
-파일이 에디터에서 열릴 때 호출되는 핸들러입니다.
+파일이 에디터에서 열릴 때 호출되는 핸들러이다.
 
 ### 프로토콜 구조
 
@@ -203,7 +203,7 @@ getDocument "file:///home/user/test.fun"
 
 ## didChange 핸들러
 
-파일이 수정될 때 호출되는 핸들러로, **증분 변경**을 처리합니다.
+파일이 수정될 때 호출되는 핸들러로, **증분 변경**을 처리한다.
 
 ### 프로토콜 구조
 
@@ -221,11 +221,11 @@ type TextDocumentContentChangeEvent =
     | { text: string }                // 전체 변경 (C2)
 ```
 
-Ionide.LanguageServerProtocol은 Union 타입을 `U2<C1, C2>`로 표현합니다.
+Ionide.LanguageServerProtocol은 Union 타입을 `U2<C1, C2>`로 표현한다.
 
 ### Range 기반 텍스트 교체
 
-증분 변경은 **Range**로 교체할 영역을 지정합니다.
+증분 변경은 **Range**로 교체할 영역을 지정한다.
 
 ```fsharp
 // LSP Range 구조
@@ -316,7 +316,7 @@ Step 4: "let x = 1\nlet " + "z" + " = 2" = "let x = 1\nlet z = 2"
 
 ## didClose 핸들러
 
-파일이 에디터에서 닫힐 때 호출되는 핸들러입니다.
+파일이 에디터에서 닫힐 때 호출되는 핸들러이다.
 
 ### 구현
 
@@ -339,7 +339,7 @@ let handleDidClose (p: DidCloseTextDocumentParams) : unit =
 
 ## 테스트 작성
 
-Expecto를 사용하여 Document Sync 기능을 테스트합니다.
+Expecto를 사용하여 Document Sync 기능을 테스트한다.
 
 ### 테스트 헬퍼 함수
 
@@ -438,11 +438,11 @@ dotnet run --project src/LangLSP.Tests
 
 ## 다음 단계
 
-문서 동기화가 완료되었으므로, 이제 **Diagnostics**(진단)를 구현할 수 있습니다.
+문서 동기화가 완료되었으므로, 이제 **Diagnostics**(진단)를 구현할 수 있다.
 
 **다음 튜토리얼:** [05-diagnostics.md](./05-diagnostics.md)
 
-Diagnostics 구현에서는 다음을 다룹니다:
+Diagnostics 구현에서는 다음을 다룬다:
 1. FunLang의 Diagnostic 시스템 활용
 2. Span을 LSP Range로 변환 (1-based → 0-based)
 3. 문법 오류 및 타입 오류 처리

@@ -1,8 +1,8 @@
 # Hover 구현하기
 
-마우스 커서를 코드 위에 올리면 타입 정보나 설명이 팝업으로 표시됩니다. 이 기능은 IDE의 핵심 기능 중 하나로, 코드를 이해하는 데 큰 도움이 됩니다.
+마우스 커서를 코드 위에 올리면 타입 정보나 설명이 팝업으로 표시된다. 이 기능은 IDE의 핵심 기능 중 하나로, 코드를 이해하는 데 큰 도움이 된다.
 
-이 튜토리얼에서는 FunLang LSP에 Hover 기능을 구현하는 방법을 배웁니다.
+이 튜토리얼에서는 FunLang LSP에 Hover 기능을 구현하는 방법을 배운다.
 
 ## 목차
 
@@ -21,7 +21,7 @@
 
 ### 요청 구조
 
-클라이언트(에디터)가 서버에 hover 정보를 요청할 때 사용하는 구조입니다.
+클라이언트(에디터)가 서버에 hover 정보를 요청할 때 사용하는 구조이다.
 
 ```typescript
 interface HoverParams {
@@ -37,7 +37,7 @@ interface Position {
 
 ### 응답 구조
 
-서버가 반환하는 hover 정보입니다.
+서버가 반환하는 hover 정보이다.
 
 ```typescript
 interface Hover {
@@ -79,7 +79,7 @@ sequenceDiagram
 
 ## 구현 전략
 
-Hover 기능은 두 가지를 제공합니다:
+Hover 기능은 두 가지를 제공한다:
 
 1. **키워드 Hover**: `let`, `if`, `fun` 등 키워드에 한국어 설명
 2. **타입 Hover**: 변수, 함수, 표현식에 추론된 타입 표시
@@ -106,18 +106,18 @@ AST 파싱          │
 
 ### 키워드 우선 확인
 
-**중요:** 키워드는 AST에 포함되지 않습니다. `let x = 1 in x`를 파싱하면:
+**중요:** 키워드는 AST에 포함되지 않는다. `let x = 1 in x`를 파싱하면:
 
 - AST: `Let("x", Number(1), Var("x"))`
-- `let`, `in` 키워드는 AST 노드가 아닙니다!
+- `let`, `in` 키워드는 AST 노드가 아니다!
 
-따라서 AST 조회 전에 키워드 체크를 먼저 해야 합니다.
+따라서 AST 조회 전에 키워드 체크를 먼저 해야 한다.
 
 ---
 
 ## 위치 기반 AST 조회
 
-커서 위치에 해당하는 AST 노드를 찾는 모듈입니다.
+커서 위치에 해당하는 AST 노드를 찾는 모듈이다.
 
 ### AstLookup 모듈
 
@@ -155,14 +155,14 @@ let positionInSpan (lspPos: Position) (span: Span) : bool =
 
 **FunLang의 특수 상황:**
 
-FsLexYacc 문서에는 Position이 1-based라고 되어 있지만, `LexBuffer.FromString`으로 생성하면 실제로는 **0-based**입니다!
+FsLexYacc 문서에는 Position이 1-based라고 되어 있지만, `LexBuffer.FromString`으로 생성하면 실제로는 **0-based**이다!
 
 | 항목 | LSP | FunLang (LexBuffer.FromString) |
 |------|-----|--------------------------------|
 | 첫 번째 줄 | 0 | 0 |
 | 첫 번째 열 | 0 | 0 |
 
-따라서 FunLang LSP에서는 **좌표 변환이 필요 없습니다**.
+따라서 FunLang LSP에서는 **좌표 변환이 필요 없다**.
 
 ```fsharp
 // Protocol.fs - 변환 없이 직접 사용
@@ -175,7 +175,7 @@ let spanToLspRange (span: Span) : Range =
 
 ### 가장 안쪽 노드 찾기
 
-AST는 중첩 구조입니다. 커서 위치에 여러 노드가 겹칠 수 있습니다.
+AST는 중첩 구조이다. 커서 위치에 여러 노드가 겹칠 수 있다.
 
 ```
 let f = fun x -> x + 1 in f 5
@@ -183,7 +183,7 @@ let f = fun x -> x + 1 in f 5
                     ~ (1) - Number 노드
 ```
 
-**innermost(가장 안쪽) 노드**를 반환해야 합니다.
+**innermost(가장 안쪽) 노드**를 반환해야 한다.
 
 ```fsharp
 /// 주어진 LSP 위치를 포함하는 가장 안쪽 AST 노드 찾기
@@ -237,7 +237,7 @@ let rec findNodeAtPosition (lspPos: Position) (expr: Expr) : Expr option =
 
 ### 키워드 설명 맵
 
-FunLang의 키워드에 대한 한국어 설명입니다.
+FunLang의 키워드에 대한 한국어 설명이다.
 
 ```fsharp
 // Hover.fs
@@ -304,7 +304,7 @@ let createKeywordHover (keyword: string) (pos: Position) : Hover option =
 **Ionide Union 타입:**
 - `Hover.Contents`는 `U3<MarkupContent, MarkedString, MarkedString[]>` 타입
 - `U3.C1`은 첫 번째 케이스인 `MarkupContent`를 의미
-- Markdown으로 포맷팅하면 에디터에서 예쁘게 표시됨
+- Markdown으로 포맷팅하면 에디터에서 예쁘게 표시된다
 
 ---
 
@@ -326,7 +326,7 @@ let createTypeHover (ty: Type.Type) (span: Span) : Hover =
 ```
 
 **formatTypeNormalized:**
-- FunLang의 타입을 읽기 좋은 문자열로 변환
+- FunLang의 타입을 읽기 좋은 문자열로 변환한다
 - 타입 변수 정규화: `TVar(1000)` → `'a`, `TVar(1001)` → `'b`
 - 예: `TFunc(TInt, TFunc(TInt, TInt))` → `int -> int -> int`
 
@@ -349,7 +349,7 @@ let getNodeType (node: Expr) : Type.Type option =
 
 ### 변수 타입 조회의 어려움
 
-**문제:** `Var("x")`만 단독으로 타입 체크하면 실패합니다.
+**문제:** `Var("x")`만 단독으로 타입 체크하면 실패한다.
 
 ```fsharp
 // 이 코드는 실패!
@@ -359,11 +359,11 @@ let varNode = Var("x", span)
 TypeCheck.typecheck varNode  // Error: x is unbound!
 ```
 
-변수 `x`가 어디서 바인딩되었는지 컨텍스트가 없기 때문입니다.
+변수 `x`가 어디서 바인딩되었는지 컨텍스트가 없기 때문이다.
 
 ### 해결책: 바인딩 사이트 검색
 
-AST를 순회하며 변수가 정의된 위치를 찾고, 바인딩된 값의 타입을 추론합니다.
+AST를 순회하며 변수가 정의된 위치를 찾고, 바인딩된 값의 타입을 추론한다.
 
 ```fsharp
 /// AST에서 변수의 바인딩 사이트를 찾아 타입 반환
@@ -406,7 +406,7 @@ let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
 
 ### handleHover 함수
 
-전체 흐름을 조합한 핸들러입니다.
+전체 흐름을 조합한 핸들러이다.
 
 ```fsharp
 /// textDocument/hover 요청 처리
@@ -611,7 +611,7 @@ dotnet test src/LangLSP.Tests
 
 ### 1. 키워드 Hover가 작동하지 않음
 
-**증상:** `let`, `if` 위에 hover해도 아무것도 표시 안됨
+**증상:** `let`, `if` 위에 hover해도 아무것도 표시 안 된다
 
 **원인:** 키워드 체크 없이 AST만 조회
 
@@ -630,13 +630,13 @@ match getWordAtPosition text pos with
 
 **증상:** 간단한 파일은 되지만, 큰 파일에서는 모든 hover가 None
 
-**원인:** 전체 AST `TypeCheck.typecheck ast`를 가드로 사용하면, 파일에 타입 에러가 있거나 타입 추론이 복잡한 경우 전체 hover가 차단됨
+**원인:** 전체 AST `TypeCheck.typecheck ast`를 가드로 사용하면, 파일에 타입 에러가 있거나 타입 추론이 복잡한 경우 전체 hover가 차단된다
 
 **해결:** 전체 typecheck 가드를 제거하고, 개별 노드별로 독립적으로 타입 추론
 
-### 3. Let/LetRec 바인딩 이름에서 hover가 안됨
+### 3. Let/LetRec 바인딩 이름에서 hover가 안 된다
 
-**증상:** `let count = 1 in count`에서 뒤의 `count`는 되지만 앞의 `count`는 안됨
+**증상:** `let count = 1 in count`에서 뒤의 `count`는 되지만 앞의 `count`는 안 된다
 
 **원인:** `findNodeAtPosition`이 바인딩 이름 위치에서 `Let` 노드를 반환하지만, handler가 `Let` 케이스를 처리하지 않음
 
@@ -652,15 +652,15 @@ match getWordAtPosition text pos with
 
 ### 5. 좌표가 어긋남
 
-**증상:** 클릭한 위치와 다른 노드의 정보가 표시됨
+**증상:** 클릭한 위치와 다른 노드의 정보가 표시된다
 
 **원인:** LSP와 파서의 좌표계 혼동
 
 **해결:** FunLang은 `LexBuffer.FromString`을 사용하므로 LSP와 동일하게 0-based. 변환 불필요.
 
-### 4. MarkupContent가 제대로 표시 안됨
+### 4. MarkupContent가 제대로 표시 안 된다
 
-**증상:** 에디터에서 raw Markdown 텍스트가 보임
+**증상:** 에디터에서 raw Markdown 텍스트가 보인다
 
 **원인:** `MarkupKind.PlainText` 사용 또는 잘못된 Union 타입
 
@@ -674,7 +674,7 @@ Contents = U3.C1 {
 }
 ```
 
-### 5. 다형 타입이 이상하게 표시됨
+### 5. 다형 타입이 이상하게 표시된다
 
 **증상:** `'a -> 'a` 대신 `TVar(1234) -> TVar(1234)` 표시
 
@@ -699,7 +699,7 @@ Hover 구현의 핵심은:
 
 > [07. Go to Definition 구현하기](07-definition.md)
 
-Go to Definition은 Hover와 비슷한 위치 조회 로직을 사용합니다. 다만 타입 대신 **정의 위치**를 반환합니다.
+Go to Definition은 Hover와 비슷한 위치 조회 로직을 사용한다. 다만 타입 대신 **정의 위치**를 반환한다.
 
 ---
 

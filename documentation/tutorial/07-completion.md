@@ -1,8 +1,8 @@
 # 자동 완성(Completion) 구현하기
 
-자동 완성은 사용자가 코드를 입력할 때 키워드, 변수, 함수 등의 후보를 제안하는 LSP의 핵심 기능입니다. 코드 작성 속도를 높이고 오타를 줄이며, 사용 가능한 심볼을 쉽게 발견할 수 있게 해줍니다.
+자동 완성은 사용자가 코드를 입력할 때 키워드, 변수, 함수 등의 후보를 제안하는 LSP의 핵심 기능이다. 코드 작성 속도를 높이고 오타를 줄이며, 사용 가능한 심볼을 쉽게 발견할 수 있게 해준다.
 
-이 튜토리얼에서는 FunLang LSP에 Completion 기능을 구현하는 방법을 배웁니다.
+이 튜토리얼에서는 FunLang LSP에 Completion 기능을 구현하는 방법을 배운다.
 
 ## 목차
 
@@ -21,7 +21,7 @@
 
 ### 요청 구조
 
-클라이언트(에디터)가 자동 완성을 요청할 때 사용하는 구조입니다.
+클라이언트(에디터)가 자동 완성을 요청할 때 사용하는 구조이다.
 
 ```typescript
 interface CompletionParams {
@@ -43,7 +43,7 @@ interface CompletionContext {
 
 ### 응답 구조
 
-서버가 반환하는 완성 후보 목록입니다.
+서버가 반환하는 완성 후보 목록이다.
 
 ```typescript
 interface CompletionList {
@@ -64,7 +64,7 @@ interface CompletionItem {
 
 ### CompletionItemKind 열거형
 
-완성 항목의 종류를 나타내며, VS Code는 각 종류마다 다른 아이콘을 표시합니다.
+완성 항목의 종류를 나타내며, VS Code는 각 종류마다 다른 아이콘을 표시한다.
 
 ```fsharp
 type CompletionItemKind =
@@ -118,7 +118,7 @@ sequenceDiagram
 
 ## 구현 전략
 
-Completion 기능은 두 가지 소스에서 완성 후보를 제공합니다:
+Completion 기능은 두 가지 소스에서 완성 후보를 제공한다:
 
 1. **키워드 완성**: FunLang의 키워드 목록 (let, in, if, then, else 등)
 2. **스코프 기반 심볼 완성**: 현재 커서 위치에서 접근 가능한 변수/함수
@@ -155,7 +155,7 @@ AST 파싱 시도
 
 ### 기존 인프라 재사용
 
-Phase 2에서 구현한 모듈들을 적극 활용합니다:
+Phase 2에서 구현한 모듈들을 적극 활용한다:
 
 - **Definition.collectDefinitions**: 모든 변수/함수 정의 위치 수집
   - 이미 AST 전체를 순회하며 바인딩 사이트를 찾음
@@ -167,7 +167,7 @@ Phase 2에서 구현한 모듈들을 적극 활용합니다:
 
 ### 클라이언트 필터링 위임
 
-**중요한 설계 결정:** 서버는 모든 후보를 반환하고, 클라이언트가 필터링합니다.
+**중요한 설계 결정:** 서버는 모든 후보를 반환하고, 클라이언트가 필터링한다.
 
 ```fsharp
 // ❌ 서버에서 prefix 필터링 (권장하지 않음)
@@ -188,7 +188,7 @@ let symbols = getSymbolsInScope ast pos  // 모든 심볼
 
 ### FunLang 키워드 목록
 
-FunLang의 예약어를 정적 리스트로 정의합니다.
+FunLang의 예약어를 정적 리스트로 정의한다.
 
 ```fsharp
 // Completion.fs
@@ -259,7 +259,7 @@ let getKeywordCompletions () : CompletionItem list =
 
 ### Definition.collectDefinitions 재사용
 
-Phase 2의 Go to Definition에서 구현한 함수를 그대로 사용합니다.
+Phase 2의 Go to Definition에서 구현한 함수를 그대로 사용한다.
 
 ```fsharp
 // Definition.fs에서 이미 구현됨
@@ -273,7 +273,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list
 
 ### 스코프 필터링
 
-**핵심:** 커서 위치 **이전**에 정의된 심볼만 포함해야 합니다.
+**핵심:** 커서 위치 **이전**에 정의된 심볼만 포함해야 한다.
 
 ```fsharp
 /// Get symbol completions from current scope
@@ -296,7 +296,7 @@ let getSymbolCompletions (ast: Expr) (pos: Position) : CompletionItem list =
 
 ### 섀도잉 처리
 
-같은 이름이 여러 번 정의되면 마지막 정의가 유효합니다.
+같은 이름이 여러 번 정의되면 마지막 정의가 유효한다.
 
 ```fsharp
 // 예시 코드
@@ -306,8 +306,8 @@ let x = 3 in
 x + █   // 여기서 x는 3을 의미
 ```
 
-`collectDefinitions`는 세 개의 `("x", span)` 항목을 반환합니다.
-`List.distinctBy fst`로 중복을 제거하면 **마지막 `x`만 남습니다**.
+`collectDefinitions`는 세 개의 `("x", span)` 항목을 반환한다.
+`List.distinctBy fst`로 중복을 제거하면 **마지막 `x`만 남는다**.
 
 ```fsharp
 // 섀도잉 처리 단계별 설명
@@ -323,7 +323,7 @@ definitions = [("x", span1); ("x", span2); ("x", span3)]
 
 ### Hover.findVarTypeInAst 재사용
 
-Phase 2의 Hover에서 구현한 함수를 사용합니다.
+Phase 2의 Hover에서 구현한 함수를 사용한다.
 
 ```fsharp
 // Hover.fs에서 이미 구현됨
@@ -391,7 +391,7 @@ VS Code 완성 목록:
 
 ### Variable vs Function 구분
 
-Phase 3에서는 모든 심볼을 `CompletionItemKind.Variable`로 표시합니다.
+Phase 3에서는 모든 심볼을 `CompletionItemKind.Variable`로 표시한다.
 
 ```fsharp
 Kind = Some CompletionItemKind.Variable  // 함수도 Variable로 표시
@@ -408,7 +408,7 @@ Kind = Some CompletionItemKind.Variable  // 함수도 Variable로 표시
 
 ### handleCompletion 메인 함수
 
-전체 로직을 조합한 핸들러입니다.
+전체 로직을 조합한 핸들러이다.
 
 ```fsharp
 /// Handle textDocument/completion request
@@ -446,7 +446,7 @@ let handleCompletion (p: CompletionParams) : Async<CompletionList option> =
 
 **1. Graceful Degradation (우아한 성능 저하)**
 
-파싱 에러가 발생해도 키워드는 제공합니다.
+파싱 에러가 발생해도 키워드는 제공한다.
 
 ```fsharp
 with _ ->
@@ -468,7 +468,7 @@ let x = 1 i█    // 사용자가 'in'을 타이핑 중 (아직 불완전)
 
 **2. IsIncomplete = false**
 
-Phase 3에서는 모든 후보를 한 번에 반환합니다.
+Phase 3에서는 모든 후보를 한 번에 반환한다.
 
 ```fsharp
 IsIncomplete = false  // 추가 후보 없음
@@ -481,7 +481,7 @@ IsIncomplete = false  // 추가 후보 없음
 
 **3. 트리거 문자 없음**
 
-Phase 3에서는 사용자가 명시적으로 완성을 호출합니다 (Ctrl+Space).
+Phase 3에서는 사용자가 명시적으로 완성을 호출한다 (Ctrl+Space).
 
 ```fsharp
 // Server.fs
@@ -828,7 +828,7 @@ let detail =
     | None -> Some name
 ```
 
-**주의:** 타입 추론 실패는 정상적인 상황입니다 (람다 매개변수 등). None을 반환해도 문제없습니다.
+**주의:** 타입 추론 실패는 정상적인 상황이다 (람다 매개변수 등). None을 반환해도 문제없다.
 
 ### 5. 트리거 문자 설정 문제
 
@@ -852,7 +852,7 @@ CompletionProvider = Some {
 }
 ```
 
-트리거 문자는 컨텍스트에 따른 필터링이 필요합니다:
+트리거 문자는 컨텍스트에 따른 필터링이 필요하다:
 - `.` 입력 후 → 레코드/모듈 멤버만 표시
 - `::` 입력 후 → 리스트 관련 심볼만 표시
 
@@ -925,7 +925,7 @@ Completion 구현의 핵심 포인트:
 
 ## 다음 단계
 
-Completion 구현으로 Phase 3이 완료됩니다!
+Completion 구현으로 Phase 3이 완료된다!
 
 Phase 4에서는:
 - **Find References**: 심볼이 사용된 모든 위치 찾기

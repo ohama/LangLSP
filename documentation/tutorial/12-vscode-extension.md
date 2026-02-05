@@ -1,8 +1,8 @@
 # VS Code Extension 패키징
 
-지금까지 우리는 완전한 Language Server를 만들어왔습니다. 진단(Diagnostics), 호버(Hover), 자동 완성(Completion), 정의로 이동(Go to Definition), 참조 찾기(Find References), 이름 바꾸기(Rename), 그리고 코드 액션(Code Actions)까지 모두 구현했습니다.
+지금까지 우리는 완전한 Language Server를 만들어왔다. 진단(Diagnostics), 호버(Hover), 자동 완성(Completion), 정의로 이동(Go to Definition), 참조 찾기(Find References), 이름 바꾸기(Rename), 그리고 코드 액션(Code Actions)까지 모두 구현했다.
 
-이제 마지막 단계입니다. 이 강력한 Language Server를 누구나 설치할 수 있는 VS Code Extension으로 패키징하는 방법을 배웁니다. 이 튜토리얼에서는 TextMate 문법을 사용한 구문 강조(Syntax Highlighting), 언어 설정(Language Configuration), 코드 스니펫(Code Snippets), 그리고 VSIX 패키징을 다룹니다.
+이제 마지막 단계이다. 이 강력한 Language Server를 누구나 설치할 수 있는 VS Code Extension으로 패키징하는 방법을 배운다. 이 튜토리얼에서는 TextMate 문법을 사용한 구문 강조(Syntax Highlighting), 언어 설정(Language Configuration), 코드 스니펫(Code Snippets), 그리고 VSIX 패키징을 다룬다.
 
 ## 목차
 
@@ -20,14 +20,14 @@
 
 ## VS Code Extension 구조
 
-VS Code Extension은 크게 두 가지 방식으로 기능을 제공합니다:
+VS Code Extension은 크게 두 가지 방식으로 기능을 제공한다:
 
 1. **선언적(Declarative)**: JSON 파일로 정의 (문법, 스니펫, 언어 설정)
 2. **명령적(Imperative)**: TypeScript 코드로 구현 (LSP 클라이언트 시작)
 
 ### Extension의 구조
 
-우리 FunLang Extension의 디렉토리 구조입니다:
+우리 FunLang Extension의 디렉토리 구조이다:
 
 ```
 client/
@@ -47,7 +47,7 @@ client/
 
 ### Extension 로딩 과정
 
-VS Code가 Extension을 로드하는 과정입니다:
+VS Code가 Extension을 로드하는 과정이다:
 
 1. **`package.json` 읽기**: `engines.vscode` 버전 체크, `contributes` 등록
 2. **선언적 기능 활성화**: 문법, 스니펫, 언어 설정 즉시 적용
@@ -72,7 +72,7 @@ sequenceDiagram
     E->>S: exit()
 ```
 
-VS Code 1.74+에서는 `activationEvents`를 빈 배열(`[]`)로 두면, `contributes.languages`에 등록된 언어의 파일을 열 때 자동으로 활성화됩니다.
+VS Code 1.74+에서는 `activationEvents`를 빈 배열(`[]`)로 두면, `contributes.languages`에 등록된 언어의 파일을 열 때 자동으로 활성화된다.
 
 ### package.json의 핵심 필드
 
@@ -91,17 +91,17 @@ VS Code 1.74+에서는 `activationEvents`를 빈 배열(`[]`)로 두면, `contri
 }
 ```
 
-**`contributes` 필드**가 가장 중요합니다. 여기에 언어, 문법, 스니펫 등을 등록합니다.
+**`contributes` 필드**가 가장 중요하다. 여기에 언어, 문법, 스니펫 등을 등록한다.
 
 ---
 
 ## TextMate Grammar
 
-**TextMate Grammar**는 정규식 기반 토큰화 시스템으로, 구문 강조(Syntax Highlighting)를 제공합니다. VS Code는 TextMate 문법을 사용하여 코드를 색상으로 구분합니다.
+**TextMate Grammar**는 정규식 기반 토큰화 시스템으로, 구문 강조(Syntax Highlighting)를 제공한다. VS Code는 TextMate 문법을 사용하여 코드를 색상으로 구분한다.
 
 ### TextMate 문법의 구조
 
-TextMate 문법 파일(`funlang.tmLanguage.json`)은 다음 구조를 가집니다:
+TextMate 문법 파일(`funlang.tmLanguage.json`)은 다음 구조를 가진다:
 
 ```json
 {
@@ -127,7 +127,7 @@ TextMate 문법 파일(`funlang.tmLanguage.json`)은 다음 구조를 가집니�
 
 ### FunLang 토큰 카테고리
 
-FunLang 구문을 다음 카테고리로 나눕니다:
+FunLang 구문을 다음 카테고리로 나눈다:
 
 | 카테고리 | 예시 | Scope 이름 |
 |---------|------|-----------|
@@ -141,7 +141,7 @@ FunLang 구문을 다음 카테고리로 나눕니다:
 
 ### 주석 패턴
 
-FunLang은 두 가지 주석을 지원합니다:
+FunLang은 두 가지 주석을 지원한다:
 
 ```json
 "comments": {
@@ -164,7 +164,7 @@ FunLang은 두 가지 주석을 지원합니다:
 
 **중첩 블록 주석 처리**:
 
-FunLang은 `(* (* nested *) *)`와 같이 중첩된 블록 주석을 지원합니다. 이를 위해 자기 참조 패턴을 사용합니다:
+FunLang은 `(* (* nested *) *)`와 같이 중첩된 블록 주석을 지원한다. 이를 위해 자기 참조 패턴을 사용한다:
 
 ```json
 "block-comment-nested": {
@@ -177,11 +177,11 @@ FunLang은 `(* (* nested *) *)`와 같이 중첩된 블록 주석을 지원합�
 }
 ```
 
-**주의**: `(*`와 `*)`는 정규식 메타 문자이므로 `\\(\\*`, `\\*\\)`로 이스케이프해야 합니다.
+**주의**: `(*`와 `*)`는 정규식 메타 문자이므로 `\\(\\*`, `\\*\\)`로 이스케이프해야 한다.
 
 ### 문자열 패턴
 
-문자열은 이스케이프 시퀀스를 지원합니다:
+문자열은 이스케이프 시퀀스를 지원한다:
 
 ```json
 "strings": {
@@ -197,11 +197,11 @@ FunLang은 `(* (* nested *) *)`와 같이 중첩된 블록 주석을 지원합�
 }
 ```
 
-`\n`, `\r`, `\t`, `\\`, `\"`, `\'`를 이스케이프로 인식합니다.
+`\n`, `\r`, `\t`, `\\`, `\"`, `\'`를 이스케이프로 인식한다.
 
 ### 상수 패턴
 
-숫자와 불린 상수를 매칭합니다:
+숫자와 불린 상수를 매칭한다:
 
 ```json
 "constants": {
@@ -218,11 +218,11 @@ FunLang은 `(* (* nested *) *)`와 같이 중첩된 블록 주석을 지원합�
 }
 ```
 
-`\b`는 **단어 경계(word boundary)**입니다. `42`는 매칭하지만 `x42`는 매칭하지 않습니다.
+`\b`는 **단어 경계(word boundary)**이다. `42`는 매칭하지만 `x42`는 매칭하지 않는다.
 
 ### 키워드 패턴
 
-FunLang의 예약어입니다:
+FunLang의 예약어이다:
 
 ```json
 "keywords": {
@@ -243,7 +243,7 @@ FunLang의 예약어입니다:
 
 ### 타입 패턴
 
-타입 키워드와 타입 변수를 구분합니다:
+타입 키워드와 타입 변수를 구분한다:
 
 ```json
 "types": {
@@ -265,7 +265,7 @@ FunLang의 예약어입니다:
 
 ### 연산자 패턴
 
-**중요: 다중 문자 연산자를 먼저 매칭해야 합니다.**
+**중요: 다중 문자 연산자를 먼저 매칭해야 한다.**
 
 ```json
 "operators": {
@@ -297,11 +297,11 @@ patterns: ["->", "-"]
 결과: "->" 전체 매칭 → 정상 색상
 ```
 
-TextMate는 `patterns` 배열을 순서대로 시도하므로, **긴 패턴을 먼저 배치**해야 합니다.
+TextMate는 `patterns` 배열을 순서대로 시도하므로, **긴 패턴을 먼저 배치**해야 한다.
 
 ### 와일드카드 패턴
 
-`_`는 특별한 식별자입니다:
+`_`는 특별한 식별자이다:
 
 ```json
 "identifiers": {
@@ -314,7 +314,7 @@ TextMate는 `patterns` 배열을 순서대로 시도하므로, **긴 패턴을 �
 }
 ```
 
-이 패턴은 `_` 단독일 때만 매칭하고, `_x`나 `x_`는 매칭하지 않습니다.
+이 패턴은 `_` 단독일 때만 매칭하고, `_x`나 `x_`는 매칭하지 않는다.
 
 ### 완전한 funlang.tmLanguage.json
 
@@ -439,7 +439,7 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 
 ## Language Configuration
 
-**Language Configuration**은 VS Code의 편집 경험을 제어하는 JSON 파일입니다. 주석 토글, 괄호 매칭, 자동 닫기, 들여쓰기 규칙을 정의합니다.
+**Language Configuration**은 VS Code의 편집 경험을 제어하는 JSON 파일이다. 주석 토글, 괄호 매칭, 자동 닫기, 들여쓰기 규칙을 정의한다.
 
 ### language-configuration.json의 구조
 
@@ -456,7 +456,7 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 
 ### 주석 토글 (comments)
 
-Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니다:
+Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의한다:
 
 ```json
 "comments": {
@@ -470,7 +470,7 @@ Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니�
 
 ### 괄호 매칭 (brackets)
 
-**FunLang은 중괄호(`{}`)를 사용하지 않습니다.** 대괄호와 소괄호만 사용합니다:
+**FunLang은 중괄호(`{}`)를 사용하지 않는다.** 대괄호와 소괄호만 사용한다:
 
 ```json
 "brackets": [
@@ -479,13 +479,13 @@ Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니�
 ]
 ```
 
-괄호 중 하나에 커서를 놓으면 짝이 강조 표시됩니다.
+괄호 중 하나에 커서를 놓으면 짝이 강조 표시된다.
 
-**주의**: 많은 언어가 `{`, `}`를 사용하지만, FunLang은 사용하지 않으므로 추가하지 않습니다.
+**주의**: 많은 언어가 `{`, `}`를 사용하지만, FunLang은 사용하지 않으므로 추가하지 않는다.
 
 ### 자동 닫기 (autoClosingPairs)
 
-여는 문자를 입력하면 닫는 문자가 자동 삽입됩니다:
+여는 문자를 입력하면 닫는 문자가 자동 삽입된다:
 
 ```json
 "autoClosingPairs": [
@@ -502,11 +502,11 @@ Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니�
 
 **블록 주석 자동 닫기**:
 
-`(*` 입력 시 `*)` 자동 삽입은 편리한 기능입니다. 사용자가 `(`를 입력하면 `)`가 먼저 삽입되고, `*`를 입력하면 `*)`가 완성됩니다.
+`(*` 입력 시 `*)` 자동 삽입은 편리한 기능이다. 사용자가 `(`를 입력하면 `)`가 먼저 삽입되고, `*`를 입력하면 `*)`가 완성된다.
 
 ### 선택 영역 감싸기 (surroundingPairs)
 
-텍스트 선택 후 여는 문자를 입력하면 선택 영역을 감쌉니다:
+텍스트 선택 후 여는 문자를 입력하면 선택 영역을 감싼다:
 
 ```json
 "surroundingPairs": [
@@ -523,7 +523,7 @@ Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니�
 
 ### Enter 키 동작 (onEnterRules)
 
-주석에서 Enter를 누르면 다음 줄도 주석으로 시작합니다:
+주석에서 Enter를 누르면 다음 줄도 주석으로 시작한다:
 
 ```json
 "onEnterRules": [
@@ -549,7 +549,7 @@ Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니�
 
 ### 들여쓰기 규칙 (indentationRules)
 
-특정 키워드 뒤에서 들여쓰기를 자동 조정합니다:
+특정 키워드 뒤에서 들여쓰기를 자동 조정한다:
 
 ```json
 "indentationRules": {
@@ -610,13 +610,13 @@ x + 1
 }
 ```
 
-이 설정으로 FunLang 편집 경험이 크게 향상됩니다.
+이 설정으로 FunLang 편집 경험이 크게 향상된다.
 
 ---
 
 ## 코드 스니펫
 
-**Code Snippets**는 자주 사용하는 코드 패턴을 빠르게 삽입하는 템플릿입니다.
+**Code Snippets**는 자주 사용하는 코드 패턴을 빠르게 삽입하는 템플릿이다.
 
 ### VS Code 스니펫 형식
 
@@ -636,7 +636,7 @@ x + 1
 
 ### Tabstop과 Placeholder
 
-스니펫은 **tabstop**으로 커서 이동 지점을 정의합니다:
+스니펫은 **tabstop**으로 커서 이동 지점을 정의한다:
 
 - `$1`, `$2`, `$3`: 탭 키를 누를 때 커서 이동 순서
 - `${1:placeholder}`: 탭스톱과 기본 텍스트
@@ -813,7 +813,7 @@ match |xs| with
 
 **함정: 스니펫에서 `$`와 `}` 이스케이프하기**
 
-스니펫 본문에서 리터럴 `$`나 `}`를 사용하려면 이스케이프해야 합니다:
+스니펫 본문에서 리터럴 `$`나 `}`를 사용하려면 이스케이프해야 한다:
 
 ```json
 "body": ["Price: \\$${1:amount}"]  // $ → \$
@@ -823,7 +823,7 @@ match |xs| with
 
 ## package.json Contributes 설정
 
-**`contributes`** 필드는 Extension이 VS Code에 제공하는 모든 선언적 기능을 등록하는 곳입니다.
+**`contributes`** 필드는 Extension이 VS Code에 제공하는 모든 선언적 기능을 등록하는 곳이다.
 
 ### contributes의 주요 필드
 
@@ -837,7 +837,7 @@ match |xs| with
 
 ### languages 기여
 
-언어 ID, 확장자, 설정 파일, 아이콘을 정의합니다:
+언어 ID, 확장자, 설정 파일, 아이콘을 정의한다:
 
 ```json
 "languages": [
@@ -860,11 +860,11 @@ match |xs| with
 - **`configuration`**: Language Configuration 파일 경로
 - **`icon`**: 파일 아이콘 (라이트/다크 테마용)
 
-`.fun` 파일을 열면 VS Code가 자동으로 `funlang` 언어로 인식합니다.
+`.fun` 파일을 열면 VS Code가 자동으로 `funlang` 언어로 인식한다.
 
 ### grammars 기여
 
-TextMate 문법 파일을 등록합니다:
+TextMate 문법 파일을 등록한다:
 
 ```json
 "grammars": [
@@ -880,11 +880,11 @@ TextMate 문법 파일을 등록합니다:
 - **`scopeName`**: TextMate 문법 파일의 `scopeName`과 일치해야 함
 - **`path`**: 문법 파일 경로
 
-이 등록으로 `funlang` 파일에 구문 강조가 적용됩니다.
+이 등록으로 `funlang` 파일에 구문 강조가 적용된다.
 
 ### snippets 기여
 
-코드 스니펫 파일을 등록합니다:
+코드 스니펫 파일을 등록한다:
 
 ```json
 "snippets": [
@@ -898,11 +898,11 @@ TextMate 문법 파일을 등록합니다:
 - **`language`**: 스니펫이 활성화될 언어 ID
 - **`path`**: 스니펫 파일 경로
 
-`funlang` 파일에서 `let`, `if` 등을 입력하면 스니펫 자동 완성이 나타납니다.
+`funlang` 파일에서 `let`, `if` 등을 입력하면 스니펫 자동 완성이 나타난다.
 
 ### 기타 필수 필드들
 
-package.json에는 `contributes` 외에도 필수 필드들이 있습니다:
+package.json에는 `contributes` 외에도 필수 필드들이 있다:
 
 ```json
 {
@@ -991,11 +991,11 @@ package.json에는 `contributes` 외에도 필수 필드들이 있습니다:
 
 ## Extension 진입점 (extension.ts)
 
-**extension.ts**는 Extension의 명령적 코드가 실행되는 진입점입니다. 여기서 LSP 클라이언트를 시작하고 서버 프로세스를 관리합니다.
+**extension.ts**는 Extension의 명령적 코드가 실행되는 진입점이다. 여기서 LSP 클라이언트를 시작하고 서버 프로세스를 관리한다.
 
 ### activate 함수
 
-VS Code가 Extension을 활성화할 때 호출하는 함수입니다:
+VS Code가 Extension을 활성화할 때 호출하는 함수이다:
 
 ```typescript
 export function activate(context: ExtensionContext) {
@@ -1008,7 +1008,7 @@ export function activate(context: ExtensionContext) {
 
 ### 서버 모드 감지
 
-개발 중에는 `dotnet run`으로 서버를 실행하고, 프로덕션에서는 패키징된 바이너리를 실행합니다:
+개발 중에는 `dotnet run`으로 서버를 실행하고, 프로덕션에서는 패키징된 바이너리를 실행한다:
 
 ```typescript
 const serverDir = context.asAbsolutePath(path.join('server'));
@@ -1042,15 +1042,15 @@ if (fs.existsSync(serverDir)) {
 }
 ```
 
-**`fs.existsSync(serverDir)`**로 `client/server/` 디렉토리가 있는지 확인합니다:
+**`fs.existsSync(serverDir)`**로 `client/server/` 디렉토리가 있는지 확인한다:
 - **있으면**: 패키징된 VSIX → `server/LangLSP.Server` 바이너리 실행
 - **없으면**: 개발 모드 → `dotnet run` 실행
 
-이렇게 하면 개발 중에는 서버 코드를 수정하고 F5로 디버깅할 수 있고, 프로덕션에서는 빠른 바이너리를 사용합니다.
+이렇게 하면 개발 중에는 서버 코드를 수정하고 F5로 디버깅할 수 있고, 프로덕션에서는 빠른 바이너리를 사용한다.
 
 ### LanguageClientOptions
 
-클라이언트가 어떤 파일을 관리할지 정의합니다:
+클라이언트가 어떤 파일을 관리할지 정의한다:
 
 ```typescript
 const clientOptions: LanguageClientOptions = {
@@ -1083,7 +1083,7 @@ client.start();
 
 ### deactivate 함수
 
-Extension이 비활성화될 때 호출됩니다:
+Extension이 비활성화될 때 호출된다:
 
 ```typescript
 export function deactivate(): Thenable<void> | undefined {
@@ -1094,7 +1094,7 @@ export function deactivate(): Thenable<void> | undefined {
 }
 ```
 
-`client.stop()`은 서버 프로세스를 종료하고 리소스를 정리합니다.
+`client.stop()`은 서버 프로세스를 종료하고 리소스를 정리한다.
 
 ### 완전한 extension.ts
 
@@ -1164,17 +1164,17 @@ export function deactivate(): Thenable<void> | undefined {
 }
 ```
 
-이 코드는 VS Code가 `.fun` 파일을 열면 자동으로 Language Server를 시작하고, 모든 LSP 기능(진단, 호버, 자동 완성 등)을 활성화합니다.
+이 코드는 VS Code가 `.fun` 파일을 열면 자동으로 Language Server를 시작하고, 모든 LSP 기능(진단, 호버, 자동 완성 등)을 활성화한다.
 
 ---
 
 ## VSIX 패키징
 
-**VSIX**는 VS Code Extension의 배포 형식입니다. ZIP 파일과 유사하지만 Extension 매니페스트와 메타데이터를 포함합니다.
+**VSIX**는 VS Code Extension의 배포 형식이다. ZIP 파일과 유사하지만 Extension 매니페스트와 메타데이터를 포함한다.
 
 ### vsce 도구 설치
 
-VS Code Extension Manager인 `@vscode/vsce`를 설치합니다:
+VS Code Extension Manager인 `@vscode/vsce`를 설치한다:
 
 ```bash
 cd client
@@ -1183,11 +1183,11 @@ npm install --save-dev @vscode/vsce
 
 ### 패키징 3단계 프로세스
 
-VSIX를 만들려면 세 단계를 거칩니다:
+VSIX를 만들려면 세 단계를 거친다:
 
 #### 1단계: F# 서버 퍼블리시
 
-Language Server 바이너리를 `client/server/` 디렉토리에 빌드합니다:
+Language Server 바이너리를 `client/server/` 디렉토리에 빌드한다:
 
 ```bash
 cd ..  # 프로젝트 루트로
@@ -1225,18 +1225,18 @@ Ionide.LanguageServerProtocol.dll
 | framework-dependent (`false`) | VSIX 크기 작음 (3-5 MB) | .NET 런타임 필요 |
 | self-contained (`true`) | 런타임 포함, 독립 실행 | VSIX 크기 큼 (50+ MB) |
 
-우리는 framework-dependent를 선택했습니다. 사용자가 .NET SDK를 이미 설치했다고 가정합니다.
+우리는 framework-dependent를 선택했다. 사용자가 .NET SDK를 이미 설치했다고 가정한다.
 
 #### 2단계: TypeScript 컴파일
 
-`extension.ts`를 JavaScript로 컴파일합니다:
+`extension.ts`를 JavaScript로 컴파일한다:
 
 ```bash
 cd client
 npm run compile
 ```
 
-이 명령은 `tsc -p ./`를 실행하여 `src/extension.ts`를 `out/extension.js`로 컴파일합니다.
+이 명령은 `tsc -p ./`를 실행하여 `src/extension.ts`를 `out/extension.js`로 컴파일한다.
 
 **출력 확인:**
 
@@ -1251,7 +1251,7 @@ extension.js.map
 
 #### 3단계: VSIX 패키징
 
-vsce로 VSIX 파일을 생성합니다:
+vsce로 VSIX 파일을 생성한다:
 
 ```bash
 npx vsce package --allow-missing-repository
@@ -1269,11 +1269,11 @@ INFO  Creating vsix package...
 INFO  Extension packaged: /path/to/funlang-0.1.0.vsix (3.6 MB)
 ```
 
-**성공!** `funlang-0.1.0.vsix` 파일이 생성되었습니다.
+**성공!** `funlang-0.1.0.vsix` 파일이 생성되었다.
 
 ### .vscodeignore 설정
 
-VSIX에 포함하지 않을 파일을 지정합니다:
+VSIX에 포함하지 않을 파일을 지정한다:
 
 ```
 .vscode/**
@@ -1353,7 +1353,7 @@ VSIX 설치 후 실행 시 서버가 시작되지 않는 경우.
 
 ## 로컬 설치 및 테스트
 
-VSIX 파일을 생성했으면 로컬에 설치하여 모든 기능이 작동하는지 확인합니다.
+VSIX 파일을 생성했으면 로컬에 설치하여 모든 기능이 작동하는지 확인한다.
 
 ### VSIX 설치
 
@@ -1473,7 +1473,7 @@ LSP 서버 로그를 확인하려면:
 [Info] Received textDocument/hover at line 1
 ```
 
-문제가 발생하면 이 로그에서 에러 메시지를 찾을 수 있습니다.
+문제가 발생하면 이 로그에서 에러 메시지를 찾을 수 있다.
 
 ### 설치 제거
 
@@ -1483,7 +1483,7 @@ LSP 서버 로그를 확인하려면:
 code --uninstall-extension funlang.funlang
 ```
 
-**주의:** Extension ID는 `publisher.name` 형식입니다 (`funlang.funlang`).
+**주의:** Extension ID는 `publisher.name` 형식이다 (`funlang.funlang`).
 
 ### 디버깅 팁
 
@@ -1510,7 +1510,7 @@ code --uninstall-extension funlang.funlang
 
 ## 정리
 
-축하합니다! 우리는 12개의 튜토리얼을 통해 완전한 Language Server Protocol 구현을 완성했습니다.
+축하한다! 우리는 12개의 튜토리얼을 통해 완전한 Language Server Protocol 구현을 완성했다.
 
 ### 전체 여정 되돌아보기
 
@@ -1554,7 +1554,7 @@ code --uninstall-extension funlang.funlang
 
 ### 다음 단계
 
-이 튜토리얼 시리즈를 완료했지만, LSP는 더 많은 가능성을 제공합니다:
+이 튜토리얼 시리즈를 완료했지만, LSP는 더 많은 가능성을 제공한다:
 
 #### 추가 LSP 기능
 
@@ -1569,7 +1569,7 @@ code --uninstall-extension funlang.funlang
 
 #### 다중 파일 지원
 
-현재 우리 LSP는 단일 파일만 처리합니다. 다중 파일 프로젝트를 지원하려면:
+현재 우리 LSP는 단일 파일만 처리한다. 다중 파일 프로젝트를 지원하려면:
 
 1. **Module 시스템**: `import`/`export` 구문 추가
 2. **의존성 해석**: 파일 간 참조 추적
@@ -1578,7 +1578,7 @@ code --uninstall-extension funlang.funlang
 
 #### VS Code 마켓플레이스 게시
 
-VSIX를 만들었으니 이제 마켓플레이스에 게시할 수 있습니다:
+VSIX를 만들었으니 이제 마켓플레이스에 게시할 수 있다:
 
 1. [Visual Studio Marketplace](https://marketplace.visualstudio.com/) 계정 생성
 2. Personal Access Token 발급
@@ -1589,7 +1589,7 @@ VSIX를 만들었으니 이제 마켓플레이스에 게시할 수 있습니다:
 
 #### 다른 에디터 지원
 
-LSP는 에디터 독립적입니다. 우리 서버를 다른 에디터에서도 사용할 수 있습니다:
+LSP는 에디터 독립적이다. 우리 서버를 다른 에디터에서도 사용할 수 있다:
 
 - **Neovim**: `nvim-lspconfig`로 설정
 - **Emacs**: `lsp-mode` 설정
@@ -1610,12 +1610,12 @@ LSP는 에디터 독립적입니다. 우리 서버를 다른 에디터에서도 
 
 ### 마무리
 
-FunLang Language Server는 이제 완성되었습니다. 당신은 이제:
+FunLang Language Server는 이제 완성되었다. 당신은 이제:
 
-- LSP 프로토콜의 구조와 동작 방식을 이해합니다
-- F#으로 Language Server를 구현할 수 있습니다
-- VS Code Extension을 만들고 패키징할 수 있습니다
-- 구문 강조, 스니펫, 언어 설정을 정의할 수 있습니다
+- LSP 프로토콜의 구조와 동작 방식을 이해한다
+- F#으로 Language Server를 구현할 수 있다
+- VS Code Extension을 만들고 패키징할 수 있다
+- 구문 강조, 스니펫, 언어 설정을 정의할 수 있다
 
 **이 지식을 활용하여 당신만의 언어를 위한 Language Server를 만들어보세요!**
 
@@ -1629,4 +1629,4 @@ Ionide LSP: https://github.com/ionide/LanguageServerProtocol
 
 **튜토리얼 시리즈 완료 🎉**
 
-이 튜토리얼이 도움이 되었기를 바랍니다. 당신의 Language Server 프로젝트에 행운을 빕니다!
+이 튜토리얼이 도움이 되었기를 바란다. 당신의 Language Server 프로젝트에 행운을 빈다!
