@@ -296,7 +296,7 @@ let getSymbolCompletions (ast: Expr) (pos: Position) : CompletionItem list =
 
 ### 섀도잉 처리
 
-같은 이름이 여러 번 정의되면 마지막 정의가 유효한다.
+같은 이름이 여러 번 정의되면 마지막 정의가 유효하다.
 
 ```fsharp
 // 예시 코드
