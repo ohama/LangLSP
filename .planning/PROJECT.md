@@ -2,7 +2,7 @@
 
 ## What This Is
 
-FunLang을 위한 VS Code Language Server와 LSP 구현 튜토리얼. LangTutorial에서 구현한 ML 계열 함수형 언어 FunLang에 대한 IDE 지원을 제공하며, 그 구현 과정을 LSP 입문자가 따라할 수 있는 단계별 한국어 튜토리얼로 문서화한다.
+FunLang을 위한 VS Code Language Server와 LSP 구현 튜토리얼. LangTutorial에서 구현한 ML 계열 함수형 언어 FunLang에 대한 IDE 지원(Diagnostics, Hover, Completion, Go to Definition, Find References, Rename, Code Actions)을 제공하며, 그 구현 과정을 LSP 입문자가 따라할 수 있는 12개의 단계별 한국어 튜토리얼로 문서화한다.
 
 ## Core Value
 
@@ -12,33 +12,52 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ VS Code에서 FunLang 파일(.fun) 열면 LSP 서버 연결 — v1.0
+- ✓ 실시간 문법/타입 오류 표시 (Diagnostics) — v1.0
+- ✓ 변수/함수 위에 마우스 올리면 타입 정보 표시 (Hover) — v1.0
+- ✓ 키워드 및 심볼 자동 완성 (Completion) — v1.0
+- ✓ 정의로 이동 (Go to Definition) — v1.0
+- ✓ 모든 참조 찾기 (Find References) — v1.0
+- ✓ 심볼 이름 일괄 변경 (Rename) — v1.0
+- ✓ 코드 액션 (미사용 변수 제거, 타입 오류 수정 제안) — v1.0
+- ✓ .vsix 파일로 VS Code 확장 패키징 — v1.0
+- ✓ TextMate 문법 강조, 언어 설정, 코드 스니펫 — v1.0
+- ✓ LSP 기초 개념 설명 튜토리얼 — v1.0
+- ✓ F# 프로젝트 설정 튜토리얼 — v1.0
+- ✓ 텍스트 동기화 구현 튜토리얼 — v1.0
+- ✓ Diagnostics 구현 튜토리얼 — v1.0
+- ✓ Hover 구현 튜토리얼 — v1.0
+- ✓ Completion 구현 튜토리얼 — v1.0
+- ✓ Go to Definition 구현 튜토리얼 — v1.0
+- ✓ Find References 구현 튜토리얼 — v1.0
+- ✓ Rename Symbol 구현 튜토리얼 — v1.0
+- ✓ Code Actions 구현 튜토리얼 — v1.0
+- ✓ VS Code 확장 패키징 튜토리얼 — v1.0
+- ✓ 119개 단위/통합 테스트 (Expecto + FsCheck) — v1.0
 
 ### Active
 
-- [ ] VS Code에서 FunLang 파일(.fun) 열면 LSP 서버 연결
-- [ ] 실시간 문법/타입 오류 표시 (Diagnostics)
-- [ ] 변수/함수 위에 마우스 올리면 타입 정보 표시 (Hover)
-- [ ] 키워드 및 심볼 자동 완성 (Completion)
-- [ ] 정의로 이동 (Go to Definition)
-- [ ] .vsix 파일로 VS Code 확장 패키징
-- [ ] LSP 기초 개념 설명 튜토리얼
-- [ ] F# 프로젝트 설정 튜토리얼
-- [ ] 텍스트 동기화 구현 튜토리얼
-- [ ] Diagnostics 구현 튜토리얼
-- [ ] Hover 구현 튜토리얼
-- [ ] Completion 구현 튜토리얼
-- [ ] Go to Definition 구현 튜토리얼
-- [ ] VS Code 확장 패키징 튜토리얼
+(None — planning next milestone)
 
 ### Out of Scope
 
-- VS Code Marketplace 배포 — v1에서는 로컬 .vsix 설치만 지원
-- 영어 튜토리얼 — 한국어 독자 대상
-- 멀티 파일 분석 — 싱글 파일 MVP에 집중
-- Semantic Tokens, Inlay Hints — LSP 3.16+ 고급 기능, 기본 완성 후 고려
+- VS Code Marketplace 배포 — v2에서 고려
+- 영어 튜토리얼 — v2에서 번역 고려
+- 멀티 파일 분석 — 싱글 파일 MVP 완성, v2에서 고려
+- Semantic Tokens, Inlay Hints — LSP 3.16+ 고급 기능, v2에서 고려
+- Call Hierarchy, Workspace Symbols — v2에서 고려
+- Debugging (DAP) — 별도 프로젝트
+- LSP 외 에디터 지원 (Neovim, Emacs) — v2+
 
 ## Context
+
+**Current State (v1.0 shipped):**
+- LSP 서버: 7개 기능 (Diagnostics, Hover, Completion, Definition, References, Rename, Code Actions)
+- 테스트: 119개 (단위 + 통합), FsCheck 속성 기반 테스트 포함
+- VS Code 확장: funlang-0.1.0.vsix (3.6 MB), TextMate 문법, 6개 코드 스니펫
+- 튜토리얼: 12개 한국어 문서 (~11,000줄)
+- Howto 가이드: 4개 개발 지식 문서
+- 코드: ~25,850줄 (F#, TypeScript, Markdown)
 
 **FunLang 언어:**
 - LangTutorial 서브모듈에 F#으로 구현된 ML 계열 함수형 언어
@@ -50,10 +69,6 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 **튜토리얼 대상:**
 - LSP 입문자 (언어/프레임워크 무관)
 - F# 경험 없어도 따라할 수 있도록 설명
-
-**기존 자료:**
-- LangTutorial/tutorial/ 에 FunLang 언어 구현 튜토리얼 존재
-- 이 프로젝트는 LSP 구현에 집중
 
 ## Constraints
 
@@ -69,10 +84,15 @@ LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념�
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| F#로 LSP 서버 구현 | FunLang이 F#로 구현되어 있어 타입 체커 등 재사용 가능 | — Pending |
-| Ionide.LanguageServerProtocol 사용 | F# 네이티브, 경량, FsAutoComplete에서 검증됨. OmniSharp은 C# 중심으로 DI 오버헤드 | — Pending |
-| 한국어 튜토리얼 | 한국어 LSP 튜토리얼 부족, 대상 독자 명확 | — Pending |
-| 8가지 LSP 기능 구현 | Table stakes 4개 + Find References, Rename, Code Actions로 실용적 범위 | — Pending |
+| F#로 LSP 서버 구현 | FunLang이 F#로 구현되어 있어 타입 체커 등 재사용 가능 | ✓ Good — Parser, TypeChecker, Evaluator 모듈 직접 호출 |
+| Ionide.LanguageServerProtocol 사용 | F# 네이티브, 경량, FsAutoComplete에서 검증됨 | ✓ Good — U2/U3 union types 학습 필요했으나 잘 동작 |
+| 한국어 튜토리얼 | 한국어 LSP 튜토리얼 부족, 대상 독자 명확 | ✓ Good — 12개 문서 ~11,000줄 완성 |
+| 8가지 LSP 기능 구현 | Table stakes 4개 + Find References, Rename, Code Actions | ✓ Good — 7개 기능 + Code Actions 포함 |
+| ConcurrentDictionary for document storage | LSP 알림 동시 처리를 위한 thread-safe 저장소 | ✓ Good — 동시성 문제 없음 |
+| Serilog 파일 로깅 | LSP가 stdout 사용하므로 /tmp에 파일 로깅 | ✓ Good — stdout 오염 방지 |
+| FsCheck 500 iterations | 위치 변환 속성 기반 테스트 | ✓ Good — 경계값 버그 발견 |
+| Framework-dependent publish | .NET 런타임 필요하지만 VSIX 크기 3.6MB로 소형화 | ✓ Good — self-contained 50MB+ 대비 경량 |
+| dotnet run for development mode | VS Code 확장에서 개발 시 dotnet run 직접 실행 | ✓ Good — 디버깅 편의성 확보 |
 
 ---
-*Last updated: 2025-02-04 after LangTutorial v5.0/v6.0 submodule update*
+*Last updated: 2026-02-05 after v1.0 milestone*
