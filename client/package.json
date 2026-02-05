@@ -4,6 +4,7 @@
   "description": "FunLang language support with LSP",
   "version": "0.1.0",
   "publisher": "funlang",
+  "icon": "images/funlang-icon.png",
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -15,7 +16,20 @@
       "id": "funlang",
       "aliases": ["FunLang", "funlang"],
       "extensions": [".fun"],
-      "configuration": "./language-configuration.json"
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./images/funlang-icon.png",
+        "dark": "./images/funlang-icon.png"
+      }
+    }],
+    "grammars": [{
+      "language": "funlang",
+      "scopeName": "source.funlang",
+      "path": "./syntaxes/funlang.tmLanguage.json"
+    }],
+    "snippets": [{
+      "language": "funlang",
+      "path": "./snippets/funlang.json"
     }]
   },
   "scripts": {
