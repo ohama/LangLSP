@@ -1,0 +1,20 @@
+[book]
+title = "FunLang LSP 튜토리얼"
+authors = ["ohama"]
+language = "ko"
+description = "F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼"
+src = "."
+
+[build]
+build-dir = "../../docs"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+
+[output.html.search]
+enable = true
+limit-results = 30
+boost-title = 2
+boost-hierarchy = 1
