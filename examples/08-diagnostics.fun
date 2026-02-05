@@ -12,14 +12,16 @@
 let x = 42 in
 let y = x + 1 in
 let z = if y > 0 then "positive" else "negative" in
-z
 
-// --- 아래 주석을 해제하면 오류가 표시됩니다 ---
+// --- 아래 주석을 한 번에 하나씩 해제하면 오류가 표시됩니다 ---
+// (주의: 반드시 하나만 해제하세요. 여러 개 해제하면 첫 오류만 표시됩니다)
 
 // 문법 오류 (주석 해제하여 테스트):
-// let a = in a
+// let a = in
 
 // 타입 오류 (주석 해제하여 테스트):
-// let b = 1 + true in b
-// let c = if 42 then 1 else 2 in c
-// let d = 1 + "hello" in d
+// let b = 1 + true in
+// let c = if 42 then 1 else 2 in
+// let d = 1 + "hello" in
+
+z

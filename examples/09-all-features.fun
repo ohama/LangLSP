@@ -75,7 +75,7 @@ in
 
 // --- 리스트 연산 ---
 let sum = fun xs -> fold (fun acc -> fun x -> acc + x) 0 xs in
-let length = fun xs -> fold (fun acc -> fun _ -> acc + 1) 0 xs in
+let length = fun xs -> fold (fun acc -> fun _x -> acc + 1) 0 xs in
 let isEven = fun n -> n / 2 * 2 = n in
 
 // --- 결과 계산 ---

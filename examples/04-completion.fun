@@ -40,4 +40,4 @@ let result =
     inner + outer
 in
 
-result + factorial 5
+(alpha, beta, gamma, add 1 2, multiply 3 4, result, factorial 5)

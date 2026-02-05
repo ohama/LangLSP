@@ -14,7 +14,7 @@
 // --- 키워드 (keyword.control) ---
 let x = 1 in
 let y = 2 in
-if x > y then x else y
+let maxXY = if x > y then x else y in
 
 // --- 재귀 함수 (rec 키워드) ---
 let rec factorial n =
@@ -65,4 +65,6 @@ let _ = 0 in
 // 'a, 'b 같은 타입 변수
 
 // --- 최종 결과 ---
-(factorial 5, add 1 2, length [1, 2, 3], greeting)
+(maxXY, factorial 5, add 1 2, double 3, length [1, 2, 3],
+ isTrue, isFalse, answer, zero, greeting, escaped,
+ arrow 1, cons, neq, leq, geq, logicAnd, logicOr)

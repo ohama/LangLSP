@@ -48,4 +48,5 @@ in                                          // hover on map → ('a -> 'b) -> li
 let nums = [1, 2, 3, 4, 5] in
 let total = sum nums in
 let doubled = map double nums in
-(total, doubled, apply double 21, twice double 3)
+(count, name, active, add 1 2, isPositive 5, negate true,
+ total, doubled, apply double 21, twice double 3)

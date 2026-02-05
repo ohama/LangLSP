@@ -10,7 +10,7 @@
 
 // --- 사용하지 않는 변수 (노란 경고) ---
 let unused1 = 42 in            // ← 노란 밑줄, 전구 → "Prefix 'unused1' with underscore"
-let unused2 = "hello" in       // ← 노란 밑줄, 전구 → "Prefix 'unused2' with underscore"
+let _unused2 = "hello" in       // ← 노란 밑줄, 전구 → "Prefix 'unused2' with underscore"
 let used = 100 in              // ← 경고 없음 (아래에서 사용됨)
 
 // --- 밑줄 접두사 (경고 없음) ---
@@ -18,6 +18,6 @@ let _intentionally_unused = 999 in  // ← 경고 없음 (밑줄 접두사 규�
 
 // --- 사용된 변수 (경고 없음) ---
 let active = true in
-let message = if active then "on" else "off" in
+let _message = if active then "on" else "off" in
 
-used + 1
+used + 1  // message 는 의도적으로 사용하지 않음 (경고 테스트)

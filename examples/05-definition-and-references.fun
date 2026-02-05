@@ -19,7 +19,7 @@ let rec fibonacci n =          // ← fibonacci 정의
     if n <= 1
     then n
     else fibonacci (n - 1) + fibonacci (n - 2)
-in                              // fibonacci 에서 Shift+F12 → 3곳 (재귀 호출 포함)
+in                              // fibonacci 에서 Shift+F12 → 5곳 (정의 + 재귀 호출 2 + 사용 2)
 
 let fib10 = fibonacci 10 in   // fibonacci 에서 F12 → 위의 정의로 이동
 let fib20 = fibonacci 20 in   // fibonacci 에서 F12 → 같은 정의로 이동
@@ -41,4 +41,4 @@ let transform = fun value ->   // ← value 정의
     doubled + squared
 in
 
-(area, fib10, first, result, third, transform 5)
+(area, fib10, fib20, first, result, third, transform 5)
