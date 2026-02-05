@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 5 of 5 (VS Code Extension)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-02-05 — Completed 05-01-PLAN.md
+Last activity: 2026-02-05 — Completed 05-02-PLAN.md
 
-Progress: [████████████████████░] 85% (23 of 27 total plans complete)
+Progress: [████████████████████░] 89% (24 of 27 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
-- Average duration: 3.6min
+- Total plans completed: 24
+- Average duration: 3.5min
 - Total execution time: 1.4 hours
 
 **By Phase:**
@@ -31,10 +31,10 @@ Progress: [████████████████████░] 85% 
 | 02-core-navigation | 5 | 32min | 6.4min |
 | 03-completion | 3 | 9min | 3min |
 | 04-advanced-features | 6 | 19min | 3.2min |
-| 05-vs-code-extension | 1 | 2min | 2min |
+| 05-vs-code-extension | 2 | 4min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 04-02 (3min), 04-03 (4min), 04-04 (3min), 04-05 (4min), 05-01 (2min)
+- Last 5 plans: 04-03 (4min), 04-04 (3min), 04-05 (4min), 05-01 (2min), 05-02 (2min)
 - Trend: Consistent 2-4min execution for both implementation and tutorial plans
 
 *Updated after each plan completion*
@@ -101,6 +101,9 @@ Recent decisions affecting current work:
 - Block comment auto-closing (05-01): (* *) added to autoClosingPairs for FunLang syntax
 - Removed curly braces (05-01): FunLang doesn't use {}, removed from brackets, autoClosingPairs, surroundingPairs
 - onEnterRules for comment continuation (05-01): // comments continue on new line automatically
+- Integration test lifecycle pattern (05-02): didOpen -> diagnostics -> hover -> completion -> definition -> references -> rename -> didClose verifies all LSP features work together
+- Graceful degradation tests (05-02): Parse errors still return keywords, type errors integrate with code actions
+- Hover on usage for type inference (05-02): Hovering on variable usage shows inferred types, definition positions may show innermost AST nodes
 
 ### Pending Todos
 
@@ -113,6 +116,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 05-01-PLAN.md (TextMate grammar and snippets)
+Stopped at: Completed 05-02-PLAN.md (LSP integration tests)
 Resume file: None
-Next action: Continue Phase 5 - Plan 05-02 (VS Code extension tutorial) and 05-03 (.vsix packaging)
+Next action: Continue Phase 5 - Plan 05-03 (VS Code extension tutorial) remaining
