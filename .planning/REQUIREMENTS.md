@@ -56,10 +56,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### VS Code Extension
 
-- [ ] **EXT-01**: FunLang 문법 강조 (TextMate grammar)
-- [ ] **EXT-02**: 언어 설정 (주석, 괄호 자동 닫기)
-- [ ] **EXT-03**: 코드 스니펫 (let, match, fun 등)
-- [ ] **EXT-04**: .vsix 파일로 패키징
+- [x] **EXT-01**: FunLang 문법 강조 (TextMate grammar)
+- [x] **EXT-02**: 언어 설정 (주석, 괄호 자동 닫기)
+- [x] **EXT-03**: 코드 스니펫 (let, match, fun 등)
+- [x] **EXT-04**: .vsix 파일로 패키징
 
 ### Testing (Expecto + FsCheck)
 
@@ -72,7 +72,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **TEST-07**: Find References 단위 테스트
 - [ ] **TEST-08**: Rename Symbol 단위 테스트
 - [ ] **TEST-09**: Code Actions 단위 테스트
-- [ ] **TEST-10**: LSP 통합 테스트 (mock client)
+- [x] **TEST-10**: LSP 통합 테스트 (mock client)
 - [ ] **TEST-11**: FsCheck 속성 기반 테스트 (위치 변환, 범위 계산 등)
 
 ### Tutorial
@@ -88,7 +88,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **TUT-09**: Find References 구현 튜토리얼
 - [ ] **TUT-10**: Rename Symbol 구현 튜토리얼
 - [ ] **TUT-11**: Code Actions 구현 튜토리얼
-- [ ] **TUT-12**: VS Code Extension 패키징 튜토리얼
+- [x] **TUT-12**: VS Code Extension 패키징 튜토리얼
 
 ## v2 Requirements
 
@@ -154,10 +154,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RENAME-03 | Phase 4 | Complete |
 | ACTION-01 | Phase 4 | Complete |
 | ACTION-02 | Phase 4 | Complete |
-| EXT-01 | Phase 5 | Pending |
-| EXT-02 | Phase 5 | Pending |
-| EXT-03 | Phase 5 | Pending |
-| EXT-04 | Phase 5 | Pending |
+| EXT-01 | Phase 5 | Complete |
+| EXT-02 | Phase 5 | Complete |
+| EXT-03 | Phase 5 | Complete |
+| EXT-04 | Phase 5 | Complete |
 | TEST-01 | Phase 1 | Complete |
 | TEST-02 | Phase 1 | Complete |
 | TEST-03 | Phase 1 | Complete |
@@ -167,7 +167,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-07 | Phase 4 | Complete |
 | TEST-08 | Phase 4 | Complete |
 | TEST-09 | Phase 4 | Complete |
-| TEST-10 | Phase 5 | Pending |
+| TEST-10 | Phase 5 | Complete |
 | TEST-11 | Phase 1 | Complete |
 | TUT-01 | Phase 1 | Complete |
 | TUT-02 | Phase 1 | Complete |
@@ -180,7 +180,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TUT-09 | Phase 4 | Complete |
 | TUT-10 | Phase 4 | Complete |
 | TUT-11 | Phase 4 | Complete |
-| TUT-12 | Phase 5 | Pending |
+| TUT-12 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 50 total
@@ -189,4 +189,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2025-02-03*
-*Last updated: 2026-02-05 — Phase 4 requirements marked Complete (44/50 complete)*
+*Last updated: 2026-02-05 — All v1 requirements Complete (50/50)*

@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Core Navigation** - Hover and Go to Definition + 튜토리얼
 - [x] **Phase 3: Completion** - Keyword and symbol autocomplete + 튜토리얼
 - [x] **Phase 4: Advanced Features** - Find References, Rename, Code Actions + 튜토리얼
-- [ ] **Phase 5: VS Code Extension** - Extension packaging + 튜토리얼
+- [x] **Phase 5: VS Code Extension** - Extension packaging + 튜토리얼
 
 ## Phase Details
 
@@ -163,11 +163,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 05-01-PLAN.md — TextMate grammar, language configuration, and code snippets (EXT-01, EXT-02, EXT-03)
-- [ ] 05-02-PLAN.md — LSP integration tests (TEST-10)
-- [ ] 05-03-PLAN.md — Extension packaging with production mode and VSIX build (EXT-04)
-- [ ] 05-04-PLAN.md — Verification checkpoint (visual testing)
-- [ ] 05-05-PLAN.md — VS Code Extension packaging tutorial in Korean (TUT-12)
+- [x] 05-01-PLAN.md — TextMate grammar, language configuration, and code snippets (EXT-01, EXT-02, EXT-03)
+- [x] 05-02-PLAN.md — LSP integration tests (TEST-10)
+- [x] 05-03-PLAN.md — Extension packaging with production mode and VSIX build (EXT-04)
+- [x] 05-04-PLAN.md — Verification checkpoint (visual testing)
+- [x] 05-05-PLAN.md — VS Code Extension packaging tutorial in Korean (TUT-12)
 
 ---
 
@@ -182,7 +182,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Core Navigation | 5/5 | Complete | 2026-02-04 |
 | 3. Completion | 3/3 | Complete | 2026-02-05 |
 | 4. Advanced Features | 6/6 | Complete | 2026-02-05 |
-| 5. VS Code Extension | 0/5 | Not started | - |
+| 5. VS Code Extension | 5/5 | Complete | 2026-02-05 |
 
 ---
-*Last updated: 2026-02-05 — Phase 5 planned (5 plans in 4 waves)*
+*Last updated: 2026-02-05 — All phases complete. Milestone ready for audit.*
