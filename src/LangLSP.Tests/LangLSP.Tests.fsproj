@@ -16,6 +16,7 @@
     <Compile Include="ReferencesTests.fs" />
     <Compile Include="RenameTests.fs" />
     <Compile Include="CodeActionsTests.fs" />
+    <Compile Include="IntegrationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
