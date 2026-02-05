@@ -87,18 +87,18 @@ type Diagnostic = {
 // Ast.fs (FunLang 프로젝트)
 type Span = {
     FileName: string
-    StartLine: int      // 1-based (사람이 읽는 방식)
-    StartColumn: int    // 1-based
+    StartLine: int      // 0-based (LexBuffer.FromString 사용 시)
+    StartColumn: int    // 0-based
     EndLine: int
-    EndColumn: int
+    EndColumn: int      // exclusive (마지막 문자 다음 위치)
 }
 ```
 
-**주의:** FunLang의 Span은 **1-based** 인덱싱을 사용하지만, LSP는 **0-based**입니다!
+**참고:** `LexBuffer.FromString`으로 파싱하면 Position이 **0-based**로 생성됩니다. LSP도 0-based이므로 **변환이 필요 없습니다**.
 
 | 인덱싱 | 첫 번째 라인 | 첫 번째 문자 |
 |--------|------------|------------|
-| FunLang Span | 1 | 1 |
+| FunLang Span (LexBuffer.FromString) | 0 | 0 |
 | LSP Position | 0 | 0 |
 
 ### TypeCheck 모듈과의 통합
@@ -123,7 +123,7 @@ let typecheckWithDiagnostic (expr: Expr) : Result<Type, Diagnostic> =
 
 ## 위치 변환: Span → LSP Range
 
-FunLang Span(1-based)을 LSP Range(0-based)로 변환하는 함수가 필요합니다.
+`LexBuffer.FromString`을 사용하면 Span이 이미 0-based이므로, 변환 없이 직접 사용합니다.
 
 ### 변환 로직
 
@@ -134,39 +134,30 @@ module LangLSP.Server.Protocol
 open Ionide.LanguageServerProtocol.Types
 open Ast  // FunLang's Span type
 
-/// Convert FunLang Span (1-based) to LSP Range (0-based)
-/// FunLang: StartLine=1 means first line
-/// LSP: line=0 means first line
-/// Edge case: if span is (0,0), clamp to (0,0) instead of wrapping to uint.MaxValue
+/// Convert FunLang Span to LSP Range
+/// LexBuffer.FromString creates 0-based positions, matching LSP
+/// So no conversion needed
 let spanToLspRange (span: Span) : Range =
-    let clamp x = max 0 (x - 1)
     {
-        Start = { Line = uint32 (clamp span.StartLine); Character = uint32 (clamp span.StartColumn) }
-        End = { Line = uint32 (clamp span.EndLine); Character = uint32 (clamp span.EndColumn) }
+        Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+        End = { Line = uint32 span.EndLine; Character = uint32 span.EndColumn }
     }
 ```
 
 **핵심 포인트:**
-1. **clamp 함수**: `x - 1`을 계산하되, 음수가 되지 않도록 `max 0` 적용
-2. **Edge case 처리**: FunLang이 잘못된 (0,0) Span을 생성하면, `uint.MaxValue`로 wrap되는 대신 (0,0)으로 clamp
+1. `LexBuffer.FromString`이 생성하는 Position은 0-based (LSP와 동일)
+2. 별도의 변환이 필요 없음
+3. FsLexYacc 문서에 1-based라고 되어 있지만, `LexBuffer.FromString`은 실제로 0-based
 
 ### 변환 예시
 
 ```fsharp
-// FunLang Span
-let span = { FileName = "test.fun"; StartLine = 3; StartColumn = 5; EndLine = 3; EndColumn = 10 }
+// FunLang Span (0-based)
+let span = { FileName = "test.fun"; StartLine = 2; StartColumn = 4; EndLine = 2; EndColumn = 9 }
 
-// LSP Range
+// LSP Range (0-based) — 동일한 값
 let range = spanToLspRange span
 // { Start = { Line = 2u; Character = 4u }; End = { Line = 2u; Character = 9u } }
-```
-
-**시각화:**
-
-```
-FunLang (1-based):   Line 3, Column 5-10
-                     ↓
-LSP (0-based):      Line 2, Character 4-9
 ```
 
 ### FunLang Diagnostic → LSP Diagnostic
@@ -239,14 +230,15 @@ let parseFunLang (source: string) (uri: string) : Result<Ast.Expr, Diagnostic> =
             else
                 "Parse error: " + ex.Message
 
-        // Create a span for the error location
-        // If we can't extract position, use (1,1)-(1,1)
+        // Create a span from lexbuf position (0-based)
+        let startPos = lexbuf.StartPos
+        let endPos = lexbuf.EndPos
         let span : Ast.Span = {
             FileName = uri
-            StartLine = 1
-            StartColumn = 1
-            EndLine = 1
-            EndColumn = 1
+            StartLine = startPos.Line
+            StartColumn = startPos.Column
+            EndLine = endPos.Line
+            EndColumn = endPos.Column
         }
 
         let diag: Diagnostic = {
@@ -265,7 +257,7 @@ let parseFunLang (source: string) (uri: string) : Result<Ast.Expr, Diagnostic> =
 
 **핵심 포인트:**
 - **try-catch**: fsyacc 파서는 예외를 던지므로 catch 필요
-- **기본 Span**: 파싱 실패 시 정확한 위치를 알 수 없으므로 (1,1) 사용
+- **lexbuf 위치 사용**: 파싱 실패 시 `lexbuf.StartPos`/`EndPos`에서 에러 위치 추출 (0-based)
 - **Error 반환**: `Result<Ast.Expr, Diagnostic>` 타입으로 파싱 실패 전달
 
 ### 문법 오류 예시
@@ -521,19 +513,19 @@ open FsCheck
 open LangLSP.Server.Protocol
 
 /// Generator for valid Span values
-/// FunLang Span is 1-based, positive, and start <= end
+/// FunLang Span is 0-based (from LexBuffer.FromString), and start <= end
 let validSpanGen : Gen<Ast.Span> =
     gen {
-        let! startLine = Gen.choose(1, 1000)
-        let! startColumn = Gen.choose(1, 200)
-        let! endLine = Gen.choose(startLine, 1000)
+        let! startLine = Gen.choose(0, 999)
+        let! startColumn = Gen.choose(0, 199)
+        let! endLine = Gen.choose(startLine, 999)
         // If on same line, endColumn >= startColumn
         // If on different line, endColumn can be anything
         let! endColumn =
             if endLine = startLine then
                 Gen.choose(startColumn, 200)
             else
-                Gen.choose(1, 200)
+                Gen.choose(0, 200)
 
         let span : Ast.Span = {
             FileName = "test.fun"
@@ -556,14 +548,14 @@ let protocolTests =
 
     testList "Protocol" [
 
-        testPropertyWithConfig fsCheckConfig "spanToLspRange converts to 0-based" <| fun (span: Ast.Span) ->
+        testPropertyWithConfig fsCheckConfig "spanToLspRange preserves 0-based values" <| fun (span: Ast.Span) ->
             let range = spanToLspRange span
-            // LSP is 0-based, FunLang is 1-based
-            // Line numbers should be decremented by 1
-            Expect.equal range.Start.Line (uint32 (max 0 (span.StartLine - 1))) "Start line should be 0-based"
-            Expect.equal range.Start.Character (uint32 (max 0 (span.StartColumn - 1))) "Start char should be 0-based"
-            Expect.equal range.End.Line (uint32 (max 0 (span.EndLine - 1))) "End line should be 0-based"
-            Expect.equal range.End.Character (uint32 (max 0 (span.EndColumn - 1))) "End char should be 0-based"
+            // Both FunLang (LexBuffer.FromString) and LSP are 0-based
+            // Values should be passed through directly
+            Expect.equal range.Start.Line (uint32 span.StartLine) "Start line should match"
+            Expect.equal range.Start.Character (uint32 span.StartColumn) "Start char should match"
+            Expect.equal range.End.Line (uint32 span.EndLine) "End line should match"
+            Expect.equal range.End.Character (uint32 span.EndColumn) "End char should match"
 
         testPropertyWithConfig fsCheckConfig "spanToLspRange preserves line ordering" <| fun (span: Ast.Span) ->
             let range = spanToLspRange span

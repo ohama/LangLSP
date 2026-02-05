@@ -176,7 +176,7 @@ Diagnostics에 `code` 필드를 설정하면, Code Actions에서 진단 종류�
 ```fsharp
 // Diagnostics.fs - 미사용 변수 진단 생성
 {
-    Range = spanToLspRange span
+    Range = findIdentifierRange source name span  // 식별자 이름 위치만 정확히 타겟팅
     Severity = Some DiagnosticSeverity.Warning
     Code = Some (U2.C2 "unused-variable")  // 진단 코드 설정
     Source = Some "funlang"
@@ -214,6 +214,7 @@ Code Actions를 제공하려면, 먼저 **미사용 변수를 감지**하는 진
 module LangLSP.Server.Diagnostics
 
 open LangLSP.Server.References
+open LangLSP.Server.Definition  // findIdentifierRange 사용
 
 /// Find unused let-bound variables in the AST
 /// Returns list of (name, span) for unused variables
@@ -299,7 +300,7 @@ let analyze (uri: string) (source: string) : Diagnostic list =
             unusedVars
             |> List.map (fun (name, span) ->
                 {
-                    Range = spanToLspRange span
+                    Range = findIdentifierRange source name span
                     Severity = Some DiagnosticSeverity.Warning
                     Code = Some (U2.C2 "unused-variable")
                     CodeDescription = None
@@ -865,23 +866,17 @@ let createFormatAction (uri: string) : CodeAction =
 
 ### 1. Range 정확성
 
-**문제:** TextEdit의 Range가 부정확하면 잘못된 위치를 수정합니다.
+**문제:** TextEdit의 Range가 부정확하면 잘못된 위치를 수정합니다. AST Span은 전체 표현식 범위(예: `let x = 42 in x + 1` 전체)이므로, 그대로 사용하면 파일 전체에 노란 밑줄이 그어질 수 있습니다.
 
 ```fsharp
 // ❌ 잘못된 예: 전체 Let 표현식 범위 사용
-let edit = {
-    Range = letExprSpan |> spanToLspRange  // "let x = 1 in x" 전체
-    NewText = "_x"  // 전체를 "_x"로 교체!
-}
+Range = spanToLspRange span  // "let x = 1 in x" 전체에 밑줄!
 
-// ✅ 올바른 예: 변수명만 정확히 타겟팅
-let edit = {
-    Range = diagnostic.Range  // 변수명 "x"만
-    NewText = "_x"
-}
+// ✅ 올바른 예: 식별자 이름만 정확히 타겟팅
+Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 ```
 
-**해결:** Diagnostics에서 정확한 Range를 설정하거나, `findNameInSource`로 이름 위치를 찾습니다.
+**해결:** `Definition.findIdentifierRange`를 사용하여 Span 내에서 식별자 이름의 정확한 위치를 찾습니다. Diagnostics에서 정확한 Range를 설정하면, CodeActions의 TextEdit도 자동으로 정확해집니다.
 
 ### 2. WorkspaceEdit vs Command
 

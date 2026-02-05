@@ -10,10 +10,11 @@
 4. [FunLang의 바인딩 위치](#funlang의-바인딩-위치)
 5. [정의 수집 구현](#정의-수집-구현)
 6. [변수 섀도잉 처리](#변수-섀도잉-처리)
-7. [핸들러 구현](#핸들러-구현)
-8. [Server.fs 통합](#serverfs-통합)
-9. [테스트 작성](#테스트-작성)
-10. [싱글 파일 vs 멀티 파일](#싱글-파일-vs-멀티-파일)
+7. [식별자 위치 정확히 찾기](#식별자-위치-정확히-찾기)
+8. [핸들러 구현](#핸들러-구현)
+9. [Server.fs 통합](#serverfs-통합)
+10. [테스트 작성](#테스트-작성)
+11. [싱글 파일 vs 멀티 파일](#싱글-파일-vs-멀티-파일)
 
 ---
 
@@ -388,6 +389,38 @@ let x = 1 in      (* 정의 1: line 0, col 4 *)
 
 ---
 
+## 식별자 위치 정확히 찾기
+
+`collectDefinitions`가 수집하는 Span은 전체 표현식의 범위입니다 (예: `let x = 42 in x + 1` 전체). Go to Definition에서는 **식별자 이름의 정확한 위치**만 반환해야 합니다.
+
+### findIdentifierRange 함수
+
+```fsharp
+/// Find the exact range of an identifier name in source text near a span
+let findIdentifierRange (text: string) (name: string) (span: Span) : Range =
+    let lines = text.Split('\n')
+    if span.StartLine < lines.Length then
+        let line = lines.[span.StartLine]
+        let idx = line.IndexOf(name, span.StartColumn)
+        if idx >= 0 then
+            { Start = { Line = uint32 span.StartLine; Character = uint32 idx }
+              End = { Line = uint32 span.StartLine; Character = uint32 (idx + name.Length) } }
+        else
+            spanToLspRange span
+    else
+        spanToLspRange span
+```
+
+**핵심 로직:**
+1. Span의 시작 라인에서 해당 이름을 검색
+2. `IndexOf(name, span.StartColumn)`로 Span 시작 위치 이후에서 이름 찾기
+3. 찾으면 이름의 정확한 시작/끝 위치 반환
+4. 못 찾으면 fallback으로 전체 Span 사용
+
+이 함수는 Diagnostics의 미사용 변수 범위에서도 재사용됩니다.
+
+---
+
 ## 핸들러 구현
 
 ### handleDefinition 함수
@@ -424,10 +457,10 @@ let handleDefinition (p: DefinitionParams) : Async<Definition option> =
                         match findDefinitionForVar name ast pos with
                         | None -> return None
                         | Some defSpan ->
-                            // 4. Location 반환
+                            // 4. Location 반환 (식별자 이름 위치만 정확히 타겟팅)
                             let location : Location = {
                                 Uri = uri
-                                Range = spanToLspRange defSpan
+                                Range = findIdentifierRange text name defSpan
                             }
                             return Some (U2.C1 location)
                     | _ ->
@@ -660,7 +693,7 @@ FunLang은 **싱글 파일**만 지원합니다 (모듈 시스템 없음).
 // 항상 같은 파일의 Location 반환
 let location : Location = {
     Uri = uri  // 요청과 동일한 URI
-    Range = spanToLspRange defSpan
+    Range = findIdentifierRange text name defSpan
 }
 return Some (U2.C1 location)  // 단일 위치만 지원
 ```
@@ -754,7 +787,7 @@ Go to Definition 구현의 핵심:
    - 위치 기반 필터링 + 정렬
 
 3. **위치 변환** - FunLang Span → LSP Location
-   - `spanToLspRange` 재사용
+   - `findIdentifierRange`로 식별자 이름 위치만 정확히 반환
 
 4. **Var 노드만 처리** - 변수 참조에서만 동작
    - 다른 노드는 None 반환

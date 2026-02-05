@@ -67,7 +67,7 @@ LangLSP/
 │       ├── Lexer.fs         # 어휘 분석
 │       ├── Parser.fs        # 구문 분석
 │       └── TypeChecker.fs   # 타입 체커
-├── docs/tutorial/           # 이 튜토리얼 문서들
+├── documentation/tutorial/           # 이 튜토리얼 문서들
 └── LangLSP.sln              # 솔루션 파일
 ```
 

@@ -368,9 +368,10 @@ let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
     | Let(_, _, body, _) ->
         // 이 바인딩이 아님, body에서 계속 검색
         findVarTypeInAst varName body
-    | LetRec(name, param, fnBody, inExpr, _) when name = varName ->
-        // 재귀 함수 - 전체 let rec 타입 체크
-        match TypeCheck.typecheck ast with
+    | LetRec(name, param, fnBody, inExpr, span) when name = varName ->
+        // 재귀 함수 - "let rec f x = body in f"를 합성하여 함수 타입 추론
+        let synthExpr = LetRec(name, param, fnBody, Var(name, span), span)
+        match TypeCheck.typecheck synthExpr with
         | Ok ty -> Some ty
         | Error _ -> None
     | LetRec(_, _, _, inExpr, _) ->
@@ -418,26 +419,33 @@ let handleHover (p: HoverParams) : Async<Hover option> =
                     let lexbuf = FSharp.Text.Lexing.LexBuffer<char>.FromString(text)
                     let ast = Parser.start Lexer.tokenize lexbuf
 
-                    // 전체 AST 타입 체크 (유효성 검증)
-                    match TypeCheck.typecheck ast with
-                    | Error _ -> return None
-                    | Ok wholeType ->
-                        // 위치에서 노드 찾기
-                        match findNodeAtPosition pos ast with
-                        | None -> return None
-                        | Some node ->
-                            let nodeType =
-                                match node with
-                                | Var(name, _) ->
-                                    // 변수는 바인딩 사이트에서 타입 찾기
-                                    match findVarTypeInAst name ast with
-                                    | Some ty -> Some ty
-                                    | None -> Some wholeType  // 결과 위치면 전체 타입
-                                | _ -> getNodeType node
+                    // 위치에서 노드 찾기 (전체 typecheck 없이 진행)
+                    match findNodeAtPosition pos ast with
+                    | None -> return None
+                    | Some node ->
+                        let nodeType =
+                            match node with
+                            | Var(name, _) ->
+                                // 변수는 바인딩 사이트에서 타입 찾기
+                                match findVarTypeInAst name ast with
+                                | Some ty -> Some ty
+                                | None -> None
+                            | Let(name, value, _, _) ->
+                                // let 바인딩 이름 위 — 바인딩 값의 타입
+                                match TypeCheck.typecheck value with
+                                | Ok ty -> Some ty
+                                | Error _ -> None
+                            | LetRec(name, param, fnBody, _, span) ->
+                                // let rec 바인딩 이름 위 — 함수 타입 추론
+                                let synthExpr = LetRec(name, param, fnBody, Var(name, span), span)
+                                match TypeCheck.typecheck synthExpr with
+                                | Ok ty -> Some ty
+                                | Error _ -> None
+                            | _ -> getNodeType node
 
-                            match nodeType with
-                            | None -> return None
-                            | Some ty -> return Some (createTypeHover ty (spanOf node))
+                        match nodeType with
+                        | None -> return None
+                        | Some ty -> return Some (createTypeHover ty (spanOf node))
                 with _ ->
                     return None
     }
@@ -609,7 +617,23 @@ match getWordAtPosition text pos with
     // AST 조회
 ```
 
-### 2. 변수 타입이 표시되지 않음
+### 2. 복잡한 파일에서 hover가 전혀 작동하지 않음
+
+**증상:** 간단한 파일은 되지만, 큰 파일에서는 모든 hover가 None
+
+**원인:** 전체 AST `TypeCheck.typecheck ast`를 가드로 사용하면, 파일에 타입 에러가 있거나 타입 추론이 복잡한 경우 전체 hover가 차단됨
+
+**해결:** 전체 typecheck 가드를 제거하고, 개별 노드별로 독립적으로 타입 추론
+
+### 3. Let/LetRec 바인딩 이름에서 hover가 안됨
+
+**증상:** `let count = 1 in count`에서 뒤의 `count`는 되지만 앞의 `count`는 안됨
+
+**원인:** `findNodeAtPosition`이 바인딩 이름 위치에서 `Let` 노드를 반환하지만, handler가 `Let` 케이스를 처리하지 않음
+
+**해결:** `Let`은 `TypeCheck.typecheck value`, `LetRec`은 합성 표현식으로 함수 타입 추론
+
+### 4. 변수 타입이 표시되지 않음
 
 **증상:** `42` 위에서는 `int` 표시되지만, 변수 `x` 위에서는 None
 
@@ -617,7 +641,7 @@ match getWordAtPosition text pos with
 
 **해결:** `findVarTypeInAst`로 바인딩 사이트에서 타입 추론
 
-### 3. 좌표가 어긋남
+### 5. 좌표가 어긋남
 
 **증상:** 클릭한 위치와 다른 노드의 정보가 표시됨
 
