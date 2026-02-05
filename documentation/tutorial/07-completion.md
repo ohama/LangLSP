@@ -105,6 +105,15 @@ let x = 42 in l█
 - **아이콘**: `CompletionItemKind`에 따라 다른 아이콘 표시
 - **타입 정보**: `detail` 필드에 타입 표시
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/completion(uri, position)
+    Note over S: 키워드 + 스코프 내 심볼 수집
+    S->>C: CompletionList(isIncomplete, items[])
+```
+
 ---
 
 ## 구현 전략

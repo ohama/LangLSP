@@ -28,6 +28,19 @@ LSP 서버는 별도 프로세스로 실행되므로, 에디터가 파일을 읽
 | 파일 수정 | `textDocument/didChange` | 파일이 수정될 때마다 변경 사항 전송 |
 | 파일 닫기 | `textDocument/didClose` | 에디터에서 파일을 닫을 때 알림 |
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/didOpen(uri, text)
+    Note over S: 문서 저장소에 전체 텍스트 저장
+    C->>S: textDocument/didChange(uri, contentChanges[])
+    Note over S: 변경 범위만 반영 (Incremental)
+    C->>S: textDocument/didChange(uri, contentChanges[])
+    C->>S: textDocument/didClose(uri)
+    Note over S: 문서 저장소에서 제거
+```
+
 ### 문서 동기화가 필요한 LSP 기능
 
 문서 동기화는 거의 모든 LSP 기능의 전제조건입니다.

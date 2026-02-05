@@ -46,6 +46,16 @@ test.fun
 3. 서버가 해당 심볼의 **모든 사용 위치** 반환 (배열)
 4. 클라이언트가 결과 패널에 위치 목록 표시
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/references(uri, position, includeDeclaration)
+    Note over S: 정의 + 모든 사용 위치 수집
+    S->>C: Location[](정의, 참조1, 참조2, ...)
+    Note over C: 참조 목록 패널에 표시
+```
+
 ### 활용 사례
 
 | 시나리오 | 사용 예시 |

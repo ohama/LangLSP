@@ -55,6 +55,23 @@ VS Code가 Extension을 로드하는 과정입니다:
 4. **`main` 진입점 실행**: `extension.ts`의 `activate()` 함수 호출
 5. **명령적 기능 시작**: LSP 클라이언트 시작, 서버 프로세스 생성
 
+```mermaid
+sequenceDiagram
+    participant V as VS Code
+    participant E as Extension
+    participant S as LangLSP Server
+    V->>E: activate()
+    E->>S: 프로세스 시작 (stdin/stdout)
+    E->>S: initialize(processId, capabilities)
+    S->>E: InitializeResult(serverCapabilities)
+    E->>S: initialized()
+    Note over V,S: LSP 세션 활성화
+    V->>E: deactivate()
+    E->>S: shutdown()
+    S->>E: shutdown response
+    E->>S: exit()
+```
+
 VS Code 1.74+에서는 `activationEvents`를 빈 배열(`[]`)로 두면, `contributes.languages`에 등록된 언어의 파일을 열 때 자동으로 활성화됩니다.
 
 ### package.json의 핵심 필드

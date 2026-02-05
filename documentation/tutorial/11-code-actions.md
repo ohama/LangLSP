@@ -48,6 +48,18 @@ test.fun
 3. 클릭하면 Code Action 목록 표시
 4. 선택하면 자동으로 코드 수정
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    S-->>C: textDocument/publishDiagnostics(diagnostics[])
+    Note over C: 💡 표시
+    C->>S: textDocument/codeAction(uri, range, diagnostics[])
+    Note over S: 진단 분석 → 수정 제안 생성
+    S->>C: CodeAction[](title, edit, kind)
+    Note over C: 사용자가 액션 선택 → WorkspaceEdit 적용
+```
+
 ### Code Action의 종류
 
 LSP 스펙에서 정의한 `CodeActionKind`:

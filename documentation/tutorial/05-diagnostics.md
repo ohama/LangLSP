@@ -61,6 +61,18 @@ let publishParams : PublishDiagnosticsParams = {
 lspClient.TextDocumentPublishDiagnostics publishParams
 ```
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/didOpen(uri, text)
+    Note over S: 파싱 → 타입 검사
+    S-->>C: textDocument/publishDiagnostics(uri, diagnostics[])
+    C->>S: textDocument/didChange(uri, changes[])
+    Note over S: 재파싱 → 재검사
+    S-->>C: textDocument/publishDiagnostics(uri, diagnostics[])
+```
+
 ---
 
 ## FunLang의 Diagnostic 시스템

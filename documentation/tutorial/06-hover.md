@@ -66,6 +66,15 @@ let double = fun x -> x * 2 in double 5
 - **팝업**: `contents`의 내용이 툴팁으로 표시
 - **Markdown 지원**: 코드 블록, 볼드, 이탤릭 등 포맷팅 가능
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/hover(uri, position)
+    Note over S: AST에서 위치 조회 → 타입 정보 추출
+    S->>C: Hover(contents, range)
+```
+
 ---
 
 ## 구현 전략

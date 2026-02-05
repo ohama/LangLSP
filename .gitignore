@@ -10,6 +10,3 @@ client/node_modules/
 
 # Test files
 client/test.fun
-
-# mdBook build output (managed by CI)
-docs/

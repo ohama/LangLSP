@@ -2,6 +2,18 @@
 
 이 문서는 F# LSP 서버 프로젝트를 처음부터 만드는 방법을 단계별로 설명합니다. 이 튜토리얼을 따라하면 FunLang LSP 서버의 전체 프로젝트 구조를 생성할 수 있습니다.
 
+### LSP Initialize 핸드셰이크
+
+```mermaid
+sequenceDiagram
+    participant C as Client (VS Code)
+    participant S as Server (LangLSP)
+    C->>S: initialize(processId, capabilities, rootUri)
+    S->>C: InitializeResult(serverCapabilities)
+    C->>S: initialized()
+    Note over C,S: 서버 준비 완료, 문서 이벤트 수신 대기
+```
+
 ## 목차
 
 1. [사전 요구사항](#사전-요구사항)

@@ -46,6 +46,16 @@ test.fun
 3. 서버가 해당 변수의 **정의 위치** 반환
 4. 클라이언트가 해당 위치로 커서 이동
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/definition(uri, position)
+    Note over S: 심볼 테이블에서 바인딩 위치 조회
+    S->>C: Location(uri, range)
+    Note over C: 정의 위치로 이동
+```
+
 ---
 
 ## LSP 프로토콜

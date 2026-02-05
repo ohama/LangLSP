@@ -51,6 +51,19 @@ test.fun
 6. 서버가 `WorkspaceEdit` 반환 (모든 변경사항)
 7. 클라이언트가 파일 업데이트 적용
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: textDocument/prepareRename(uri, position)
+    S->>C: {range, placeholder}
+    Note over C: 사용자에게 새 이름 입력 요청
+    C->>S: textDocument/rename(uri, position, newName)
+    Note over S: 모든 참조 위치 수집 → TextEdit 생성
+    S->>C: WorkspaceEdit(changes: {uri: TextEdit[]})
+    Note over C: 모든 위치 일괄 변경
+```
+
 ---
 
 ## LSP 프로토콜
