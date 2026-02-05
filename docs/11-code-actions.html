@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,8 +175,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="code-actions-구현하기"><a class="header" href="#code-actions-구현하기">Code Actions 구현하기</a></h1>
-<p>코드 에디터에서 전구 아이콘(💡)을 본 적이 있나요? 문제가 있는 코드에 커서를 놓으면 나타나는 “빠른 수정(Quick Fix)” 메뉴가 바로 Code Actions입니다.</p>
-<p>이 튜토리얼에서는 FunLang LSP에 Code Actions 기능을 구현하여, 사용자가 진단(Diagnostics)에 대한 자동 수정을 받을 수 있도록 만듭니다.</p>
+<p>코드 에디터에서 전구 아이콘(💡)을 본 적이 있는가? 문제가 있는 코드에 커서를 놓으면 나타나는 “빠른 수정(Quick Fix)” 메뉴가 바로 Code Actions이다.</p>
+<p>이 튜토리얼에서는 FunLang LSP에 Code Actions 기능을 구현하여, 사용자가 진단(Diagnostics)에 대한 자동 수정을 받을 수 있도록 만든다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#code-actions이란">Code Actions이란</a></li>
@@ -192,7 +192,7 @@
 </ol>
 <hr>
 <h2 id="code-actions이란"><a class="header" href="#code-actions이란">Code Actions이란</a></h2>
-<p><strong>Code Actions</strong>는 LSP에서 제공하는 “코드 수정 제안” 기능입니다.</p>
+<p><strong>Code Actions</strong>는 LSP에서 제공하는 “코드 수정 제안” 기능이다.</p>
 <h3 id="사용-사례"><a class="header" href="#사용-사례">사용 사례</a></h3>
 <div class="table-wrapper">
 <table>
@@ -250,11 +250,11 @@
 </tbody>
 </table>
 </div>
-<p>우리는 <code>quickfix</code>를 중점적으로 구현합니다.</p>
+<p>우리는 <code>quickfix</code>를 중점적으로 구현한다.</p>
 <hr>
 <h2 id="lsp-프로토콜"><a class="header" href="#lsp-프로토콜">LSP 프로토콜</a></h2>
 <h3 id="textdocumentcodeaction-요청"><a class="header" href="#textdocumentcodeaction-요청">textDocument/codeAction 요청</a></h3>
-<p>클라이언트가 서버에 Code Actions를 요청하는 구조입니다.</p>
+<p>클라이언트가 서버에 Code Actions를 요청하는 구조이다.</p>
 <pre><code class="language-typescript">interface CodeActionParams {
     textDocument: TextDocumentIdentifier  // 문서 URI
     range: Range                          // 선택 영역 (또는 커서 위치)
@@ -273,7 +273,7 @@ interface CodeActionContext {
 <li>서버는 이 진단 정보를 기반으로 적절한 수정 제안</li>
 </ul>
 <h3 id="codeaction-응답"><a class="header" href="#codeaction-응답">CodeAction 응답</a></h3>
-<p>서버가 반환하는 액션 목록입니다.</p>
+<p>서버가 반환하는 액션 목록이다.</p>
 <pre><code class="language-typescript">interface CodeAction {
     title: string                     // 사용자에게 표시할 제목
     kind?: CodeActionKind             // 액션 종류
@@ -285,7 +285,7 @@ interface CodeActionContext {
 }
 </code></pre>
 <h3 id="workspaceedit-구조"><a class="header" href="#workspaceedit-구조">WorkspaceEdit 구조</a></h3>
-<p>코드 수정을 표현하는 구조입니다.</p>
+<p>코드 수정을 표현하는 구조이다.</p>
 <pre><code class="language-typescript">interface WorkspaceEdit {
     changes?: { [uri: string]: TextEdit[] }  // URI별 편집 목록
     documentChanges?: TextDocumentEdit[]     // 문서 변경 (순서 보장)
@@ -312,7 +312,7 @@ interface TextEdit {
 </code></pre>
 <hr>
 <h2 id="diagnostics와의-관계"><a class="header" href="#diagnostics와의-관계">Diagnostics와의 관계</a></h2>
-<p>Code Actions는 <strong>Diagnostics와 긴밀히 연결</strong>되어 있습니다.</p>
+<p>Code Actions는 <strong>Diagnostics와 긴밀히 연결</strong>되어 있다.</p>
 <h3 id="전체-흐름"><a class="header" href="#전체-흐름">전체 흐름</a></h3>
 <pre><code>1. 사용자가 코드 입력
    ↓
@@ -335,7 +335,7 @@ interface TextEdit {
 10. 서버가 편집 적용 확인
 </code></pre>
 <h3 id="진단-코드diagnostic-code-활용"><a class="header" href="#진단-코드diagnostic-code-활용">진단 코드(Diagnostic Code) 활용</a></h3>
-<p>Diagnostics에 <code>code</code> 필드를 설정하면, Code Actions에서 진단 종류를 구분할 수 있습니다.</p>
+<p>Diagnostics에 <code>code</code> 필드를 설정하면, Code Actions에서 진단 종류를 구분할 수 있다.</p>
 <pre><code class="language-fsharp">// Diagnostics.fs - 미사용 변수 진단 생성
 {
     Range = findIdentifierRange source name span  // 식별자 이름 위치만 정확히 타겟팅
@@ -362,7 +362,7 @@ match diag.Code with
 </code></pre>
 <hr>
 <h2 id="미사용-변수-감지-구현"><a class="header" href="#미사용-변수-감지-구현">미사용 변수 감지 구현</a></h2>
-<p>Code Actions를 제공하려면, 먼저 <strong>미사용 변수를 감지</strong>하는 진단이 필요합니다.</p>
+<p>Code Actions를 제공하려면, 먼저 <strong>미사용 변수를 감지</strong>하는 진단이 필요하다.</p>
 <h3 id="findunusedvariables-함수"><a class="header" href="#findunusedvariables-함수">findUnusedVariables 함수</a></h3>
 <pre><code class="language-fsharp">// Diagnostics.fs
 module LangLSP.Server.Diagnostics
@@ -430,7 +430,7 @@ let findUnusedVariables (ast: Ast.Expr) : (string * Ast.Span) list =
 <li><strong>Span 수집</strong>: 미사용 변수의 위치 저장</li>
 </ol>
 <h3 id="analyze-함수-확장"><a class="header" href="#analyze-함수-확장">analyze 함수 확장</a></h3>
-<p>기존 <code>analyze</code> 함수에 미사용 변수 검사를 추가합니다.</p>
+<p>기존 <code>analyze</code> 함수에 미사용 변수 검사를 추가한다.</p>
 <pre><code class="language-fsharp">/// Analyze document and return all diagnostics
 /// Returns list of diagnostics (empty if no errors)
 let analyze (uri: string) (source: string) : Diagnostic list =
@@ -473,7 +473,7 @@ let analyze (uri: string) (source: string) : Diagnostic list =
 </ul>
 <hr>
 <h2 id="quickfix-codeaction-생성"><a class="header" href="#quickfix-codeaction-생성">QuickFix CodeAction 생성</a></h2>
-<p>미사용 변수 진단에 대한 자동 수정 액션을 생성합니다.</p>
+<p>미사용 변수 진단에 대한 자동 수정 액션을 생성한다.</p>
 <h3 id="createprefixunderscoreaction-함수"><a class="header" href="#createprefixunderscoreaction-함수">createPrefixUnderscoreAction 함수</a></h3>
 <pre><code class="language-fsharp">// CodeActions.fs
 module LangLSP.Server.CodeActions
@@ -535,7 +535,7 @@ let createWorkspaceEdit (uri: string) (edits: TextEdit[]) : WorkspaceEdit =
 </code></pre>
 <p><strong>간단한 헬퍼로 코드 가독성 향상.</strong></p>
 <h3 id="createtypeinfoaction-함수"><a class="header" href="#createtypeinfoaction-함수">createTypeInfoAction 함수</a></h3>
-<p>타입 오류에 대한 <strong>정보성 액션</strong>(편집 없음)도 추가할 수 있습니다.</p>
+<p>타입 오류에 대한 <strong>정보성 액션</strong>(편집 없음)도 추가할 수 있다.</p>
 <pre><code class="language-fsharp">/// Create informational action showing expected type for type errors
 let createTypeInfoAction (diagnostic: Diagnostic) : CodeAction =
     // Extract expected type from diagnostic message if present
@@ -562,7 +562,7 @@ let createTypeInfoAction (diagnostic: Diagnostic) : CodeAction =
 <p><strong>Edit = None</strong>: 코드 변경 없이 정보만 제공하는 액션.</p>
 <hr>
 <h2 id="handlecodeaction-구현"><a class="header" href="#handlecodeaction-구현">handleCodeAction 구현</a></h2>
-<p><code>textDocument/codeAction</code> 요청을 처리하는 핸들러입니다.</p>
+<p><code>textDocument/codeAction</code> 요청을 처리하는 핸들러이다.</p>
 <h3 id="전체-구현"><a class="header" href="#전체-구현">전체 구현</a></h3>
 <pre><code class="language-fsharp">/// Handle textDocument/codeAction request
 /// Returns code actions (quickfixes) for diagnostics at cursor position
@@ -609,7 +609,7 @@ let handleCodeAction (p: CodeActionParams) : Async&lt;CodeAction[] option&gt; =
 <li><strong>액션 배열 반환</strong>: 여러 진단에 대한 액션 모두 반환</li>
 </ol>
 <h3 id="u2-타입-처리"><a class="header" href="#u2-타입-처리">U2 타입 처리</a></h3>
-<p>Ionide LSP 라이브러리는 <code>Code</code> 필드를 <code>U2&lt;int, string&gt;</code> 타입으로 정의합니다.</p>
+<p>Ionide LSP 라이브러리는 <code>Code</code> 필드를 <code>U2&lt;int, string&gt;</code> 타입으로 정의한다.</p>
 <pre><code class="language-fsharp">// Ionide 타입 정의
 type Diagnostic = {
     Code: U2&lt;int, string&gt; option
@@ -621,10 +621,10 @@ type Diagnostic = {
 <li><code>U2.C1 n</code>: int 값 (예: <code>123</code>)</li>
 <li><code>U2.C2 s</code>: string 값 (예: <code>"unused-variable"</code>)</li>
 </ul>
-<p>우리는 string 코드를 사용하므로 <code>U2.C2</code> 케이스를 매칭합니다.</p>
+<p>우리는 string 코드를 사용하므로 <code>U2.C2</code> 케이스를 매칭한다.</p>
 <hr>
 <h2 id="serverfs-통합"><a class="header" href="#serverfs-통합">Server.fs 통합</a></h2>
-<p>LSP 서버에 Code Actions 핸들러를 등록합니다.</p>
+<p>LSP 서버에 Code Actions 핸들러를 등록한다.</p>
 <h3 id="서버-초기화-시-capability-선언"><a class="header" href="#서버-초기화-시-capability-선언">서버 초기화 시 Capability 선언</a></h3>
 <pre><code class="language-fsharp">// Server.fs - initialize 함수
 let initialize (p: InitializeParams) : Async&lt;InitializeResult&gt; =
@@ -682,7 +682,7 @@ let main argv =
 <p><strong>중요:</strong> <code>CodeAction[] option</code> 반환 타입 유지 (None이면 액션 없음).</p>
 <hr>
 <h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
-<p>Expecto를 사용하여 Code Actions 기능을 테스트합니다.</p>
+<p>Expecto를 사용하여 Code Actions 기능을 테스트한다.</p>
 <h3 id="기본-테스트-구조"><a class="header" href="#기본-테스트-구조">기본 테스트 구조</a></h3>
 <pre><code class="language-fsharp">// CodeActionsTests.fs
 module LangLSP.Tests.CodeActionsTests
@@ -860,7 +860,7 @@ let codeActionsTests =
 </code></pre>
 <hr>
 <h2 id="확장-가능성"><a class="header" href="#확장-가능성">확장 가능성</a></h2>
-<p>Code Actions 시스템은 매우 확장 가능합니다. 다음과 같은 액션을 추가할 수 있습니다:</p>
+<p>Code Actions 시스템은 매우 확장 가능하다. 다음과 같은 액션을 추가할 수 있다:</p>
 <h3 id="1-refactoring-actions"><a class="header" href="#1-refactoring-actions">1. Refactoring Actions</a></h3>
 <pre><code class="language-fsharp">/// Extract expression to variable
 let createExtractVariableAction (range: Range) (uri: string) : CodeAction =
@@ -923,7 +923,7 @@ let createOrganizeImportsAction (uri: string) : CodeAction =
     }
 </code></pre>
 <h3 id="5-command-based-actions"><a class="header" href="#5-command-based-actions">5. Command-based Actions</a></h3>
-<p>Edit 대신 Command를 사용하면 복잡한 다단계 작업이 가능합니다.</p>
+<p>Edit 대신 Command를 사용하면 복잡한 다단계 작업이 가능하다.</p>
 <pre><code class="language-fsharp">/// Run auto-formatter
 let createFormatAction (uri: string) : CodeAction =
     {
@@ -944,14 +944,14 @@ let createFormatAction (uri: string) : CodeAction =
 <hr>
 <h2 id="주의사항"><a class="header" href="#주의사항">주의사항</a></h2>
 <h3 id="1-range-정확성"><a class="header" href="#1-range-정확성">1. Range 정확성</a></h3>
-<p><strong>문제:</strong> TextEdit의 Range가 부정확하면 잘못된 위치를 수정합니다. AST Span은 전체 표현식 범위(예: <code>let x = 42 in x + 1</code> 전체)이므로, 그대로 사용하면 파일 전체에 노란 밑줄이 그어질 수 있습니다.</p>
+<p><strong>문제:</strong> TextEdit의 Range가 부정확하면 잘못된 위치를 수정한다. AST Span은 전체 표현식 범위(예: <code>let x = 42 in x + 1</code> 전체)이므로, 그대로 사용하면 파일 전체에 노란 밑줄이 그어질 수 있다.</p>
 <pre><code class="language-fsharp">// ❌ 잘못된 예: 전체 Let 표현식 범위 사용
 Range = spanToLspRange span  // "let x = 1 in x" 전체에 밑줄!
 
 // ✅ 올바른 예: 식별자 이름만 정확히 타겟팅
 Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 </code></pre>
-<p><strong>해결:</strong> <code>Definition.findIdentifierRange</code>를 사용하여 Span 내에서 식별자 이름의 정확한 위치를 찾습니다. Diagnostics에서 정확한 Range를 설정하면, CodeActions의 TextEdit도 자동으로 정확해집니다.</p>
+<p><strong>해결:</strong> <code>Definition.findIdentifierRange</code>를 사용하여 Span 내에서 식별자 이름의 정확한 위치를 찾는다. Diagnostics에서 정확한 Range를 설정하면, CodeActions의 TextEdit도 자동으로 정확해진다.</p>
 <h3 id="2-workspaceedit-vs-command"><a class="header" href="#2-workspaceedit-vs-command">2. WorkspaceEdit vs Command</a></h3>
 <p><strong>WorkspaceEdit</strong>: 단순 텍스트 교체에 적합</p>
 <pre><code class="language-fsharp">{ Edit = Some workspaceEdit; Command = None }
@@ -959,7 +959,7 @@ Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 <p><strong>Command</strong>: 복잡한 로직 필요 시 사용</p>
 <pre><code class="language-fsharp">{ Edit = None; Command = Some { Command = "funlang.customAction"; Arguments = ... } }
 </code></pre>
-<p><strong>주의:</strong> Command 사용 시 클라이언트가 해당 명령을 등록해야 합니다.</p>
+<p><strong>주의:</strong> Command 사용 시 클라이언트가 해당 명령을 등록해야 한다.</p>
 <h3 id="3-ispreferred-사용"><a class="header" href="#3-ispreferred-사용">3. IsPreferred 사용</a></h3>
 <pre><code class="language-fsharp">{
     Title = "Prefix with underscore"
@@ -969,7 +969,7 @@ Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
 </code></pre>
 <p>여러 액션이 있을 때, 가장 권장되는 액션에만 <code>IsPreferred = true</code> 설정.</p>
 <h3 id="4-multiple-diagnostics"><a class="header" href="#4-multiple-diagnostics">4. Multiple Diagnostics</a></h3>
-<p>같은 위치에 여러 진단이 있을 수 있습니다.</p>
+<p>같은 위치에 여러 진단이 있을 수 있다.</p>
 <pre><code class="language-fsharp">let handleCodeAction (p: CodeActionParams) : Async&lt;CodeAction[] option&gt; =
     async {
         let actions = ResizeArray&lt;CodeAction&gt;()
@@ -987,7 +987,7 @@ Range = findIdentifierRange source name span  // 변수명 "x"만 밑줄
     }
 </code></pre>
 <h3 id="5-진단-코드-일관성"><a class="header" href="#5-진단-코드-일관성">5. 진단 코드 일관성</a></h3>
-<p>Diagnostics와 CodeActions에서 같은 코드를 사용해야 합니다.</p>
+<p>Diagnostics와 CodeActions에서 같은 코드를 사용해야 한다.</p>
 <pre><code class="language-fsharp">// Diagnostics.fs
 Code = Some (U2.C2 "unused-variable")
 
@@ -1023,7 +1023,7 @@ return Some [||]
 <p>LSP 스펙에서는 액션이 없으면 <code>null</code> (F#에서 None) 반환 권장.</p>
 <hr>
 <h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
-<p>Code Actions 구현이 완료되었습니다! 이제 사용자는:</p>
+<p>Code Actions 구현이 완료되었다! 이제 사용자는:</p>
 <ol>
 <li><strong>자동 수정</strong>: 미사용 변수를 클릭 한 번으로 수정</li>
 <li><strong>타입 힌트</strong>: 타입 오류에 대한 상세 정보 확인</li>

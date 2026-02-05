@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,8 +175,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="자동-완성completion-구현하기"><a class="header" href="#자동-완성completion-구현하기">자동 완성(Completion) 구현하기</a></h1>
-<p>자동 완성은 사용자가 코드를 입력할 때 키워드, 변수, 함수 등의 후보를 제안하는 LSP의 핵심 기능입니다. 코드 작성 속도를 높이고 오타를 줄이며, 사용 가능한 심볼을 쉽게 발견할 수 있게 해줍니다.</p>
-<p>이 튜토리얼에서는 FunLang LSP에 Completion 기능을 구현하는 방법을 배웁니다.</p>
+<p>자동 완성은 사용자가 코드를 입력할 때 키워드, 변수, 함수 등의 후보를 제안하는 LSP의 핵심 기능이다. 코드 작성 속도를 높이고 오타를 줄이며, 사용 가능한 심볼을 쉽게 발견할 수 있게 해준다.</p>
+<p>이 튜토리얼에서는 FunLang LSP에 Completion 기능을 구현하는 방법을 배운다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#textdocumentcompletion-프로토콜">textDocument/completion 프로토콜</a></li>
@@ -191,7 +191,7 @@
 <hr>
 <h2 id="textdocumentcompletion-프로토콜"><a class="header" href="#textdocumentcompletion-프로토콜">textDocument/completion 프로토콜</a></h2>
 <h3 id="요청-구조"><a class="header" href="#요청-구조">요청 구조</a></h3>
-<p>클라이언트(에디터)가 자동 완성을 요청할 때 사용하는 구조입니다.</p>
+<p>클라이언트(에디터)가 자동 완성을 요청할 때 사용하는 구조이다.</p>
 <pre><code class="language-typescript">interface CompletionParams {
     textDocument: TextDocumentIdentifier  // 문서 URI
     position: Position                     // 커서 위치 (0-based)
@@ -209,7 +209,7 @@ interface CompletionContext {
 }
 </code></pre>
 <h3 id="응답-구조"><a class="header" href="#응답-구조">응답 구조</a></h3>
-<p>서버가 반환하는 완성 후보 목록입니다.</p>
+<p>서버가 반환하는 완성 후보 목록이다.</p>
 <pre><code class="language-typescript">interface CompletionList {
     isIncomplete: boolean      // 추가 후보가 있는지 (스트리밍용)
     items: CompletionItem[]    // 완성 후보들
@@ -226,7 +226,7 @@ interface CompletionItem {
 }
 </code></pre>
 <h3 id="completionitemkind-열거형"><a class="header" href="#completionitemkind-열거형">CompletionItemKind 열거형</a></h3>
-<p>완성 항목의 종류를 나타내며, VS Code는 각 종류마다 다른 아이콘을 표시합니다.</p>
+<p>완성 항목의 종류를 나타내며, VS Code는 각 종류마다 다른 아이콘을 표시한다.</p>
 <pre><code class="language-fsharp">type CompletionItemKind =
     | Text = 1
     | Method = 2
@@ -272,7 +272,7 @@ let x = 42 in l█
 
 <hr>
 <h2 id="구현-전략"><a class="header" href="#구현-전략">구현 전략</a></h2>
-<p>Completion 기능은 두 가지 소스에서 완성 후보를 제공합니다:</p>
+<p>Completion 기능은 두 가지 소스에서 완성 후보를 제공한다:</p>
 <ol>
 <li><strong>키워드 완성</strong>: FunLang의 키워드 목록 (let, in, if, then, else 등)</li>
 <li><strong>스코프 기반 심볼 완성</strong>: 현재 커서 위치에서 접근 가능한 변수/함수</li>
@@ -305,7 +305,7 @@ AST 파싱 시도
                    CompletionList 반환
 </code></pre>
 <h3 id="기존-인프라-재사용"><a class="header" href="#기존-인프라-재사용">기존 인프라 재사용</a></h3>
-<p>Phase 2에서 구현한 모듈들을 적극 활용합니다:</p>
+<p>Phase 2에서 구현한 모듈들을 적극 활용한다:</p>
 <ul>
 <li>
 <p><strong>Definition.collectDefinitions</strong>: 모든 변수/함수 정의 위치 수집</p>
@@ -323,7 +323,7 @@ AST 파싱 시도
 </li>
 </ul>
 <h3 id="클라이언트-필터링-위임"><a class="header" href="#클라이언트-필터링-위임">클라이언트 필터링 위임</a></h3>
-<p><strong>중요한 설계 결정:</strong> 서버는 모든 후보를 반환하고, 클라이언트가 필터링합니다.</p>
+<p><strong>중요한 설계 결정:</strong> 서버는 모든 후보를 반환하고, 클라이언트가 필터링한다.</p>
 <pre><code class="language-fsharp">// ❌ 서버에서 prefix 필터링 (권장하지 않음)
 let symbols = getSymbolsInScope ast pos
               |&gt; List.filter (fun (name, _) -&gt; name.StartsWith "l")
@@ -339,7 +339,7 @@ let symbols = getSymbolsInScope ast pos  // 모든 심볼
 <hr>
 <h2 id="키워드-완성"><a class="header" href="#키워드-완성">키워드 완성</a></h2>
 <h3 id="funlang-키워드-목록"><a class="header" href="#funlang-키워드-목록">FunLang 키워드 목록</a></h3>
-<p>FunLang의 예약어를 정적 리스트로 정의합니다.</p>
+<p>FunLang의 예약어를 정적 리스트로 정의한다.</p>
 <pre><code class="language-fsharp">// Completion.fs
 module LangLSP.Server.Completion
 
@@ -408,7 +408,7 @@ let getKeywordCompletions () : CompletionItem list =
 <hr>
 <h2 id="스코프-기반-심볼-완성"><a class="header" href="#스코프-기반-심볼-완성">스코프 기반 심볼 완성</a></h2>
 <h3 id="definitioncollectdefinitions-재사용"><a class="header" href="#definitioncollectdefinitions-재사용">Definition.collectDefinitions 재사용</a></h3>
-<p>Phase 2의 Go to Definition에서 구현한 함수를 그대로 사용합니다.</p>
+<p>Phase 2의 Go to Definition에서 구현한 함수를 그대로 사용한다.</p>
 <pre><code class="language-fsharp">// Definition.fs에서 이미 구현됨
 let collectDefinitions (ast: Expr) : (string * Span) list
 </code></pre>
@@ -419,7 +419,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list
 <li><code>(변수명, Span)</code> 쌍의 리스트 반환</li>
 </ul>
 <h3 id="스코프-필터링"><a class="header" href="#스코프-필터링">스코프 필터링</a></h3>
-<p><strong>핵심:</strong> 커서 위치 <strong>이전</strong>에 정의된 심볼만 포함해야 합니다.</p>
+<p><strong>핵심:</strong> 커서 위치 <strong>이전</strong>에 정의된 심볼만 포함해야 한다.</p>
 <pre><code class="language-fsharp">/// Get symbol completions from current scope
 /// Filters to symbols defined before cursor position
 let getSymbolCompletions (ast: Expr) (pos: Position) : CompletionItem list =
@@ -438,15 +438,15 @@ let getSymbolCompletions (ast: Expr) (pos: Position) : CompletionItem list =
         |&gt; List.rev
 </code></pre>
 <h3 id="섀도잉-처리"><a class="header" href="#섀도잉-처리">섀도잉 처리</a></h3>
-<p>같은 이름이 여러 번 정의되면 마지막 정의가 유효합니다.</p>
+<p>같은 이름이 여러 번 정의되면 마지막 정의가 유효하다.</p>
 <pre><code class="language-fsharp">// 예시 코드
 let x = 1 in
 let x = 2 in
 let x = 3 in
 x + █   // 여기서 x는 3을 의미
 </code></pre>
-<p><code>collectDefinitions</code>는 세 개의 <code>("x", span)</code> 항목을 반환합니다.
-<code>List.distinctBy fst</code>로 중복을 제거하면 <strong>마지막 <code>x</code>만 남습니다</strong>.</p>
+<p><code>collectDefinitions</code>는 세 개의 <code>("x", span)</code> 항목을 반환한다.
+<code>List.distinctBy fst</code>로 중복을 제거하면 <strong>마지막 <code>x</code>만 남는다</strong>.</p>
 <pre><code class="language-fsharp">// 섀도잉 처리 단계별 설명
 definitions = [("x", span1); ("x", span2); ("x", span3)]
   |&gt; List.rev                 // [("x", span3); ("x", span2); ("x", span1)]
@@ -456,7 +456,7 @@ definitions = [("x", span1); ("x", span2); ("x", span3)]
 <hr>
 <h2 id="타입-정보-표시"><a class="header" href="#타입-정보-표시">타입 정보 표시</a></h2>
 <h3 id="hoverfindvartypeinast-재사용"><a class="header" href="#hoverfindvartypeinast-재사용">Hover.findVarTypeInAst 재사용</a></h3>
-<p>Phase 2의 Hover에서 구현한 함수를 사용합니다.</p>
+<p>Phase 2의 Hover에서 구현한 함수를 사용한다.</p>
 <pre><code class="language-fsharp">// Hover.fs에서 이미 구현됨
 let findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option
 </code></pre>
@@ -516,7 +516,7 @@ inScope
 <li><code>TTuple([TInt; TBool])</code> → <code>"int * bool"</code></li>
 </ul>
 <h3 id="variable-vs-function-구분"><a class="header" href="#variable-vs-function-구분">Variable vs Function 구분</a></h3>
-<p>Phase 3에서는 모든 심볼을 <code>CompletionItemKind.Variable</code>로 표시합니다.</p>
+<p>Phase 3에서는 모든 심볼을 <code>CompletionItemKind.Variable</code>로 표시한다.</p>
 <pre><code class="language-fsharp">Kind = Some CompletionItemKind.Variable  // 함수도 Variable로 표시
 </code></pre>
 <p><strong>왜?</strong></p>
@@ -528,7 +528,7 @@ inScope
 <hr>
 <h2 id="서버-통합"><a class="header" href="#서버-통합">서버 통합</a></h2>
 <h3 id="handlecompletion-메인-함수"><a class="header" href="#handlecompletion-메인-함수">handleCompletion 메인 함수</a></h3>
-<p>전체 로직을 조합한 핸들러입니다.</p>
+<p>전체 로직을 조합한 핸들러이다.</p>
 <pre><code class="language-fsharp">/// Handle textDocument/completion request
 let handleCompletion (p: CompletionParams) : Async&lt;CompletionList option&gt; =
     async {
@@ -561,7 +561,7 @@ let handleCompletion (p: CompletionParams) : Async&lt;CompletionList option&gt; 
 </code></pre>
 <h3 id="주요-설계-결정"><a class="header" href="#주요-설계-결정">주요 설계 결정</a></h3>
 <p><strong>1. Graceful Degradation (우아한 성능 저하)</strong></p>
-<p>파싱 에러가 발생해도 키워드는 제공합니다.</p>
+<p>파싱 에러가 발생해도 키워드는 제공한다.</p>
 <pre><code class="language-fsharp">with _ -&gt;
     // AST 없어도 키워드는 사용 가능
     return Some {
@@ -579,7 +579,7 @@ let handleCompletion (p: CompletionParams) : Async&lt;CompletionList option&gt; 
 <li>사용자 경험 향상</li>
 </ul>
 <p><strong>2. IsIncomplete = false</strong></p>
-<p>Phase 3에서는 모든 후보를 한 번에 반환합니다.</p>
+<p>Phase 3에서는 모든 후보를 한 번에 반환한다.</p>
 <pre><code class="language-fsharp">IsIncomplete = false  // 추가 후보 없음
 </code></pre>
 <p><code>IsIncomplete = true</code>는 언제 사용?</p>
@@ -589,7 +589,7 @@ let handleCompletion (p: CompletionParams) : Async&lt;CompletionList option&gt; 
 <li>FunLang은 단일 파일이라 필요 없음</li>
 </ul>
 <p><strong>3. 트리거 문자 없음</strong></p>
-<p>Phase 3에서는 사용자가 명시적으로 완성을 호출합니다 (Ctrl+Space).</p>
+<p>Phase 3에서는 사용자가 명시적으로 완성을 호출한다 (Ctrl+Space).</p>
 <pre><code class="language-fsharp">// Server.fs
 CompletionProvider = Some {
     ResolveProvider = Some false
@@ -885,7 +885,7 @@ let detail =
     | Some ty -&gt; Some (sprintf "%s: %s" name (Type.formatTypeNormalized ty))
     | None -&gt; Some name
 </code></pre>
-<p><strong>주의:</strong> 타입 추론 실패는 정상적인 상황입니다 (람다 매개변수 등). None을 반환해도 문제없습니다.</p>
+<p><strong>주의:</strong> 타입 추론 실패는 정상적인 상황이다 (람다 매개변수 등). None을 반환해도 문제없다.</p>
 <h3 id="5-트리거-문자-설정-문제"><a class="header" href="#5-트리거-문자-설정-문제">5. 트리거 문자 설정 문제</a></h3>
 <p><strong>증상:</strong> 자동 완성이 <code>.</code> 입력 시 작동하지 않거나 너무 자주 트리거됨</p>
 <p><strong>원인:</strong> Phase 3은 트리거 문자를 지원하지 않음</p>
@@ -903,7 +903,7 @@ CompletionProvider = Some {
     // ...
 }
 </code></pre>
-<p>트리거 문자는 컨텍스트에 따른 필터링이 필요합니다:</p>
+<p>트리거 문자는 컨텍스트에 따른 필터링이 필요하다:</p>
 <ul>
 <li><code>.</code> 입력 후 → 레코드/모듈 멤버만 표시</li>
 <li><code>::</code> 입력 후 → 리스트 관련 심볼만 표시</li>
@@ -965,7 +965,7 @@ with _ -&gt;
 </ol>
 <hr>
 <h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
-<p>Completion 구현으로 Phase 3이 완료됩니다!</p>
+<p>Completion 구현으로 Phase 3이 완료된다!</p>
 <p>Phase 4에서는:</p>
 <ul>
 <li><strong>Find References</strong>: 심볼이 사용된 모든 위치 찾기</li>

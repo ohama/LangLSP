@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="find-references-구현하기"><a class="header" href="#find-references-구현하기">Find References 구현하기</a></h1>
-<p>이 문서는 LSP 서버에서 <strong>Find References</strong> 기능을 구현하는 방법을 설명합니다. 변수나 함수를 선택하고 “Find References“를 실행하면 해당 심볼이 사용된 모든 위치를 찾아줍니다. 이 기능은 코드 리팩토링과 영향 분석(Impact Analysis)에 필수적입니다.</p>
+<p>이 문서는 LSP 서버에서 <strong>Find References</strong> 기능을 구현하는 방법을 설명한다. 변수나 함수를 선택하고 “Find References“를 실행하면 해당 심볼이 사용된 모든 위치를 찾아준다. 이 기능은 코드 리팩토링과 영향 분석(Impact Analysis)에 필수적이다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#find-references란">Find References란</a></li>
@@ -191,7 +191,7 @@
 </ol>
 <hr>
 <h2 id="find-references란"><a class="header" href="#find-references란">Find References란</a></h2>
-<p><strong>Find References</strong>는 선택한 심볼의 모든 사용처를 찾는 기능입니다. Go to Definition이 “정의 위치” 하나를 찾는다면, Find References는 “사용 위치” 여러 개를 찾습니다.</p>
+<p><strong>Find References</strong>는 선택한 심볼의 모든 사용처를 찾는 기능이다. Go to Definition이 “정의 위치” 하나를 찾는다면, Find References는 “사용 위치” 여러 개를 찾는다.</p>
 <h3 id="vs-code에서의-사용"><a class="header" href="#vs-code에서의-사용">VS Code에서의 사용</a></h3>
 <pre><code>test.fun
 ────────
@@ -275,7 +275,7 @@ interface ReferenceContext {
 </tbody>
 </table>
 </div>
-<p>대부분의 경우 <code>true</code>가 유용합니다 (전체 영향 범위 파악).</p>
+<p>대부분의 경우 <code>true</code>가 유용하다 (전체 영향 범위 파악).</p>
 <h3 id="응답-형식"><a class="header" href="#응답-형식">응답 형식</a></h3>
 <pre><code class="language-typescript">// Location 배열 반환
 type ReferenceResponse = Location[] | null
@@ -323,7 +323,7 @@ interface Location {
 </div>
 <hr>
 <h2 id="definition과의-관계"><a class="header" href="#definition과의-관계">Definition과의 관계</a></h2>
-<p>Find References는 Go to Definition의 <strong>역방향</strong> 동작입니다.</p>
+<p>Find References는 Go to Definition의 <strong>역방향</strong> 동작이다.</p>
 <h3 id="상호-관계"><a class="header" href="#상호-관계">상호 관계</a></h3>
 <pre><code>┌─────────────────────────────────────────┐
 │  let add = fun x -&gt; fun y -&gt; x + y in   │  ← 정의 위치 (Definition)
@@ -352,7 +352,7 @@ interface Location {
 │    커서 위치 → 정의 확인 → 사용 위치 (N개)   │
 └──────────────────────────────────────────────┘
 </code></pre>
-<p>Find References 구현 시 <strong>Definition 모듈을 재사용</strong>합니다:</p>
+<p>Find References 구현 시 <strong>Definition 모듈을 재사용</strong>한다:</p>
 <ol>
 <li>커서 위치에서 심볼의 정의를 먼저 찾음 (<code>findDefinitionForVar</code>)</li>
 <li>그 정의를 참조하는 모든 Var 노드를 수집</li>
@@ -361,7 +361,7 @@ interface Location {
 <hr>
 <h2 id="레퍼런스-수집-구현"><a class="header" href="#레퍼런스-수집-구현">레퍼런스 수집 구현</a></h2>
 <h3 id="collectreferences-함수-기본-버전"><a class="header" href="#collectreferences-함수-기본-버전">collectReferences 함수 (기본 버전)</a></h3>
-<p>먼저 <strong>섀도잉 미고려</strong> 버전을 구현합니다. 단순히 이름이 일치하는 모든 Var 노드를 수집합니다.</p>
+<p>먼저 <strong>섀도잉 미고려</strong> 버전을 구현한다. 단순히 이름이 일치하는 모든 Var 노드를 수집한다.</p>
 <pre><code class="language-fsharp">// References.fs
 module LangLSP.Server.References
 
@@ -448,7 +448,7 @@ let collectReferences (varName: string) (ast: Expr) : Span list =
 <hr>
 <h2 id="스코프-인식-레퍼런스-수집"><a class="header" href="#스코프-인식-레퍼런스-수집">스코프 인식 레퍼런스 수집</a></h2>
 <h3 id="섀도잉-문제"><a class="header" href="#섀도잉-문제">섀도잉 문제</a></h3>
-<p>기본 <code>collectReferences</code>는 <strong>이름만</strong> 체크하므로 섀도잉 처리가 안 됩니다.</p>
+<p>기본 <code>collectReferences</code>는 <strong>이름만</strong> 체크하므로 섀도잉 처리가 안 된다.</p>
 <pre><code class="language-funlang">let x = 1 in           (* 정의 A *)
   let x = 2 in         (* 정의 B - A를 shadow *)
     x + 1              (* 이 x는 B를 참조 *)
@@ -459,7 +459,7 @@ let collectReferences (varName: string) (ast: Expr) : Span list =
 <li><strong>기본 구현 결과</strong>: 3번 라인의 <code>x</code> 포함 (잘못됨!)</li>
 </ul>
 <h3 id="collectreferencesforbinding-함수"><a class="header" href="#collectreferencesforbinding-함수">collectReferencesForBinding 함수</a></h3>
-<p><strong>특정 정의</strong>를 참조하는 Var 노드만 찾는 함수입니다.</p>
+<p><strong>특정 정의</strong>를 참조하는 Var 노드만 찾는 함수이다.</p>
 <pre><code class="language-fsharp">// References.fs
 open LangLSP.Server.Definition
 
@@ -508,13 +508,13 @@ let collectReferencesForBinding (varName: string) (defSpan: Span) (ast: Expr) : 
 └─────────────────────────────────────────────┘
 </code></pre>
 <h3 id="왜-definition-모듈을-재사용하는가"><a class="header" href="#왜-definition-모듈을-재사용하는가">왜 Definition 모듈을 재사용하는가?</a></h3>
-<p><code>findDefinitionForVar</code>는 <strong>섀도잉 해결 로직</strong>을 이미 구현했습니다:</p>
+<p><code>findDefinitionForVar</code>는 <strong>섀도잉 해결 로직</strong>을 이미 구현했다:</p>
 <ul>
 <li>사용 위치 이전의 정의만 고려</li>
 <li>가장 가까운 (내부) 정의 선택</li>
 <li>렉시컬 스코핑 규칙 적용</li>
 </ul>
-<p>Find References는 이 로직을 <strong>여러 번 호출</strong>하여 각 Var 노드가 올바른 정의를 참조하는지 검증합니다.</p>
+<p>Find References는 이 로직을 <strong>여러 번 호출</strong>하여 각 Var 노드가 올바른 정의를 참조하는지 검증한다.</p>
 <hr>
 <h2 id="변수-섀도잉-처리"><a class="header" href="#변수-섀도잉-처리">변수 섀도잉 처리</a></h2>
 <h3 id="구체적-예시"><a class="header" href="#구체적-예시">구체적 예시</a></h3>
@@ -964,7 +964,7 @@ let referencesTests =
 └─────────────────────────────────────────────┘
 </code></pre>
 <h3 id="코드-재사용"><a class="header" href="#코드-재사용">코드 재사용</a></h3>
-<p>Find References는 Definition 모듈을 <strong>필수적으로</strong> 재사용합니다:</p>
+<p>Find References는 Definition 모듈을 <strong>필수적으로</strong> 재사용한다:</p>
 <pre><code class="language-fsharp">// References.fs에서 Definition 함수 사용
 open LangLSP.Server.Definition
 
@@ -1159,7 +1159,7 @@ let updateReferences (edit: TextEdit) (oldIndex: DefinitionIndex) : DefinitionIn
 </ol>
 <hr>
 <h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
-<p>Find References를 완성했습니다! 이제 사용자가 심볼의 영향 범위를 파악할 수 있습니다.</p>
+<p>Find References를 완성했다! 이제 사용자가 심볼의 영향 범위를 파악할 수 있다.</p>
 <p>다음 Phase에서 구현할 기능들:</p>
 <ul>
 <li><strong>Rename</strong>: Find References 활용하여 모든 사용처 일괄 변경</li>

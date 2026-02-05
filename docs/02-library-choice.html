@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="f-lsp-라이브러리-선택"><a class="header" href="#f-lsp-라이브러리-선택">F# LSP 라이브러리 선택</a></h1>
-<p>이 문서는 F#으로 LSP 서버를 구현할 때 사용할 수 있는 라이브러리들을 비교하고, 왜 <strong>Ionide.LanguageServerProtocol</strong>을 선택했는지 설명합니다.</p>
+<p>이 문서는 F#으로 LSP 서버를 구현할 때 사용할 수 있는 라이브러리들을 비교하고, 왜 <strong>Ionide.LanguageServerProtocol</strong>을 선택했는지 설명한다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#f-lsp-라이브러리-옵션">F# LSP 라이브러리 옵션</a></li>
@@ -186,7 +186,7 @@
 </ol>
 <hr>
 <h2 id="f-lsp-라이브러리-옵션"><a class="header" href="#f-lsp-라이브러리-옵션">F# LSP 라이브러리 옵션</a></h2>
-<p>F#으로 LSP 서버를 만들 때 선택할 수 있는 옵션은 크게 3가지입니다.</p>
+<p>F#으로 LSP 서버를 만들 때 선택할 수 있는 옵션은 크게 3가지이다.</p>
 <h3 id="1-ionidelanguageserverprotocol"><a class="header" href="#1-ionidelanguageserverprotocol">1. Ionide.LanguageServerProtocol</a></h3>
 <ul>
 <li><strong>NuGet</strong>: <a href="https://www.nuget.org/packages/Ionide.LanguageServerProtocol/"><code>Ionide.LanguageServerProtocol</code></a></li>
@@ -209,7 +209,7 @@
 </ul>
 <hr>
 <h2 id="ionidelanguageserverprotocol-소개"><a class="header" href="#ionidelanguageserverprotocol-소개">Ionide.LanguageServerProtocol 소개</a></h2>
-<p><strong>Ionide.LanguageServerProtocol</strong>은 F# 네이티브 LSP 라이브러리입니다.</p>
+<p><strong>Ionide.LanguageServerProtocol</strong>은 F# 네이티브 LSP 라이브러리이다.</p>
 <h3 id="핵심-특징"><a class="header" href="#핵심-특징">핵심 특징</a></h3>
 <ul>
 <li><strong>F#으로 작성됨</strong>: F# 타입 시스템과 자연스럽게 통합</li>
@@ -269,7 +269,7 @@ server.Start()
 </code></pre>
 <hr>
 <h2 id="omnisharp-대비-장점"><a class="header" href="#omnisharp-대비-장점">OmniSharp 대비 장점</a></h2>
-<p>Ionide와 OmniSharp를 비교하면 다음과 같습니다.</p>
+<p>Ionide와 OmniSharp를 비교하면 다음과 같다.</p>
 <h3 id="비교표"><a class="header" href="#비교표">비교표</a></h3>
 <div class="table-wrapper">
 <table>
@@ -291,7 +291,7 @@ server.Start()
 </div>
 <h3 id="왜-ionide를-선택했는가"><a class="header" href="#왜-ionide를-선택했는가">왜 Ionide를 선택했는가?</a></h3>
 <h4 id="1-f-네이티브-구현"><a class="header" href="#1-f-네이티브-구현">1. F# 네이티브 구현</a></h4>
-<p>FunLang 컴파일러가 F#으로 작성되어 있으므로, F# 라이브러리를 사용하는 것이 자연스럽습니다.</p>
+<p>FunLang 컴파일러가 F#으로 작성되어 있으므로, F# 라이브러리를 사용하는 것이 자연스럽다.</p>
 <pre><code class="language-fsharp">// FunLang AST (F# record)
 type Expr =
     | Lit of int
@@ -301,9 +301,9 @@ type Expr =
 type Position = { Line: int; Character: int }
 type Range = { Start: Position; End: Position }
 </code></pre>
-<p>두 라이브러리 모두 F#의 record, discriminated union을 사용하므로 타입이 잘 맞습니다.</p>
+<p>두 라이브러리 모두 F#의 record, discriminated union을 사용하므로 타입이 잘 맞는다.</p>
 <h4 id="2-dependency-injection-불필요"><a class="header" href="#2-dependency-injection-불필요">2. Dependency Injection 불필요</a></h4>
-<p>OmniSharp는 C# 스타일의 DI 컨테이너를 강제합니다.</p>
+<p>OmniSharp는 C# 스타일의 DI 컨테이너를 강제한다.</p>
 <p><strong>OmniSharp 스타일 (C# DI 필수):</strong></p>
 <pre><code class="language-csharp">// OmniSharp는 이런 DI 설정이 필요
 services.AddLanguageServer(options =&gt; {
@@ -317,16 +317,16 @@ services.AddLanguageServer(options =&gt; {
 <pre><code class="language-fsharp">// Ionide는 간단한 함수 등록
 server.On&lt;HoverParams, Hover option&gt;("textDocument/hover", hoverHandler)
 </code></pre>
-<p>F# 개발자에게는 Ionide의 함수형 스타일이 더 자연스럽습니다.</p>
+<p>F# 개발자에게는 Ionide의 함수형 스타일이 더 자연스럽다.</p>
 <h4 id="3-fsautocomplete의-검증"><a class="header" href="#3-fsautocomplete의-검증">3. FsAutoComplete의 검증</a></h4>
-<p>FsAutoComplete는 F# LSP 서버로, VS Code에서 수백만 명의 개발자가 사용합니다.</p>
+<p>FsAutoComplete는 F# LSP 서버로, VS Code에서 수백만 명의 개발자가 사용한다.</p>
 <pre><code>VS Code F# Extension
     ↓
 FsAutoComplete (F# LSP Server)
     ↓
 Ionide.LanguageServerProtocol
 </code></pre>
-<p>이미 프로덕션에서 수년간 검증된 라이브러리입니다.</p>
+<p>이미 프로덕션에서 수년간 검증된 라이브러리이다.</p>
 <h4 id="4-경량-설계"><a class="header" href="#4-경량-설계">4. 경량 설계</a></h4>
 <p><strong>Ionide 의존성:</strong></p>
 <ul>
@@ -341,10 +341,10 @@ Ionide.LanguageServerProtocol
 <li>Microsoft.Extensions.Logging</li>
 <li>… (약 30개 패키지)</li>
 </ul>
-<p>튜토리얼 목적의 LSP 서버에는 Ionide의 경량 설계가 적합합니다.</p>
+<p>튜토리얼 목적의 LSP 서버에는 Ionide의 경량 설계가 적합하다.</p>
 <hr>
 <h2 id="직접-구현을-피해야-하는-이유"><a class="header" href="#직접-구현을-피해야-하는-이유">직접 구현을 피해야 하는 이유</a></h2>
-<p>“LSP는 그냥 JSON이니까 직접 구현하면 되지 않을까?” - <strong>이건 함정입니다.</strong></p>
+<p>“LSP는 그냥 JSON이니까 직접 구현하면 되지 않을까?” - <strong>이건 함정이다.</strong></p>
 <h3 id="lsp-스펙의-복잡성"><a class="header" href="#lsp-스펙의-복잡성">LSP 스펙의 복잡성</a></h3>
 <p><strong>LSP 3.17 스펙 통계:</strong></p>
 <ul>
@@ -355,7 +355,7 @@ Ionide.LanguageServerProtocol
 </ul>
 <h3 id="직접-구현-시-마주칠-문제들"><a class="header" href="#직접-구현-시-마주칠-문제들">직접 구현 시 마주칠 문제들</a></h3>
 <h4 id="1-content-length-헤더-파싱"><a class="header" href="#1-content-length-헤더-파싱">1. Content-Length 헤더 파싱</a></h4>
-<p>LSP 메시지는 HTTP 스타일 헤더를 사용합니다.</p>
+<p>LSP 메시지는 HTTP 스타일 헤더를 사용한다.</p>
 <pre><code>Content-Length: 123\r\n
 Content-Type: application/vscode-jsonrpc; charset=utf-8\r\n
 \r\n
@@ -367,14 +367,14 @@ Content-Type: application/vscode-jsonrpc; charset=utf-8\r\n
 <li>UTF-8 인코딩 문제</li>
 </ul>
 <h4 id="2-utf-16-position-인코딩"><a class="header" href="#2-utf-16-position-인코딩">2. UTF-16 Position 인코딩</a></h4>
-<p>LSP의 <code>Position</code>은 <strong>UTF-16 code unit</strong> 기준입니다.</p>
+<p>LSP의 <code>Position</code>은 <strong>UTF-16 code unit</strong> 기준이다.</p>
 <pre><code class="language-fsharp">let text = "안녕하세요 🎉"
 // UTF-8: 각 한글 = 3바이트, 🎉 = 4바이트
 // UTF-16: 각 한글 = 1 code unit, 🎉 = 2 code units
 
 // LSP Position.character는 UTF-16 기준으로 계산해야 함
 </code></pre>
-<p>직접 구현하면 이모지, CJK 문자에서 위치 계산 버그가 발생합니다.</p>
+<p>직접 구현하면 이모지, CJK 문자에서 위치 계산 버그가 발생한다.</p>
 <h4 id="3-407개-타입-정의"><a class="header" href="#3-407개-타입-정의">3. 407개 타입 정의</a></h4>
 <p>LSP 타입을 모두 직접 정의하면:</p>
 <pre><code class="language-fsharp">type Position = { Line: int; Character: int }
@@ -386,22 +386,22 @@ type CompletionList = { ... }
 type Hover = { ... }
 // ... 400개 더
 </code></pre>
-<p>이미 Ionide에 모두 정의되어 있습니다.</p>
+<p>이미 Ionide에 모두 정의되어 있다.</p>
 <h4 id="4-json-직렬화-버그"><a class="header" href="#4-json-직렬화-버그">4. JSON 직렬화 버그</a></h4>
-<p>LSP는 <code>null</code>과 <code>undefined</code>를 구분합니다.</p>
+<p>LSP는 <code>null</code>과 <code>undefined</code>를 구분한다.</p>
 <pre><code class="language-json">// 이 둘은 의미가 다름
 {"hoverProvider": null}       // hover 지원 안 함
 {"hoverProvider": undefined}  // 필드 생략됨
 </code></pre>
-<p>직접 JSON 직렬화를 구현하면 이런 미묘한 차이를 놓칩니다.</p>
+<p>직접 JSON 직렬화를 구현하면 이런 미묘한 차이를 놓친다.</p>
 <h3 id="결론-바퀴의-재발명-회피"><a class="header" href="#결론-바퀴의-재발명-회피">결론: 바퀴의 재발명 회피</a></h3>
 <blockquote>
 <p>“Don’t reinvent the wheel. Use a proven library.”</p>
 </blockquote>
-<p>LSP 라이브러리는 이미 수년간 검증되었습니다. 튜토리얼의 목적은 <strong>LSP 메시지 파싱</strong>이 아니라 <strong>LSP 서버 로직 구현</strong>입니다.</p>
+<p>LSP 라이브러리는 이미 수년간 검증되었다. 튜토리얼의 목적은 <strong>LSP 메시지 파싱</strong>이 아니라 <strong>LSP 서버 로직 구현</strong>이다.</p>
 <hr>
 <h2 id="결론-ionide-선택"><a class="header" href="#결론-ionide-선택">결론: Ionide 선택</a></h2>
-<p>이 튜토리얼 시리즈는 <strong>Ionide.LanguageServerProtocol</strong>을 사용합니다.</p>
+<p>이 튜토리얼 시리즈는 <strong>Ionide.LanguageServerProtocol</strong>을 사용한다.</p>
 <h3 id="선택-이유-요약"><a class="header" href="#선택-이유-요약">선택 이유 요약</a></h3>
 <ol>
 <li><strong>F# 네이티브</strong>: FunLang이 F#이므로 타입 시스템 자연스럽게 통합</li>
@@ -414,7 +414,7 @@ type Hover = { ... }
 <pre><code class="language-bash">dotnet add package Ionide.LanguageServerProtocol --version 0.7.0
 </code></pre>
 <h3 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h3>
-<p>다음 문서에서는 Ionide.LanguageServerProtocol을 사용해 최소한의 LSP 서버를 구현합니다.</p>
+<p>다음 문서에서는 Ionide.LanguageServerProtocol을 사용해 최소한의 LSP 서버를 구현한다.</p>
 <hr>
 <h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
 <ul>

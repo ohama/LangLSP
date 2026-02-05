@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="go-to-definition-구현하기"><a class="header" href="#go-to-definition-구현하기">Go to Definition 구현하기</a></h1>
-<p>이 문서는 LSP 서버에서 <strong>Go to Definition</strong> 기능을 구현하는 방법을 설명합니다. 변수나 함수를 클릭하고 “Go to Definition“을 실행하면 해당 심볼이 정의된 위치로 이동합니다. 이 기능은 코드 네비게이션의 핵심으로, 대규모 코드베이스에서 특히 유용합니다.</p>
+<p>이 문서는 LSP 서버에서 <strong>Go to Definition</strong> 기능을 구현하는 방법을 설명한다. 변수나 함수를 클릭하고 “Go to Definition“을 실행하면 해당 심볼이 정의된 위치로 이동한다. 이 기능은 코드 네비게이션의 핵심으로, 대규모 코드베이스에서 특히 유용하다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#go-to-definition이란">Go to Definition이란</a></li>
@@ -192,7 +192,7 @@
 </ol>
 <hr>
 <h2 id="go-to-definition이란"><a class="header" href="#go-to-definition이란">Go to Definition이란</a></h2>
-<p><strong>Go to Definition</strong>은 변수나 함수 이름 위에서 트리거하면 해당 심볼이 <strong>처음 정의된 위치</strong>로 이동하는 기능입니다.</p>
+<p><strong>Go to Definition</strong>은 변수나 함수 이름 위에서 트리거하면 해당 심볼이 <strong>처음 정의된 위치</strong>로 이동하는 기능이다.</p>
 <h3 id="vs-code에서의-사용"><a class="header" href="#vs-code에서의-사용">VS Code에서의 사용</a></h3>
 <pre><code>test.fun
 ────────
@@ -244,7 +244,7 @@
 }
 </code></pre>
 <h3 id="응답-형식"><a class="header" href="#응답-형식">응답 형식</a></h3>
-<p>LSP는 세 가지 응답 형식을 지원합니다:</p>
+<p>LSP는 세 가지 응답 형식을 지원한다:</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -257,7 +257,7 @@
 </tbody>
 </table>
 </div>
-<p>FunLang은 <strong>싱글 파일 + 단일 정의</strong>이므로 <code>Location</code>만 사용합니다.</p>
+<p>FunLang은 <strong>싱글 파일 + 단일 정의</strong>이므로 <code>Location</code>만 사용한다.</p>
 <h3 id="location-구조"><a class="header" href="#location-구조">Location 구조</a></h3>
 <pre><code class="language-typescript">interface Location {
     uri: string   // 파일 경로 (예: "file:///test.fun")
@@ -279,9 +279,9 @@
 </code></pre>
 <hr>
 <h2 id="심볼-테이블"><a class="header" href="#심볼-테이블">심볼 테이블</a></h2>
-<p>Go to Definition을 구현하려면 <strong>“어떤 변수가 어디서 정의되었는지”</strong> 알아야 합니다. 이를 위해 **심볼 테이블(Symbol Table)**을 구축합니다.</p>
+<p>Go to Definition을 구현하려면 <strong>“어떤 변수가 어디서 정의되었는지”</strong> 알아야 한다. 이를 위해 **심볼 테이블(Symbol Table)**을 구축한다.</p>
 <h3 id="개념"><a class="header" href="#개념">개념</a></h3>
-<p>심볼 테이블은 변수/함수 이름을 정의 위치에 매핑하는 자료구조입니다:</p>
+<p>심볼 테이블은 변수/함수 이름을 정의 위치에 매핑하는 자료구조이다:</p>
 <pre><code>| 이름   | 정의 위치 (Span)       |
 |--------|----------------------|
 | add    | (0, 4) - (0, 7)     |
@@ -290,7 +290,7 @@
 | result | (1, 4) - (1, 10)    |
 </code></pre>
 <h3 id="구현-방식"><a class="header" href="#구현-방식">구현 방식</a></h3>
-<p>FunLang LSP에서는 AST를 순회하며 모든 바인딩 위치를 수집합니다:</p>
+<p>FunLang LSP에서는 AST를 순회하며 모든 바인딩 위치를 수집한다:</p>
 <pre><code class="language-fsharp">// (변수명, Span) 쌍의 리스트
 let collectDefinitions (ast: Expr) : (string * Span) list
 </code></pre>
@@ -301,7 +301,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list
 </ul>
 <hr>
 <h2 id="funlang의-바인딩-위치"><a class="header" href="#funlang의-바인딩-위치">FunLang의 바인딩 위치</a></h2>
-<p>FunLang에서 변수가 <strong>정의</strong>되는 곳을 모두 파악해야 합니다.</p>
+<p>FunLang에서 변수가 <strong>정의</strong>되는 곳을 모두 파악해야 한다.</p>
 <h3 id="1-let-바인딩"><a class="header" href="#1-let-바인딩">1. let 바인딩</a></h3>
 <pre><code class="language-funlang">let x = 42 in x + 1
     ^
@@ -318,7 +318,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list
              ^
              정의 위치 (파라미터)
 </code></pre>
-<p><code>let rec</code>은 <strong>두 가지</strong> 바인딩을 생성합니다:</p>
+<p><code>let rec</code>은 <strong>두 가지</strong> 바인딩을 생성한다:</p>
 <ol>
 <li>함수 이름 (<code>fact</code>)</li>
 <li>파라미터 (<code>n</code>)</li>
@@ -363,7 +363,7 @@ let (x, y) = (1, 2) in x + y
 </code></pre>
 <hr>
 <h2 id="정의-수집-구현"><a class="header" href="#정의-수집-구현">정의 수집 구현</a></h2>
-<p>실제 구현은 <code>Definition.fs</code>에 있습니다.</p>
+<p>실제 구현은 <code>Definition.fs</code>에 있다.</p>
 <h3 id="collectdefinitions-함수"><a class="header" href="#collectdefinitions-함수">collectDefinitions 함수</a></h3>
 <pre><code class="language-fsharp">// Definition.fs
 module LangLSP.Server.Definition
@@ -453,7 +453,7 @@ let collectDefinitions (ast: Expr) : (string * Span) list =
 </ol>
 <hr>
 <h2 id="변수-섀도잉-처리"><a class="header" href="#변수-섀도잉-처리">변수 섀도잉 처리</a></h2>
-<p>같은 이름의 변수가 여러 번 정의될 수 있습니다.</p>
+<p>같은 이름의 변수가 여러 번 정의될 수 있다.</p>
 <h3 id="문제-상황"><a class="header" href="#문제-상황">문제 상황</a></h3>
 <pre><code class="language-funlang">let x = 1 in
   let x = 2 in
@@ -461,9 +461,9 @@ let collectDefinitions (ast: Expr) : (string * Span) list =
     ^
     여기서 x는 어느 정의를 가리킬까요?
 </code></pre>
-<p><strong>정답:</strong> 가장 가까운(내부) 정의인 <code>let x = 2</code>입니다.</p>
+<p><strong>정답:</strong> 가장 가까운(내부) 정의인 <code>let x = 2</code>이다.</p>
 <h3 id="스코프-규칙"><a class="header" href="#스코프-규칙">스코프 규칙</a></h3>
-<p>FunLang은 **렉시컬 스코핑(Lexical Scoping)**을 사용합니다:</p>
+<p>FunLang은 **렉시컬 스코핑(Lexical Scoping)**을 사용한다:</p>
 <ul>
 <li>변수 사용 위치에서 가장 가까운 바깥쪽 정의를 참조</li>
 <li>내부 정의가 외부 정의를 “가림(shadow)”</li>
@@ -507,7 +507,7 @@ let findDefinitionForVar (varName: string) (ast: Expr) (usagePos: Position) : Sp
 </ol>
 <hr>
 <h2 id="식별자-위치-정확히-찾기"><a class="header" href="#식별자-위치-정확히-찾기">식별자 위치 정확히 찾기</a></h2>
-<p><code>collectDefinitions</code>가 수집하는 Span은 전체 표현식의 범위입니다 (예: <code>let x = 42 in x + 1</code> 전체). Go to Definition에서는 <strong>식별자 이름의 정확한 위치</strong>만 반환해야 합니다.</p>
+<p><code>collectDefinitions</code>가 수집하는 Span은 전체 표현식의 범위이다 (예: <code>let x = 42 in x + 1</code> 전체). Go to Definition에서는 <strong>식별자 이름의 정확한 위치</strong>만 반환해야 한다.</p>
 <h3 id="findidentifierrange-함수"><a class="header" href="#findidentifierrange-함수">findIdentifierRange 함수</a></h3>
 <pre><code class="language-fsharp">/// Find the exact range of an identifier name in source text near a span
 let findIdentifierRange (text: string) (name: string) (span: Span) : Range =
@@ -530,7 +530,7 @@ let findIdentifierRange (text: string) (name: string) (span: Span) : Range =
 <li>찾으면 이름의 정확한 시작/끝 위치 반환</li>
 <li>못 찾으면 fallback으로 전체 Span 사용</li>
 </ol>
-<p>이 함수는 Diagnostics의 미사용 변수 범위에서도 재사용됩니다.</p>
+<p>이 함수는 Diagnostics의 미사용 변수 범위에서도 재사용된다.</p>
 <hr>
 <h2 id="핸들러-구현"><a class="header" href="#핸들러-구현">핸들러 구현</a></h2>
 <h3 id="handledefinition-함수"><a class="header" href="#handledefinition-함수">handleDefinition 함수</a></h3>
@@ -610,12 +610,12 @@ let handleDefinition (p: DefinitionParams) : Async&lt;Definition option&gt; =
 └─────────────────────────────────────┘
 </code></pre>
 <h3 id="astlookupfindnodeatposition-활용"><a class="header" href="#astlookupfindnodeatposition-활용">AstLookup.findNodeAtPosition 활용</a></h3>
-<p>이전 튜토리얼(Hover)에서 구현한 <code>findNodeAtPosition</code>을 재사용합니다:</p>
+<p>이전 튜토리얼(Hover)에서 구현한 <code>findNodeAtPosition</code>을 재사용한다:</p>
 <pre><code class="language-fsharp">// AstLookup.fs
 /// Find the innermost AST node containing the given LSP position
 let rec findNodeAtPosition (lspPos: Position) (expr: Expr) : Expr option
 </code></pre>
-<p>이 함수는 커서 위치에 해당하는 <strong>가장 구체적인</strong> AST 노드를 반환합니다.</p>
+<p>이 함수는 커서 위치에 해당하는 <strong>가장 구체적인</strong> AST 노드를 반환한다.</p>
 <hr>
 <h2 id="serverfs-통합"><a class="header" href="#serverfs-통합">Server.fs 통합</a></h2>
 <h3 id="서버-기능-등록"><a class="header" href="#서버-기능-등록">서버 기능 등록</a></h3>
@@ -729,7 +729,7 @@ let definitionTests =
 <hr>
 <h2 id="싱글-파일-vs-멀티-파일"><a class="header" href="#싱글-파일-vs-멀티-파일">싱글 파일 vs 멀티 파일</a></h2>
 <h3 id="funlang의-현재-범위"><a class="header" href="#funlang의-현재-범위">FunLang의 현재 범위</a></h3>
-<p>FunLang은 <strong>싱글 파일</strong>만 지원합니다 (모듈 시스템 없음).</p>
+<p>FunLang은 <strong>싱글 파일</strong>만 지원한다 (모듈 시스템 없음).</p>
 <p>따라서:</p>
 <ul>
 <li>정의는 항상 <strong>같은 파일</strong>에 있음</li>
@@ -858,7 +858,7 @@ defs
 </ol>
 <hr>
 <h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
-<p>Go to Definition을 완성했습니다! 이 기능은 코드 네비게이션의 핵심입니다.</p>
+<p>Go to Definition을 완성했다! 이 기능은 코드 네비게이션의 핵심이다.</p>
 <p>다음 Phase에서 구현할 기능들:</p>
 <ul>
 <li><strong>Find References</strong>: 변수의 모든 사용처 찾기</li>

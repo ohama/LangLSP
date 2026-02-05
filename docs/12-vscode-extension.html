@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,8 +175,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="vs-code-extension-패키징"><a class="header" href="#vs-code-extension-패키징">VS Code Extension 패키징</a></h1>
-<p>지금까지 우리는 완전한 Language Server를 만들어왔습니다. 진단(Diagnostics), 호버(Hover), 자동 완성(Completion), 정의로 이동(Go to Definition), 참조 찾기(Find References), 이름 바꾸기(Rename), 그리고 코드 액션(Code Actions)까지 모두 구현했습니다.</p>
-<p>이제 마지막 단계입니다. 이 강력한 Language Server를 누구나 설치할 수 있는 VS Code Extension으로 패키징하는 방법을 배웁니다. 이 튜토리얼에서는 TextMate 문법을 사용한 구문 강조(Syntax Highlighting), 언어 설정(Language Configuration), 코드 스니펫(Code Snippets), 그리고 VSIX 패키징을 다룹니다.</p>
+<p>지금까지 우리는 완전한 Language Server를 만들어왔다. 진단(Diagnostics), 호버(Hover), 자동 완성(Completion), 정의로 이동(Go to Definition), 참조 찾기(Find References), 이름 바꾸기(Rename), 그리고 코드 액션(Code Actions)까지 모두 구현했다.</p>
+<p>이제 마지막 단계이다. 이 강력한 Language Server를 누구나 설치할 수 있는 VS Code Extension으로 패키징하는 방법을 배운다. 이 튜토리얼에서는 TextMate 문법을 사용한 구문 강조(Syntax Highlighting), 언어 설정(Language Configuration), 코드 스니펫(Code Snippets), 그리고 VSIX 패키징을 다룬다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#vs-code-extension-구조">VS Code Extension 구조</a></li>
@@ -191,13 +191,13 @@
 </ol>
 <hr>
 <h2 id="vs-code-extension-구조"><a class="header" href="#vs-code-extension-구조">VS Code Extension 구조</a></h2>
-<p>VS Code Extension은 크게 두 가지 방식으로 기능을 제공합니다:</p>
+<p>VS Code Extension은 크게 두 가지 방식으로 기능을 제공한다:</p>
 <ol>
 <li><strong>선언적(Declarative)</strong>: JSON 파일로 정의 (문법, 스니펫, 언어 설정)</li>
 <li><strong>명령적(Imperative)</strong>: TypeScript 코드로 구현 (LSP 클라이언트 시작)</li>
 </ol>
 <h3 id="extension의-구조"><a class="header" href="#extension의-구조">Extension의 구조</a></h3>
-<p>우리 FunLang Extension의 디렉토리 구조입니다:</p>
+<p>우리 FunLang Extension의 디렉토리 구조이다:</p>
 <pre><code>client/
 ├── package.json                    # 확장 매니페스트 (메타데이터 + contributes)
 ├── language-configuration.json     # 언어 설정 (주석, 괄호 매칭 등)
@@ -213,7 +213,7 @@
     └── LangLSP.Server
 </code></pre>
 <h3 id="extension-로딩-과정"><a class="header" href="#extension-로딩-과정">Extension 로딩 과정</a></h3>
-<p>VS Code가 Extension을 로드하는 과정입니다:</p>
+<p>VS Code가 Extension을 로드하는 과정이다:</p>
 <ol>
 <li><strong><code>package.json</code> 읽기</strong>: <code>engines.vscode</code> 버전 체크, <code>contributes</code> 등록</li>
 <li><strong>선언적 기능 활성화</strong>: 문법, 스니펫, 언어 설정 즉시 적용</li>
@@ -237,7 +237,7 @@
     E-&gt;&gt;S: exit()
 </pre>
 
-<p>VS Code 1.74+에서는 <code>activationEvents</code>를 빈 배열(<code>[]</code>)로 두면, <code>contributes.languages</code>에 등록된 언어의 파일을 열 때 자동으로 활성화됩니다.</p>
+<p>VS Code 1.74+에서는 <code>activationEvents</code>를 빈 배열(<code>[]</code>)로 두면, <code>contributes.languages</code>에 등록된 언어의 파일을 열 때 자동으로 활성화된다.</p>
 <h3 id="packagejson의-핵심-필드"><a class="header" href="#packagejson의-핵심-필드">package.json의 핵심 필드</a></h3>
 <pre><code class="language-json">{
   "name": "funlang",              // Extension ID (소문자, 하이픈)
@@ -252,12 +252,12 @@
   "contributes": { /* ... */ }    // 선언적 기여 사항
 }
 </code></pre>
-<p><strong><code>contributes</code> 필드</strong>가 가장 중요합니다. 여기에 언어, 문법, 스니펫 등을 등록합니다.</p>
+<p><strong><code>contributes</code> 필드</strong>가 가장 중요하다. 여기에 언어, 문법, 스니펫 등을 등록한다.</p>
 <hr>
 <h2 id="textmate-grammar"><a class="header" href="#textmate-grammar">TextMate Grammar</a></h2>
-<p><strong>TextMate Grammar</strong>는 정규식 기반 토큰화 시스템으로, 구문 강조(Syntax Highlighting)를 제공합니다. VS Code는 TextMate 문법을 사용하여 코드를 색상으로 구분합니다.</p>
+<p><strong>TextMate Grammar</strong>는 정규식 기반 토큰화 시스템으로, 구문 강조(Syntax Highlighting)를 제공한다. VS Code는 TextMate 문법을 사용하여 코드를 색상으로 구분한다.</p>
 <h3 id="textmate-문법의-구조"><a class="header" href="#textmate-문법의-구조">TextMate 문법의 구조</a></h3>
-<p>TextMate 문법 파일(<code>funlang.tmLanguage.json</code>)은 다음 구조를 가집니다:</p>
+<p>TextMate 문법 파일(<code>funlang.tmLanguage.json</code>)은 다음 구조를 가진다:</p>
 <pre><code class="language-json">{
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "FunLang",
@@ -280,7 +280,7 @@
 <li><strong><code>repository</code></strong>: 재사용 가능한 패턴 정의 (이름으로 참조)</li>
 </ul>
 <h3 id="funlang-토큰-카테고리"><a class="header" href="#funlang-토큰-카테고리">FunLang 토큰 카테고리</a></h3>
-<p>FunLang 구문을 다음 카테고리로 나눕니다:</p>
+<p>FunLang 구문을 다음 카테고리로 나눈다:</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -298,7 +298,7 @@
 </table>
 </div>
 <h3 id="주석-패턴"><a class="header" href="#주석-패턴">주석 패턴</a></h3>
-<p>FunLang은 두 가지 주석을 지원합니다:</p>
+<p>FunLang은 두 가지 주석을 지원한다:</p>
 <pre><code class="language-json">"comments": {
   "patterns": [
     {
@@ -317,7 +317,7 @@
 }
 </code></pre>
 <p><strong>중첩 블록 주석 처리</strong>:</p>
-<p>FunLang은 <code>(* (* nested *) *)</code>와 같이 중첩된 블록 주석을 지원합니다. 이를 위해 자기 참조 패턴을 사용합니다:</p>
+<p>FunLang은 <code>(* (* nested *) *)</code>와 같이 중첩된 블록 주석을 지원한다. 이를 위해 자기 참조 패턴을 사용한다:</p>
 <pre><code class="language-json">"block-comment-nested": {
   "name": "comment.block.nested.funlang",
   "begin": "\\(\\*",
@@ -327,9 +327,9 @@
   ]
 }
 </code></pre>
-<p><strong>주의</strong>: <code>(*</code>와 <code>*)</code>는 정규식 메타 문자이므로 <code>\\(\\*</code>, <code>\\*\\)</code>로 이스케이프해야 합니다.</p>
+<p><strong>주의</strong>: <code>(*</code>와 <code>*)</code>는 정규식 메타 문자이므로 <code>\\(\\*</code>, <code>\\*\\)</code>로 이스케이프해야 한다.</p>
 <h3 id="문자열-패턴"><a class="header" href="#문자열-패턴">문자열 패턴</a></h3>
-<p>문자열은 이스케이프 시퀀스를 지원합니다:</p>
+<p>문자열은 이스케이프 시퀀스를 지원한다:</p>
 <pre><code class="language-json">"strings": {
   "name": "string.quoted.double.funlang",
   "begin": "\"",
@@ -342,9 +342,9 @@
   ]
 }
 </code></pre>
-<p><code>\n</code>, <code>\r</code>, <code>\t</code>, <code>\\</code>, <code>\"</code>, <code>\'</code>를 이스케이프로 인식합니다.</p>
+<p><code>\n</code>, <code>\r</code>, <code>\t</code>, <code>\\</code>, <code>\"</code>, <code>\'</code>를 이스케이프로 인식한다.</p>
 <h3 id="상수-패턴"><a class="header" href="#상수-패턴">상수 패턴</a></h3>
-<p>숫자와 불린 상수를 매칭합니다:</p>
+<p>숫자와 불린 상수를 매칭한다:</p>
 <pre><code class="language-json">"constants": {
   "patterns": [
     {
@@ -358,9 +358,9 @@
   ]
 }
 </code></pre>
-<p><code>\b</code>는 **단어 경계(word boundary)**입니다. <code>42</code>는 매칭하지만 <code>x42</code>는 매칭하지 않습니다.</p>
+<p><code>\b</code>는 **단어 경계(word boundary)**이다. <code>42</code>는 매칭하지만 <code>x42</code>는 매칭하지 않는다.</p>
 <h3 id="키워드-패턴"><a class="header" href="#키워드-패턴">키워드 패턴</a></h3>
-<p>FunLang의 예약어입니다:</p>
+<p>FunLang의 예약어이다:</p>
 <pre><code class="language-json">"keywords": {
   "name": "keyword.control.funlang",
   "match": "\\b(if|then|else|match|with|let|in|fun|rec)\\b"
@@ -374,7 +374,7 @@
 "match": "\\b(let|if)\\b"   // "let", "if"만 매칭, "letter"는 매칭 안 됨
 </code></pre>
 <h3 id="타입-패턴"><a class="header" href="#타입-패턴">타입 패턴</a></h3>
-<p>타입 키워드와 타입 변수를 구분합니다:</p>
+<p>타입 키워드와 타입 변수를 구분한다:</p>
 <pre><code class="language-json">"types": {
   "patterns": [
     {
@@ -393,7 +393,7 @@
 <li><code>'a</code>, <code>'result</code>: 타입 변수 (녹색)</li>
 </ul>
 <h3 id="연산자-패턴"><a class="header" href="#연산자-패턴">연산자 패턴</a></h3>
-<p><strong>중요: 다중 문자 연산자를 먼저 매칭해야 합니다.</strong></p>
+<p><strong>중요: 다중 문자 연산자를 먼저 매칭해야 한다.</strong></p>
 <pre><code class="language-json">"operators": {
   "patterns": [
     { "name": "keyword.operator.arrow.funlang", "match": "-&gt;" },
@@ -419,9 +419,9 @@ patterns: ["-&gt;", "-"]
 코드: "x -&gt; y"
 결과: "-&gt;" 전체 매칭 → 정상 색상
 </code></pre>
-<p>TextMate는 <code>patterns</code> 배열을 순서대로 시도하므로, <strong>긴 패턴을 먼저 배치</strong>해야 합니다.</p>
+<p>TextMate는 <code>patterns</code> 배열을 순서대로 시도하므로, <strong>긴 패턴을 먼저 배치</strong>해야 한다.</p>
 <h3 id="와일드카드-패턴"><a class="header" href="#와일드카드-패턴">와일드카드 패턴</a></h3>
-<p><code>_</code>는 특별한 식별자입니다:</p>
+<p><code>_</code>는 특별한 식별자이다:</p>
 <pre><code class="language-json">"identifiers": {
   "patterns": [
     {
@@ -431,7 +431,7 @@ patterns: ["-&gt;", "-"]
   ]
 }
 </code></pre>
-<p>이 패턴은 <code>_</code> 단독일 때만 매칭하고, <code>_x</code>나 <code>x_</code>는 매칭하지 않습니다.</p>
+<p>이 패턴은 <code>_</code> 단독일 때만 매칭하고, <code>_x</code>나 <code>x_</code>는 매칭하지 않는다.</p>
 <h3 id="완전한-funlangtmlanguagejson"><a class="header" href="#완전한-funlangtmlanguagejson">완전한 funlang.tmLanguage.json</a></h3>
 <pre><code class="language-json">{
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
@@ -546,7 +546,7 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 </code></pre>
 <hr>
 <h2 id="language-configuration"><a class="header" href="#language-configuration">Language Configuration</a></h2>
-<p><strong>Language Configuration</strong>은 VS Code의 편집 경험을 제어하는 JSON 파일입니다. 주석 토글, 괄호 매칭, 자동 닫기, 들여쓰기 규칙을 정의합니다.</p>
+<p><strong>Language Configuration</strong>은 VS Code의 편집 경험을 제어하는 JSON 파일이다. 주석 토글, 괄호 매칭, 자동 닫기, 들여쓰기 규칙을 정의한다.</p>
 <h3 id="language-configurationjson의-구조"><a class="header" href="#language-configurationjson의-구조">language-configuration.json의 구조</a></h3>
 <pre><code class="language-json">{
   "comments": { /* 주석 토글 */ },
@@ -558,7 +558,7 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 }
 </code></pre>
 <h3 id="주석-토글-comments"><a class="header" href="#주석-토글-comments">주석 토글 (comments)</a></h3>
-<p>Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의합니다:</p>
+<p>Ctrl+/ (라인 주석), Ctrl+Shift+A (블록 주석)의 동작을 정의한다:</p>
 <pre><code class="language-json">"comments": {
   "lineComment": "//",
   "blockComment": ["(*", "*)"]
@@ -569,16 +569,16 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 <li>Ctrl+Shift+A: 선택 영역을 <code>(* ... *)</code> 로 감싸거나 해제</li>
 </ul>
 <h3 id="괄호-매칭-brackets"><a class="header" href="#괄호-매칭-brackets">괄호 매칭 (brackets)</a></h3>
-<p><strong>FunLang은 중괄호(<code>{}</code>)를 사용하지 않습니다.</strong> 대괄호와 소괄호만 사용합니다:</p>
+<p><strong>FunLang은 중괄호(<code>{}</code>)를 사용하지 않는다.</strong> 대괄호와 소괄호만 사용한다:</p>
 <pre><code class="language-json">"brackets": [
   ["[", "]"],
   ["(", ")"]
 ]
 </code></pre>
-<p>괄호 중 하나에 커서를 놓으면 짝이 강조 표시됩니다.</p>
-<p><strong>주의</strong>: 많은 언어가 <code>{</code>, <code>}</code>를 사용하지만, FunLang은 사용하지 않으므로 추가하지 않습니다.</p>
+<p>괄호 중 하나에 커서를 놓으면 짝이 강조 표시된다.</p>
+<p><strong>주의</strong>: 많은 언어가 <code>{</code>, <code>}</code>를 사용하지만, FunLang은 사용하지 않으므로 추가하지 않는다.</p>
 <h3 id="자동-닫기-autoclosingpairs"><a class="header" href="#자동-닫기-autoclosingpairs">자동 닫기 (autoClosingPairs)</a></h3>
-<p>여는 문자를 입력하면 닫는 문자가 자동 삽입됩니다:</p>
+<p>여는 문자를 입력하면 닫는 문자가 자동 삽입된다:</p>
 <pre><code class="language-json">"autoClosingPairs": [
   { "open": "[", "close": "]" },
   { "open": "(", "close": ")" },
@@ -592,9 +592,9 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 <li><strong><code>notIn: ["string"]</code></strong>: 문자열 안에서는 자동 닫기 비활성화</li>
 </ul>
 <p><strong>블록 주석 자동 닫기</strong>:</p>
-<p><code>(*</code> 입력 시 <code>*)</code> 자동 삽입은 편리한 기능입니다. 사용자가 <code>(</code>를 입력하면 <code>)</code>가 먼저 삽입되고, <code>*</code>를 입력하면 <code>*)</code>가 완성됩니다.</p>
+<p><code>(*</code> 입력 시 <code>*)</code> 자동 삽입은 편리한 기능이다. 사용자가 <code>(</code>를 입력하면 <code>)</code>가 먼저 삽입되고, <code>*</code>를 입력하면 <code>*)</code>가 완성된다.</p>
 <h3 id="선택-영역-감싸기-surroundingpairs"><a class="header" href="#선택-영역-감싸기-surroundingpairs">선택 영역 감싸기 (surroundingPairs)</a></h3>
-<p>텍스트 선택 후 여는 문자를 입력하면 선택 영역을 감쌉니다:</p>
+<p>텍스트 선택 후 여는 문자를 입력하면 선택 영역을 감싼다:</p>
 <pre><code class="language-json">"surroundingPairs": [
   ["[", "]"],
   ["(", ")"],
@@ -608,7 +608,7 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 <li>결과: <code>"hello"</code></li>
 </ol>
 <h3 id="enter-키-동작-onenterrules"><a class="header" href="#enter-키-동작-onenterrules">Enter 키 동작 (onEnterRules)</a></h3>
-<p>주석에서 Enter를 누르면 다음 줄도 주석으로 시작합니다:</p>
+<p>주석에서 Enter를 누르면 다음 줄도 주석으로 시작한다:</p>
 <pre><code class="language-json">"onEnterRules": [
   {
     "beforeText": "^\\s*\\/\\/.*$",
@@ -628,7 +628,7 @@ Scopes: source.funlang keyword.operator.arrow.funlang
 <li><code>.*$</code>: 나머지 텍스트</li>
 </ul>
 <h3 id="들여쓰기-규칙-indentationrules"><a class="header" href="#들여쓰기-규칙-indentationrules">들여쓰기 규칙 (indentationRules)</a></h3>
-<p>특정 키워드 뒤에서 들여쓰기를 자동 조정합니다:</p>
+<p>특정 키워드 뒤에서 들여쓰기를 자동 조정한다:</p>
 <pre><code class="language-json">"indentationRules": {
   "increaseIndentPattern": "\\b(let|if|then|else|match|with|fun)\\b.*$",
   "decreaseIndentPattern": "^\\s*\\b(in|else|with)\\b"
@@ -677,10 +677,10 @@ x + 1
   }
 }
 </code></pre>
-<p>이 설정으로 FunLang 편집 경험이 크게 향상됩니다.</p>
+<p>이 설정으로 FunLang 편집 경험이 크게 향상된다.</p>
 <hr>
 <h2 id="코드-스니펫"><a class="header" href="#코드-스니펫">코드 스니펫</a></h2>
-<p><strong>Code Snippets</strong>는 자주 사용하는 코드 패턴을 빠르게 삽입하는 템플릿입니다.</p>
+<p><strong>Code Snippets</strong>는 자주 사용하는 코드 패턴을 빠르게 삽입하는 템플릿이다.</p>
 <h3 id="vs-code-스니펫-형식"><a class="header" href="#vs-code-스니펫-형식">VS Code 스니펫 형식</a></h3>
 <pre><code class="language-json">{
   "Snippet Name": {
@@ -696,7 +696,7 @@ x + 1
 <li><strong><code>description</code></strong>: 자동 완성 목록에 표시되는 설명</li>
 </ul>
 <h3 id="tabstop과-placeholder"><a class="header" href="#tabstop과-placeholder">Tabstop과 Placeholder</a></h3>
-<p>스니펫은 <strong>tabstop</strong>으로 커서 이동 지점을 정의합니다:</p>
+<p>스니펫은 <strong>tabstop</strong>으로 커서 이동 지점을 정의한다:</p>
 <ul>
 <li><code>$1</code>, <code>$2</code>, <code>$3</code>: 탭 키를 누를 때 커서 이동 순서</li>
 <li><code>${1:placeholder}</code>: 탭스톱과 기본 텍스트</li>
@@ -830,12 +830,12 @@ else alternative
 <li>Tabstop 사이를 Tab 키로 이동</li>
 </ol>
 <p><strong>함정: 스니펫에서 <code>$</code>와 <code>}</code> 이스케이프하기</strong></p>
-<p>스니펫 본문에서 리터럴 <code>$</code>나 <code>}</code>를 사용하려면 이스케이프해야 합니다:</p>
+<p>스니펫 본문에서 리터럴 <code>$</code>나 <code>}</code>를 사용하려면 이스케이프해야 한다:</p>
 <pre><code class="language-json">"body": ["Price: \\$${1:amount}"]  // $ → \$
 </code></pre>
 <hr>
 <h2 id="packagejson-contributes-설정"><a class="header" href="#packagejson-contributes-설정">package.json Contributes 설정</a></h2>
-<p><strong><code>contributes</code></strong> 필드는 Extension이 VS Code에 제공하는 모든 선언적 기능을 등록하는 곳입니다.</p>
+<p><strong><code>contributes</code></strong> 필드는 Extension이 VS Code에 제공하는 모든 선언적 기능을 등록하는 곳이다.</p>
 <h3 id="contributes의-주요-필드"><a class="header" href="#contributes의-주요-필드">contributes의 주요 필드</a></h3>
 <pre><code class="language-json">"contributes": {
   "languages": [ /* 언어 정의 */ ],
@@ -844,7 +844,7 @@ else alternative
 }
 </code></pre>
 <h3 id="languages-기여"><a class="header" href="#languages-기여">languages 기여</a></h3>
-<p>언어 ID, 확장자, 설정 파일, 아이콘을 정의합니다:</p>
+<p>언어 ID, 확장자, 설정 파일, 아이콘을 정의한다:</p>
 <pre><code class="language-json">"languages": [
   {
     "id": "funlang",
@@ -865,9 +865,9 @@ else alternative
 <li><strong><code>configuration</code></strong>: Language Configuration 파일 경로</li>
 <li><strong><code>icon</code></strong>: 파일 아이콘 (라이트/다크 테마용)</li>
 </ul>
-<p><code>.fun</code> 파일을 열면 VS Code가 자동으로 <code>funlang</code> 언어로 인식합니다.</p>
+<p><code>.fun</code> 파일을 열면 VS Code가 자동으로 <code>funlang</code> 언어로 인식한다.</p>
 <h3 id="grammars-기여"><a class="header" href="#grammars-기여">grammars 기여</a></h3>
-<p>TextMate 문법 파일을 등록합니다:</p>
+<p>TextMate 문법 파일을 등록한다:</p>
 <pre><code class="language-json">"grammars": [
   {
     "language": "funlang",
@@ -881,9 +881,9 @@ else alternative
 <li><strong><code>scopeName</code></strong>: TextMate 문법 파일의 <code>scopeName</code>과 일치해야 함</li>
 <li><strong><code>path</code></strong>: 문법 파일 경로</li>
 </ul>
-<p>이 등록으로 <code>funlang</code> 파일에 구문 강조가 적용됩니다.</p>
+<p>이 등록으로 <code>funlang</code> 파일에 구문 강조가 적용된다.</p>
 <h3 id="snippets-기여"><a class="header" href="#snippets-기여">snippets 기여</a></h3>
-<p>코드 스니펫 파일을 등록합니다:</p>
+<p>코드 스니펫 파일을 등록한다:</p>
 <pre><code class="language-json">"snippets": [
   {
     "language": "funlang",
@@ -895,9 +895,9 @@ else alternative
 <li><strong><code>language</code></strong>: 스니펫이 활성화될 언어 ID</li>
 <li><strong><code>path</code></strong>: 스니펫 파일 경로</li>
 </ul>
-<p><code>funlang</code> 파일에서 <code>let</code>, <code>if</code> 등을 입력하면 스니펫 자동 완성이 나타납니다.</p>
+<p><code>funlang</code> 파일에서 <code>let</code>, <code>if</code> 등을 입력하면 스니펫 자동 완성이 나타난다.</p>
 <h3 id="기타-필수-필드들"><a class="header" href="#기타-필수-필드들">기타 필수 필드들</a></h3>
-<p>package.json에는 <code>contributes</code> 외에도 필수 필드들이 있습니다:</p>
+<p>package.json에는 <code>contributes</code> 외에도 필수 필드들이 있다:</p>
 <pre><code class="language-json">{
   "publisher": "funlang",
   "engines": {
@@ -979,9 +979,9 @@ else alternative
 </code></pre>
 <hr>
 <h2 id="extension-진입점-extensionts"><a class="header" href="#extension-진입점-extensionts">Extension 진입점 (extension.ts)</a></h2>
-<p><strong>extension.ts</strong>는 Extension의 명령적 코드가 실행되는 진입점입니다. 여기서 LSP 클라이언트를 시작하고 서버 프로세스를 관리합니다.</p>
+<p><strong>extension.ts</strong>는 Extension의 명령적 코드가 실행되는 진입점이다. 여기서 LSP 클라이언트를 시작하고 서버 프로세스를 관리한다.</p>
 <h3 id="activate-함수"><a class="header" href="#activate-함수">activate 함수</a></h3>
-<p>VS Code가 Extension을 활성화할 때 호출하는 함수입니다:</p>
+<p>VS Code가 Extension을 활성화할 때 호출하는 함수이다:</p>
 <pre><code class="language-typescript">export function activate(context: ExtensionContext) {
   // 1. 서버 경로 결정
   // 2. ServerOptions 생성
@@ -990,7 +990,7 @@ else alternative
 }
 </code></pre>
 <h3 id="서버-모드-감지"><a class="header" href="#서버-모드-감지">서버 모드 감지</a></h3>
-<p>개발 중에는 <code>dotnet run</code>으로 서버를 실행하고, 프로덕션에서는 패키징된 바이너리를 실행합니다:</p>
+<p>개발 중에는 <code>dotnet run</code>으로 서버를 실행하고, 프로덕션에서는 패키징된 바이너리를 실행한다:</p>
 <pre><code class="language-typescript">const serverDir = context.asAbsolutePath(path.join('server'));
 let serverOptions: ServerOptions;
 
@@ -1021,14 +1021,14 @@ if (fs.existsSync(serverDir)) {
   };
 }
 </code></pre>
-<p>**<code>fs.existsSync(serverDir)</code>**로 <code>client/server/</code> 디렉토리가 있는지 확인합니다:</p>
+<p>**<code>fs.existsSync(serverDir)</code>**로 <code>client/server/</code> 디렉토리가 있는지 확인한다:</p>
 <ul>
 <li><strong>있으면</strong>: 패키징된 VSIX → <code>server/LangLSP.Server</code> 바이너리 실행</li>
 <li><strong>없으면</strong>: 개발 모드 → <code>dotnet run</code> 실행</li>
 </ul>
-<p>이렇게 하면 개발 중에는 서버 코드를 수정하고 F5로 디버깅할 수 있고, 프로덕션에서는 빠른 바이너리를 사용합니다.</p>
+<p>이렇게 하면 개발 중에는 서버 코드를 수정하고 F5로 디버깅할 수 있고, 프로덕션에서는 빠른 바이너리를 사용한다.</p>
 <h3 id="languageclientoptions"><a class="header" href="#languageclientoptions">LanguageClientOptions</a></h3>
-<p>클라이언트가 어떤 파일을 관리할지 정의합니다:</p>
+<p>클라이언트가 어떤 파일을 관리할지 정의한다:</p>
 <pre><code class="language-typescript">const clientOptions: LanguageClientOptions = {
   documentSelector: [{ scheme: 'file', language: 'funlang' }],
   synchronize: {
@@ -1056,7 +1056,7 @@ client.start();
 <li><code>client.start()</code>: 서버 프로세스 시작, LSP 연결 수립</li>
 </ul>
 <h3 id="deactivate-함수"><a class="header" href="#deactivate-함수">deactivate 함수</a></h3>
-<p>Extension이 비활성화될 때 호출됩니다:</p>
+<p>Extension이 비활성화될 때 호출된다:</p>
 <pre><code class="language-typescript">export function deactivate(): Thenable&lt;void&gt; | undefined {
   if (!client) {
     return undefined;
@@ -1064,7 +1064,7 @@ client.start();
   return client.stop();
 }
 </code></pre>
-<p><code>client.stop()</code>은 서버 프로세스를 종료하고 리소스를 정리합니다.</p>
+<p><code>client.stop()</code>은 서버 프로세스를 종료하고 리소스를 정리한다.</p>
 <h3 id="완전한-extensionts"><a class="header" href="#완전한-extensionts">완전한 extension.ts</a></h3>
 <pre><code class="language-typescript">import * as path from 'path';
 import * as fs from 'fs';
@@ -1130,19 +1130,19 @@ export function deactivate(): Thenable&lt;void&gt; | undefined {
   return client.stop();
 }
 </code></pre>
-<p>이 코드는 VS Code가 <code>.fun</code> 파일을 열면 자동으로 Language Server를 시작하고, 모든 LSP 기능(진단, 호버, 자동 완성 등)을 활성화합니다.</p>
+<p>이 코드는 VS Code가 <code>.fun</code> 파일을 열면 자동으로 Language Server를 시작하고, 모든 LSP 기능(진단, 호버, 자동 완성 등)을 활성화한다.</p>
 <hr>
 <h2 id="vsix-패키징"><a class="header" href="#vsix-패키징">VSIX 패키징</a></h2>
-<p><strong>VSIX</strong>는 VS Code Extension의 배포 형식입니다. ZIP 파일과 유사하지만 Extension 매니페스트와 메타데이터를 포함합니다.</p>
+<p><strong>VSIX</strong>는 VS Code Extension의 배포 형식이다. ZIP 파일과 유사하지만 Extension 매니페스트와 메타데이터를 포함한다.</p>
 <h3 id="vsce-도구-설치"><a class="header" href="#vsce-도구-설치">vsce 도구 설치</a></h3>
-<p>VS Code Extension Manager인 <code>@vscode/vsce</code>를 설치합니다:</p>
+<p>VS Code Extension Manager인 <code>@vscode/vsce</code>를 설치한다:</p>
 <pre><code class="language-bash">cd client
 npm install --save-dev @vscode/vsce
 </code></pre>
 <h3 id="패키징-3단계-프로세스"><a class="header" href="#패키징-3단계-프로세스">패키징 3단계 프로세스</a></h3>
-<p>VSIX를 만들려면 세 단계를 거칩니다:</p>
+<p>VSIX를 만들려면 세 단계를 거친다:</p>
 <h4 id="1단계-f-서버-퍼블리시"><a class="header" href="#1단계-f-서버-퍼블리시">1단계: F# 서버 퍼블리시</a></h4>
-<p>Language Server 바이너리를 <code>client/server/</code> 디렉토리에 빌드합니다:</p>
+<p>Language Server 바이너리를 <code>client/server/</code> 디렉토리에 빌드한다:</p>
 <pre><code class="language-bash">cd ..  # 프로젝트 루트로
 dotnet publish src/LangLSP.Server/LangLSP.Server.fsproj \
   -c Release \
@@ -1178,13 +1178,13 @@ Ionide.LanguageServerProtocol.dll
 </tbody>
 </table>
 </div>
-<p>우리는 framework-dependent를 선택했습니다. 사용자가 .NET SDK를 이미 설치했다고 가정합니다.</p>
+<p>우리는 framework-dependent를 선택했다. 사용자가 .NET SDK를 이미 설치했다고 가정한다.</p>
 <h4 id="2단계-typescript-컴파일"><a class="header" href="#2단계-typescript-컴파일">2단계: TypeScript 컴파일</a></h4>
-<p><code>extension.ts</code>를 JavaScript로 컴파일합니다:</p>
+<p><code>extension.ts</code>를 JavaScript로 컴파일한다:</p>
 <pre><code class="language-bash">cd client
 npm run compile
 </code></pre>
-<p>이 명령은 <code>tsc -p ./</code>를 실행하여 <code>src/extension.ts</code>를 <code>out/extension.js</code>로 컴파일합니다.</p>
+<p>이 명령은 <code>tsc -p ./</code>를 실행하여 <code>src/extension.ts</code>를 <code>out/extension.js</code>로 컴파일한다.</p>
 <p><strong>출력 확인:</strong></p>
 <pre><code class="language-bash">ls -l out/
 </code></pre>
@@ -1192,7 +1192,7 @@ npm run compile
 extension.js.map
 </code></pre>
 <h4 id="3단계-vsix-패키징"><a class="header" href="#3단계-vsix-패키징">3단계: VSIX 패키징</a></h4>
-<p>vsce로 VSIX 파일을 생성합니다:</p>
+<p>vsce로 VSIX 파일을 생성한다:</p>
 <pre><code class="language-bash">npx vsce package --allow-missing-repository
 </code></pre>
 <p><strong>옵션 설명:</strong></p>
@@ -1205,9 +1205,9 @@ INFO  Detected presense of vscode-languageclient. Bundling extension...
 INFO  Creating vsix package...
 INFO  Extension packaged: /path/to/funlang-0.1.0.vsix (3.6 MB)
 </code></pre>
-<p><strong>성공!</strong> <code>funlang-0.1.0.vsix</code> 파일이 생성되었습니다.</p>
+<p><strong>성공!</strong> <code>funlang-0.1.0.vsix</code> 파일이 생성되었다.</p>
 <h3 id="vscodeignore-설정"><a class="header" href="#vscodeignore-설정">.vscodeignore 설정</a></h3>
-<p>VSIX에 포함하지 않을 파일을 지정합니다:</p>
+<p>VSIX에 포함하지 않을 파일을 지정한다:</p>
 <pre><code>.vscode/**
 src/**
 node_modules/**
@@ -1267,7 +1267,7 @@ test.fun
 </ol>
 <hr>
 <h2 id="로컬-설치-및-테스트"><a class="header" href="#로컬-설치-및-테스트">로컬 설치 및 테스트</a></h2>
-<p>VSIX 파일을 생성했으면 로컬에 설치하여 모든 기능이 작동하는지 확인합니다.</p>
+<p>VSIX 파일을 생성했으면 로컬에 설치하여 모든 기능이 작동하는지 확인한다.</p>
 <h3 id="vsix-설치"><a class="header" href="#vsix-설치">VSIX 설치</a></h3>
 <pre><code class="language-bash">code --install-extension funlang-0.1.0.vsix
 </code></pre>
@@ -1349,12 +1349,12 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 [Info] Received textDocument/didOpen: test.fun
 [Info] Received textDocument/hover at line 1
 </code></pre>
-<p>문제가 발생하면 이 로그에서 에러 메시지를 찾을 수 있습니다.</p>
+<p>문제가 발생하면 이 로그에서 에러 메시지를 찾을 수 있다.</p>
 <h3 id="설치-제거"><a class="header" href="#설치-제거">설치 제거</a></h3>
 <p>테스트 후 Extension을 제거하려면:</p>
 <pre><code class="language-bash">code --uninstall-extension funlang.funlang
 </code></pre>
-<p><strong>주의:</strong> Extension ID는 <code>publisher.name</code> 형식입니다 (<code>funlang.funlang</code>).</p>
+<p><strong>주의:</strong> Extension ID는 <code>publisher.name</code> 형식이다 (<code>funlang.funlang</code>).</p>
 <h3 id="디버깅-팁"><a class="header" href="#디버깅-팁">디버깅 팁</a></h3>
 <h4 id="extension이-활성화되지-않는-경우"><a class="header" href="#extension이-활성화되지-않는-경우">Extension이 활성화되지 않는 경우</a></h4>
 <ol>
@@ -1377,7 +1377,7 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 </ol>
 <hr>
 <h2 id="정리"><a class="header" href="#정리">정리</a></h2>
-<p>축하합니다! 우리는 12개의 튜토리얼을 통해 완전한 Language Server Protocol 구현을 완성했습니다.</p>
+<p>축하한다! 우리는 12개의 튜토리얼을 통해 완전한 Language Server Protocol 구현을 완성했다.</p>
 <h3 id="전체-여정-되돌아보기"><a class="header" href="#전체-여정-되돌아보기">전체 여정 되돌아보기</a></h3>
 <p><strong>Phase 1-4: LSP 기능 구현</strong></p>
 <ol>
@@ -1430,7 +1430,7 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 </table>
 </div>
 <h3 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h3>
-<p>이 튜토리얼 시리즈를 완료했지만, LSP는 더 많은 가능성을 제공합니다:</p>
+<p>이 튜토리얼 시리즈를 완료했지만, LSP는 더 많은 가능성을 제공한다:</p>
 <h4 id="추가-lsp-기능"><a class="header" href="#추가-lsp-기능">추가 LSP 기능</a></h4>
 <ol>
 <li><strong>Semantic Tokens</strong>: 의미 기반 구문 강조 (TextMate보다 정확)</li>
@@ -1443,7 +1443,7 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 <li><strong>Type Hierarchy</strong>: 타입 계층 구조</li>
 </ol>
 <h4 id="다중-파일-지원"><a class="header" href="#다중-파일-지원">다중 파일 지원</a></h4>
-<p>현재 우리 LSP는 단일 파일만 처리합니다. 다중 파일 프로젝트를 지원하려면:</p>
+<p>현재 우리 LSP는 단일 파일만 처리한다. 다중 파일 프로젝트를 지원하려면:</p>
 <ol>
 <li><strong>Module 시스템</strong>: <code>import</code>/<code>export</code> 구문 추가</li>
 <li><strong>의존성 해석</strong>: 파일 간 참조 추적</li>
@@ -1451,7 +1451,7 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 <li><strong>Workspace Diagnostics</strong>: 프로젝트 전체 진단</li>
 </ol>
 <h4 id="vs-code-마켓플레이스-게시"><a class="header" href="#vs-code-마켓플레이스-게시">VS Code 마켓플레이스 게시</a></h4>
-<p>VSIX를 만들었으니 이제 마켓플레이스에 게시할 수 있습니다:</p>
+<p>VSIX를 만들었으니 이제 마켓플레이스에 게시할 수 있다:</p>
 <ol>
 <li><a href="https://marketplace.visualstudio.com/">Visual Studio Marketplace</a> 계정 생성</li>
 <li>Personal Access Token 발급</li>
@@ -1460,7 +1460,7 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 </ol>
 <p>게시 가이드: https://code.visualstudio.com/api/working-with-extensions/publishing-extension</p>
 <h4 id="다른-에디터-지원"><a class="header" href="#다른-에디터-지원">다른 에디터 지원</a></h4>
-<p>LSP는 에디터 독립적입니다. 우리 서버를 다른 에디터에서도 사용할 수 있습니다:</p>
+<p>LSP는 에디터 독립적이다. 우리 서버를 다른 에디터에서도 사용할 수 있다:</p>
 <ul>
 <li><strong>Neovim</strong>: <code>nvim-lspconfig</code>로 설정</li>
 <li><strong>Emacs</strong>: <code>lsp-mode</code> 설정</li>
@@ -1479,20 +1479,20 @@ x  ← 여기서 F2 → "y" 입력 → Enter
 <li><strong>선언적 vs 명령적</strong>: JSON 설정(문법, 스니펫)과 코드(LSP 클라이언트) 분리</li>
 </ol>
 <h3 id="마무리"><a class="header" href="#마무리">마무리</a></h3>
-<p>FunLang Language Server는 이제 완성되었습니다. 당신은 이제:</p>
+<p>FunLang Language Server는 이제 완성되었다. 당신은 이제:</p>
 <ul>
-<li>LSP 프로토콜의 구조와 동작 방식을 이해합니다</li>
-<li>F#으로 Language Server를 구현할 수 있습니다</li>
-<li>VS Code Extension을 만들고 패키징할 수 있습니다</li>
-<li>구문 강조, 스니펫, 언어 설정을 정의할 수 있습니다</li>
+<li>LSP 프로토콜의 구조와 동작 방식을 이해한다</li>
+<li>F#으로 Language Server를 구현할 수 있다</li>
+<li>VS Code Extension을 만들고 패키징할 수 있다</li>
+<li>구문 강조, 스니펫, 언어 설정을 정의할 수 있다</li>
 </ul>
-<p><strong>이 지식을 활용하여 당신만의 언어를 위한 Language Server를 만들어보세요!</strong></p>
+<p><strong>이 지식을 활용하여 당신만의 언어를 위한 Language Server를 만들어보라!</strong></p>
 <p>LSP 스펙 참조: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/</p>
 <p>F# Compiler Services: https://fsharp.github.io/fsharp-compiler-docs/</p>
 <p>Ionide LSP: https://github.com/ionide/LanguageServerProtocol</p>
 <hr>
 <p><strong>튜토리얼 시리즈 완료 🎉</strong></p>
-<p>이 튜토리얼이 도움이 되었기를 바랍니다. 당신의 Language Server 프로젝트에 행운을 빕니다!</p>
+<p>이 튜토리얼이 도움이 되었기를 바란다. 당신의 Language Server 프로젝트에 행운을 빈다!</p>
 
                     </main>
 

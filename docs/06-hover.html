@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,8 +175,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="hover-구현하기"><a class="header" href="#hover-구현하기">Hover 구현하기</a></h1>
-<p>마우스 커서를 코드 위에 올리면 타입 정보나 설명이 팝업으로 표시됩니다. 이 기능은 IDE의 핵심 기능 중 하나로, 코드를 이해하는 데 큰 도움이 됩니다.</p>
-<p>이 튜토리얼에서는 FunLang LSP에 Hover 기능을 구현하는 방법을 배웁니다.</p>
+<p>마우스 커서를 코드 위에 올리면 타입 정보나 설명이 팝업으로 표시된다. 이 기능은 IDE의 핵심 기능 중 하나로, 코드를 이해하는 데 큰 도움이 된다.</p>
+<p>이 튜토리얼에서는 FunLang LSP에 Hover 기능을 구현하는 방법을 배운다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#textdocumenthover-프로토콜">textDocument/hover 프로토콜</a></li>
@@ -191,7 +191,7 @@
 <hr>
 <h2 id="textdocumenthover-프로토콜"><a class="header" href="#textdocumenthover-프로토콜">textDocument/hover 프로토콜</a></h2>
 <h3 id="요청-구조"><a class="header" href="#요청-구조">요청 구조</a></h3>
-<p>클라이언트(에디터)가 서버에 hover 정보를 요청할 때 사용하는 구조입니다.</p>
+<p>클라이언트(에디터)가 서버에 hover 정보를 요청할 때 사용하는 구조이다.</p>
 <pre><code class="language-typescript">interface HoverParams {
     textDocument: TextDocumentIdentifier  // 문서 URI
     position: Position                     // 커서 위치 (0-based)
@@ -203,7 +203,7 @@ interface Position {
 }
 </code></pre>
 <h3 id="응답-구조"><a class="header" href="#응답-구조">응답 구조</a></h3>
-<p>서버가 반환하는 hover 정보입니다.</p>
+<p>서버가 반환하는 hover 정보이다.</p>
 <pre><code class="language-typescript">interface Hover {
     contents: MarkupContent     // 표시할 내용
     range?: Range               // 하이라이트할 범위 (선택)
@@ -237,7 +237,7 @@ let double = fun x -&gt; x * 2 in double 5
 
 <hr>
 <h2 id="구현-전략"><a class="header" href="#구현-전략">구현 전략</a></h2>
-<p>Hover 기능은 두 가지를 제공합니다:</p>
+<p>Hover 기능은 두 가지를 제공한다:</p>
 <ol>
 <li><strong>키워드 Hover</strong>: <code>let</code>, <code>if</code>, <code>fun</code> 등 키워드에 한국어 설명</li>
 <li><strong>타입 Hover</strong>: 변수, 함수, 표현식에 추론된 타입 표시</li>
@@ -260,15 +260,15 @@ AST 파싱          │
 타입 정보 반환     │
 </code></pre>
 <h3 id="키워드-우선-확인"><a class="header" href="#키워드-우선-확인">키워드 우선 확인</a></h3>
-<p><strong>중요:</strong> 키워드는 AST에 포함되지 않습니다. <code>let x = 1 in x</code>를 파싱하면:</p>
+<p><strong>중요:</strong> 키워드는 AST에 포함되지 않는다. <code>let x = 1 in x</code>를 파싱하면:</p>
 <ul>
 <li>AST: <code>Let("x", Number(1), Var("x"))</code></li>
-<li><code>let</code>, <code>in</code> 키워드는 AST 노드가 아닙니다!</li>
+<li><code>let</code>, <code>in</code> 키워드는 AST 노드가 아니다!</li>
 </ul>
-<p>따라서 AST 조회 전에 키워드 체크를 먼저 해야 합니다.</p>
+<p>따라서 AST 조회 전에 키워드 체크를 먼저 해야 한다.</p>
 <hr>
 <h2 id="위치-기반-ast-조회"><a class="header" href="#위치-기반-ast-조회">위치 기반 AST 조회</a></h2>
-<p>커서 위치에 해당하는 AST 노드를 찾는 모듈입니다.</p>
+<p>커서 위치에 해당하는 AST 노드를 찾는 모듈이다.</p>
 <h3 id="astlookup-모듈"><a class="header" href="#astlookup-모듈">AstLookup 모듈</a></h3>
 <pre><code class="language-fsharp">// AstLookup.fs
 module LangLSP.Server.AstLookup
@@ -300,7 +300,7 @@ let positionInSpan (lspPos: Position) (span: Span) : bool =
 </code></pre>
 <h3 id="좌표계-이해하기"><a class="header" href="#좌표계-이해하기">좌표계 이해하기</a></h3>
 <p><strong>FunLang의 특수 상황:</strong></p>
-<p>FsLexYacc 문서에는 Position이 1-based라고 되어 있지만, <code>LexBuffer.FromString</code>으로 생성하면 실제로는 <strong>0-based</strong>입니다!</p>
+<p>FsLexYacc 문서에는 Position이 1-based라고 되어 있지만, <code>LexBuffer.FromString</code>으로 생성하면 실제로는 <strong>0-based</strong>이다!</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -312,7 +312,7 @@ let positionInSpan (lspPos: Position) (span: Span) : bool =
 </tbody>
 </table>
 </div>
-<p>따라서 FunLang LSP에서는 <strong>좌표 변환이 필요 없습니다</strong>.</p>
+<p>따라서 FunLang LSP에서는 <strong>좌표 변환이 필요 없다</strong>.</p>
 <pre><code class="language-fsharp">// Protocol.fs - 변환 없이 직접 사용
 let spanToLspRange (span: Span) : Range =
     {
@@ -321,12 +321,12 @@ let spanToLspRange (span: Span) : Range =
     }
 </code></pre>
 <h3 id="가장-안쪽-노드-찾기"><a class="header" href="#가장-안쪽-노드-찾기">가장 안쪽 노드 찾기</a></h3>
-<p>AST는 중첩 구조입니다. 커서 위치에 여러 노드가 겹칠 수 있습니다.</p>
+<p>AST는 중첩 구조이다. 커서 위치에 여러 노드가 겹칠 수 있다.</p>
 <pre><code>let f = fun x -&gt; x + 1 in f 5
               ~~~~~~~ (x + 1) - Add 노드
                     ~ (1) - Number 노드
 </code></pre>
-<p><strong>innermost(가장 안쪽) 노드</strong>를 반환해야 합니다.</p>
+<p><strong>innermost(가장 안쪽) 노드</strong>를 반환해야 한다.</p>
 <pre><code class="language-fsharp">/// 주어진 LSP 위치를 포함하는 가장 안쪽 AST 노드 찾기
 let rec findNodeAtPosition (lspPos: Position) (expr: Expr) : Expr option =
     let span = spanOf expr
@@ -375,7 +375,7 @@ let rec findNodeAtPosition (lspPos: Position) (expr: Expr) : Expr option =
 <hr>
 <h2 id="키워드-hover"><a class="header" href="#키워드-hover">키워드 Hover</a></h2>
 <h3 id="키워드-설명-맵"><a class="header" href="#키워드-설명-맵">키워드 설명 맵</a></h3>
-<p>FunLang의 키워드에 대한 한국어 설명입니다.</p>
+<p>FunLang의 키워드에 대한 한국어 설명이다.</p>
 <pre><code class="language-fsharp">// Hover.fs
 module LangLSP.Server.Hover
 
@@ -434,7 +434,7 @@ let createKeywordHover (keyword: string) (pos: Position) : Hover option =
 <ul>
 <li><code>Hover.Contents</code>는 <code>U3&lt;MarkupContent, MarkedString, MarkedString[]&gt;</code> 타입</li>
 <li><code>U3.C1</code>은 첫 번째 케이스인 <code>MarkupContent</code>를 의미</li>
-<li>Markdown으로 포맷팅하면 에디터에서 예쁘게 표시됨</li>
+<li>Markdown으로 포맷팅하면 에디터에서 예쁘게 표시된다</li>
 </ul>
 <hr>
 <h2 id="타입-hover"><a class="header" href="#타입-hover">타입 Hover</a></h2>
@@ -452,7 +452,7 @@ let createTypeHover (ty: Type.Type) (span: Span) : Hover =
 </code></pre>
 <p><strong>formatTypeNormalized:</strong></p>
 <ul>
-<li>FunLang의 타입을 읽기 좋은 문자열로 변환</li>
+<li>FunLang의 타입을 읽기 좋은 문자열로 변환한다</li>
 <li>타입 변수 정규화: <code>TVar(1000)</code> → <code>'a</code>, <code>TVar(1001)</code> → <code>'b</code></li>
 <li>예: <code>TFunc(TInt, TFunc(TInt, TInt))</code> → <code>int -&gt; int -&gt; int</code></li>
 </ul>
@@ -471,16 +471,16 @@ let getNodeType (node: Expr) : Type.Type option =
         | Error _ -&gt; None
 </code></pre>
 <h3 id="변수-타입-조회의-어려움"><a class="header" href="#변수-타입-조회의-어려움">변수 타입 조회의 어려움</a></h3>
-<p><strong>문제:</strong> <code>Var("x")</code>만 단독으로 타입 체크하면 실패합니다.</p>
+<p><strong>문제:</strong> <code>Var("x")</code>만 단독으로 타입 체크하면 실패한다.</p>
 <pre><code class="language-fsharp">// 이 코드는 실패!
 let code = "let x = 42 in x"
 let ast = parse code  // Let("x", Number(42), Var("x"))
 let varNode = Var("x", span)
 TypeCheck.typecheck varNode  // Error: x is unbound!
 </code></pre>
-<p>변수 <code>x</code>가 어디서 바인딩되었는지 컨텍스트가 없기 때문입니다.</p>
+<p>변수 <code>x</code>가 어디서 바인딩되었는지 컨텍스트가 없기 때문이다.</p>
 <h3 id="해결책-바인딩-사이트-검색"><a class="header" href="#해결책-바인딩-사이트-검색">해결책: 바인딩 사이트 검색</a></h3>
-<p>AST를 순회하며 변수가 정의된 위치를 찾고, 바인딩된 값의 타입을 추론합니다.</p>
+<p>AST를 순회하며 변수가 정의된 위치를 찾고, 바인딩된 값의 타입을 추론한다.</p>
 <pre><code class="language-fsharp">/// AST에서 변수의 바인딩 사이트를 찾아 타입 반환
 let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
     match ast with
@@ -517,7 +517,7 @@ let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
 <hr>
 <h2 id="서버-통합"><a class="header" href="#서버-통합">서버 통합</a></h2>
 <h3 id="handlehover-함수"><a class="header" href="#handlehover-함수">handleHover 함수</a></h3>
-<p>전체 흐름을 조합한 핸들러입니다.</p>
+<p>전체 흐름을 조합한 핸들러이다.</p>
 <pre><code class="language-fsharp">/// textDocument/hover 요청 처리
 let handleHover (p: HoverParams) : Async&lt;Hover option&gt; =
     async {
@@ -696,7 +696,7 @@ let hoverTests = testList "Hover" [
 <hr>
 <h2 id="흔한-실수와-해결책"><a class="header" href="#흔한-실수와-해결책">흔한 실수와 해결책</a></h2>
 <h3 id="1-키워드-hover가-작동하지-않음"><a class="header" href="#1-키워드-hover가-작동하지-않음">1. 키워드 Hover가 작동하지 않음</a></h3>
-<p><strong>증상:</strong> <code>let</code>, <code>if</code> 위에 hover해도 아무것도 표시 안됨</p>
+<p><strong>증상:</strong> <code>let</code>, <code>if</code> 위에 hover해도 아무것도 표시 안 된다</p>
 <p><strong>원인:</strong> 키워드 체크 없이 AST만 조회</p>
 <p><strong>해결:</strong> AST 조회 전에 <code>getWordAtPosition</code>으로 키워드 체크</p>
 <pre><code class="language-fsharp">// 올바른 순서
@@ -708,10 +708,10 @@ match getWordAtPosition text pos with
 </code></pre>
 <h3 id="2-복잡한-파일에서-hover가-전혀-작동하지-않음"><a class="header" href="#2-복잡한-파일에서-hover가-전혀-작동하지-않음">2. 복잡한 파일에서 hover가 전혀 작동하지 않음</a></h3>
 <p><strong>증상:</strong> 간단한 파일은 되지만, 큰 파일에서는 모든 hover가 None</p>
-<p><strong>원인:</strong> 전체 AST <code>TypeCheck.typecheck ast</code>를 가드로 사용하면, 파일에 타입 에러가 있거나 타입 추론이 복잡한 경우 전체 hover가 차단됨</p>
+<p><strong>원인:</strong> 전체 AST <code>TypeCheck.typecheck ast</code>를 가드로 사용하면, 파일에 타입 에러가 있거나 타입 추론이 복잡한 경우 전체 hover가 차단된다</p>
 <p><strong>해결:</strong> 전체 typecheck 가드를 제거하고, 개별 노드별로 독립적으로 타입 추론</p>
-<h3 id="3-letletrec-바인딩-이름에서-hover가-안됨"><a class="header" href="#3-letletrec-바인딩-이름에서-hover가-안됨">3. Let/LetRec 바인딩 이름에서 hover가 안됨</a></h3>
-<p><strong>증상:</strong> <code>let count = 1 in count</code>에서 뒤의 <code>count</code>는 되지만 앞의 <code>count</code>는 안됨</p>
+<h3 id="3-letletrec-바인딩-이름에서-hover가-안-된다"><a class="header" href="#3-letletrec-바인딩-이름에서-hover가-안-된다">3. Let/LetRec 바인딩 이름에서 hover가 안 된다</a></h3>
+<p><strong>증상:</strong> <code>let count = 1 in count</code>에서 뒤의 <code>count</code>는 되지만 앞의 <code>count</code>는 안 된다</p>
 <p><strong>원인:</strong> <code>findNodeAtPosition</code>이 바인딩 이름 위치에서 <code>Let</code> 노드를 반환하지만, handler가 <code>Let</code> 케이스를 처리하지 않음</p>
 <p><strong>해결:</strong> <code>Let</code>은 <code>TypeCheck.typecheck value</code>, <code>LetRec</code>은 합성 표현식으로 함수 타입 추론</p>
 <h3 id="4-변수-타입이-표시되지-않음"><a class="header" href="#4-변수-타입이-표시되지-않음">4. 변수 타입이 표시되지 않음</a></h3>
@@ -719,11 +719,11 @@ match getWordAtPosition text pos with
 <p><strong>원인:</strong> 변수를 단독으로 타입 체크하면 바인딩 컨텍스트가 없음</p>
 <p><strong>해결:</strong> <code>findVarTypeInAst</code>로 바인딩 사이트에서 타입 추론</p>
 <h3 id="5-좌표가-어긋남"><a class="header" href="#5-좌표가-어긋남">5. 좌표가 어긋남</a></h3>
-<p><strong>증상:</strong> 클릭한 위치와 다른 노드의 정보가 표시됨</p>
+<p><strong>증상:</strong> 클릭한 위치와 다른 노드의 정보가 표시된다</p>
 <p><strong>원인:</strong> LSP와 파서의 좌표계 혼동</p>
 <p><strong>해결:</strong> FunLang은 <code>LexBuffer.FromString</code>을 사용하므로 LSP와 동일하게 0-based. 변환 불필요.</p>
-<h3 id="4-markupcontent가-제대로-표시-안됨"><a class="header" href="#4-markupcontent가-제대로-표시-안됨">4. MarkupContent가 제대로 표시 안됨</a></h3>
-<p><strong>증상:</strong> 에디터에서 raw Markdown 텍스트가 보임</p>
+<h3 id="4-markupcontent가-제대로-표시-안-된다"><a class="header" href="#4-markupcontent가-제대로-표시-안-된다">4. MarkupContent가 제대로 표시 안 된다</a></h3>
+<p><strong>증상:</strong> 에디터에서 raw Markdown 텍스트가 보인다</p>
 <p><strong>원인:</strong> <code>MarkupKind.PlainText</code> 사용 또는 잘못된 Union 타입</p>
 <p><strong>해결:</strong></p>
 <pre><code class="language-fsharp">// 올바른 방법
@@ -732,7 +732,7 @@ Contents = U3.C1 {
     Value = "```funlang\nint\n```"  // 코드 펜스로 구문 강조
 }
 </code></pre>
-<h3 id="5-다형-타입이-이상하게-표시됨"><a class="header" href="#5-다형-타입이-이상하게-표시됨">5. 다형 타입이 이상하게 표시됨</a></h3>
+<h3 id="5-다형-타입이-이상하게-표시된다"><a class="header" href="#5-다형-타입이-이상하게-표시된다">5. 다형 타입이 이상하게 표시된다</a></h3>
 <p><strong>증상:</strong> <code>'a -&gt; 'a</code> 대신 <code>TVar(1234) -&gt; TVar(1234)</code> 표시</p>
 <p><strong>원인:</strong> 내부 타입 표현을 직접 출력</p>
 <p><strong>해결:</strong> <code>Type.formatTypeNormalized</code> 사용 - 타입 변수를 <code>'a</code>, <code>'b</code> 등으로 정규화</p>
@@ -750,7 +750,7 @@ Contents = U3.C1 {
 <blockquote>
 <p><a href="07-definition.html">07. Go to Definition 구현하기</a></p>
 </blockquote>
-<p>Go to Definition은 Hover와 비슷한 위치 조회 로직을 사용합니다. 다만 타입 대신 <strong>정의 위치</strong>를 반환합니다.</p>
+<p>Go to Definition은 Hover와 비슷한 위치 조회 로직을 사용한다. 다만 타입 대신 <strong>정의 위치</strong>를 반환한다.</p>
 <hr>
 <h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
 <ul>

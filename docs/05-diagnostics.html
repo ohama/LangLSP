@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18d22713.js";
+            window.path_to_searchindex_js = "searchindex-ea2416fc.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="진단diagnostics-구현"><a class="header" href="#진단diagnostics-구현">진단(Diagnostics) 구현</a></h1>
-<p>이 문서는 LSP 서버에서 <strong>Diagnostics</strong>(진단)를 구현하는 방법을 설명합니다. 진단은 에디터에 빨간 줄로 표시되는 에러와 경고를 말하며, LSP의 가장 중요한 기능 중 하나입니다.</p>
+<p>이 문서는 LSP 서버에서 <strong>Diagnostics</strong>(진단)를 구현하는 방법을 설명한다. 진단은 에디터에 빨간 줄로 표시되는 에러와 경고를 말하며, LSP의 가장 중요한 기능 중 하나이다.</p>
 <h2 id="목차"><a class="header" href="#목차">목차</a></h2>
 <ol>
 <li><a href="#진단이란">진단이란</a></li>
@@ -189,7 +189,7 @@
 </ol>
 <hr>
 <h2 id="진단이란"><a class="header" href="#진단이란">진단이란</a></h2>
-<p><strong>Diagnostics</strong>는 소스 코드의 문제를 사용자에게 알려주는 LSP 메시지입니다.</p>
+<p><strong>Diagnostics</strong>는 소스 코드의 문제를 사용자에게 알려주는 LSP 메시지이다.</p>
 <h3 id="진단의-구성-요소"><a class="header" href="#진단의-구성-요소">진단의 구성 요소</a></h3>
 <pre><code class="language-typescript">interface Diagnostic {
     range: Range                    // 에러가 발생한 위치
@@ -212,8 +212,8 @@
 <li><strong>Problems 패널</strong>: 모든 진단이 목록으로 표시</li>
 </ul>
 <h3 id="publishdiagnostics-알림"><a class="header" href="#publishdiagnostics-알림">publishDiagnostics 알림</a></h3>
-<p>LSP 서버는 <code>textDocument/publishDiagnostics</code> 알림을 클라이언트(에디터)로 보냅니다.</p>
-<p><strong>중요:</strong> 이것은 **알림(Notification)**이지 요청(Request)이 아닙니다. 따라서 응답을 기다리지 않습니다.</p>
+<p>LSP 서버는 <code>textDocument/publishDiagnostics</code> 알림을 클라이언트(에디터)로 보낸다.</p>
+<p><strong>중요:</strong> 이것은 **알림(Notification)**이지 요청(Request)이 아니다. 따라서 응답을 기다리지 않는다.</p>
 <pre><code class="language-fsharp">// 진단 발행 예시
 let publishParams : PublishDiagnosticsParams = {
     Uri = "file:///test.fun"
@@ -235,7 +235,7 @@ lspClient.TextDocumentPublishDiagnostics publishParams
 
 <hr>
 <h2 id="funlang의-diagnostic-시스템"><a class="header" href="#funlang의-diagnostic-시스템">FunLang의 Diagnostic 시스템</a></h2>
-<p>FunLang 컴파일러는 이미 풍부한 진단 시스템을 갖추고 있습니다.</p>
+<p>FunLang 컴파일러는 이미 풍부한 진단 시스템을 갖추고 있다.</p>
 <h3 id="funlang-diagnostic-타입"><a class="header" href="#funlang-diagnostic-타입">FunLang Diagnostic 타입</a></h3>
 <pre><code class="language-fsharp">// Diagnostic.fs (FunLang 프로젝트)
 type Diagnostic = {
@@ -257,7 +257,7 @@ type Span = {
     EndColumn: int      // exclusive (마지막 문자 다음 위치)
 }
 </code></pre>
-<p><strong>참고:</strong> <code>LexBuffer.FromString</code>으로 파싱하면 Position이 <strong>0-based</strong>로 생성됩니다. LSP도 0-based이므로 <strong>변환이 필요 없습니다</strong>.</p>
+<p><strong>참고:</strong> <code>LexBuffer.FromString</code>으로 파싱하면 Position이 <strong>0-based</strong>로 생성된다. LSP도 0-based이므로 <strong>변환이 필요 없다</strong>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -270,7 +270,7 @@ type Span = {
 </table>
 </div>
 <h3 id="typecheck-모듈과의-통합"><a class="header" href="#typecheck-모듈과의-통합">TypeCheck 모듈과의 통합</a></h3>
-<p>FunLang의 <code>TypeCheck</code> 모듈은 타입 체킹 결과를 <code>Result&lt;Type, Diagnostic&gt;</code>로 반환합니다.</p>
+<p>FunLang의 <code>TypeCheck</code> 모듈은 타입 체킹 결과를 <code>Result&lt;Type, Diagnostic&gt;</code>로 반환한다.</p>
 <pre><code class="language-fsharp">// TypeCheck.fs (FunLang 프로젝트)
 let typecheckWithDiagnostic (expr: Expr) : Result&lt;Type, Diagnostic&gt; =
     try
@@ -281,10 +281,10 @@ let typecheckWithDiagnostic (expr: Expr) : Result&lt;Type, Diagnostic&gt; =
         let diag = typeErrorToDiagnostic error
         Error diag
 </code></pre>
-<p>이것을 LSP 서버에서 그대로 활용할 수 있습니다!</p>
+<p>이것을 LSP 서버에서 그대로 활용할 수 있다!</p>
 <hr>
 <h2 id="위치-변환-span--lsp-range"><a class="header" href="#위치-변환-span--lsp-range">위치 변환: Span → LSP Range</a></h2>
-<p><code>LexBuffer.FromString</code>을 사용하면 Span이 이미 0-based이므로, 변환 없이 직접 사용합니다.</p>
+<p><code>LexBuffer.FromString</code>을 사용하면 Span이 이미 0-based이므로, 변환 없이 직접 사용한다.</p>
 <h3 id="변환-로직"><a class="header" href="#변환-로직">변환 로직</a></h3>
 <pre><code class="language-fsharp">// Protocol.fs
 module LangLSP.Server.Protocol
@@ -350,7 +350,7 @@ let diagnosticToLsp (diag: Diagnostic.Diagnostic) : Diagnostic =
 </ul>
 <hr>
 <h2 id="문법-오류-처리"><a class="header" href="#문법-오류-처리">문법 오류 처리</a></h2>
-<p>파싱 단계에서 발생하는 문법 오류를 처리합니다.</p>
+<p>파싱 단계에서 발생하는 문법 오류를 처리한다.</p>
 <h3 id="파싱-로직"><a class="header" href="#파싱-로직">파싱 로직</a></h3>
 <pre><code class="language-fsharp">// Diagnostics.fs
 module LangLSP.Server.Diagnostics
@@ -418,7 +418,7 @@ let result = parseFunLang source "file:///test.fun"
 </code></pre>
 <hr>
 <h2 id="타입-오류-처리"><a class="header" href="#타입-오류-처리">타입 오류 처리</a></h2>
-<p>AST를 파싱한 후 타입 체킹을 수행합니다.</p>
+<p>AST를 파싱한 후 타입 체킹을 수행한다.</p>
 <h3 id="타입-체킹-로직"><a class="header" href="#타입-체킹-로직">타입 체킹 로직</a></h3>
 <pre><code class="language-fsharp">/// Type check AST using FunLang's type checker
 /// Returns Ok(type) on success, Error(diagnostic) on type error
@@ -452,7 +452,7 @@ match result with
     printfn "Parse error: %s" parseDiag.Message
 </code></pre>
 <h3 id="funlang의-풍부한-타입-에러"><a class="header" href="#funlang의-풍부한-타입-에러">FunLang의 풍부한 타입 에러</a></h3>
-<p>FunLang의 Diagnostic 시스템은 다음을 제공합니다:</p>
+<p>FunLang의 Diagnostic 시스템은 다음을 제공한다:</p>
 <ol>
 <li><strong>PrimarySpan</strong>: 주 에러 위치</li>
 <li><strong>SecondarySpans</strong>: 관련 위치 (예: 타입 annotation이 있는 곳)</li>
@@ -466,10 +466,10 @@ match result with
    = note: in if condition at test.fun:1:4
    = hint: Check that all branches of your expression return the same type
 </code></pre>
-<p>이 모든 정보가 LSP Diagnostic의 <code>Message</code>와 <code>RelatedInformation</code>으로 변환됩니다!</p>
+<p>이 모든 정보가 LSP Diagnostic의 <code>Message</code>와 <code>RelatedInformation</code>으로 변환된다!</p>
 <hr>
 <h2 id="publishdiagnostics-호출"><a class="header" href="#publishdiagnostics-호출">publishDiagnostics 호출</a></h2>
-<p>전체 분석 파이프라인을 구성합니다.</p>
+<p>전체 분석 파이프라인을 구성한다.</p>
 <h3 id="analyze-함수"><a class="header" href="#analyze-함수">analyze 함수</a></h3>
 <pre><code class="language-fsharp">/// Analyze document and return all diagnostics
 /// Returns list of diagnostics (empty if no errors)
@@ -535,13 +535,13 @@ let handleDidChangeWithDiagnostics (lspClient: ILspClient) (p: DidChangeTextDocu
 </code></pre>
 <hr>
 <h2 id="진단-클리어"><a class="header" href="#진단-클리어">진단 클리어</a></h2>
-<p>문서를 닫거나 에러가 수정되었을 때 진단을 클리어해야 합니다.</p>
+<p>문서를 닫거나 에러가 수정되었을 때 진단을 클리어해야 한다.</p>
 <h3 id="cleardiagnostics-함수"><a class="header" href="#cleardiagnostics-함수">clearDiagnostics 함수</a></h3>
 <pre><code class="language-fsharp">/// Clear diagnostics for a document
 let clearDiagnostics (lspClient: ILspClient) (uri: string) : Async&lt;unit&gt; =
     publishDiagnostics lspClient uri []
 </code></pre>
-<p><strong>핵심 아이디어:</strong> 빈 진단 배열을 발행하면 기존 진단이 모두 제거됩니다.</p>
+<p><strong>핵심 아이디어:</strong> 빈 진단 배열을 발행하면 기존 진단이 모두 제거된다.</p>
 <h3 id="사용-시나리오"><a class="header" href="#사용-시나리오">사용 시나리오</a></h3>
 <ol>
 <li>
@@ -563,7 +563,7 @@ do! publishDiagnostics lspClient uri diagnostics  // 진단 클리어
 </ol>
 <hr>
 <h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
-<p>Expecto와 FsCheck를 활용하여 진단 기능을 테스트합니다.</p>
+<p>Expecto와 FsCheck를 활용하여 진단 기능을 테스트한다.</p>
 <h3 id="기본-테스트"><a class="header" href="#기본-테스트">기본 테스트</a></h3>
 <pre><code class="language-fsharp">// DiagnosticsTests.fs
 module LangLSP.Tests.DiagnosticsTests
@@ -725,8 +725,8 @@ let protocolTests =
 </code></pre>
 <hr>
 <h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
-<p>진단 시스템이 완료되었으므로, 이제 사용자는 에디터에서 실시간 에러 피드백을 받을 수 있습니다!</p>
-<p><strong>Phase 1 완료!</strong> 다음 Phase에서는 더 고급 기능을 구현합니다:</p>
+<p>진단 시스템이 완료되었으므로, 이제 사용자는 에디터에서 실시간 에러 피드백을 받을 수 있다!</p>
+<p><strong>Phase 1 완료!</strong> 다음 Phase에서는 더 고급 기능을 구현한다:</p>
 <h3 id="phase-2---lsp-기능-확장"><a class="header" href="#phase-2---lsp-기능-확장">Phase 2 - LSP 기능 확장</a></h3>
 <ol>
 <li><strong>Hover</strong>: 커서 위치의 타입 정보 표시</li>
