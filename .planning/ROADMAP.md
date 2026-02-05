@@ -160,10 +160,14 @@ Plans:
   7. All LSP integration tests pass (mock client end-to-end)
   8. Tutorial shows how to package VS Code extension as .vsix
 
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- TBD (created during plan-phase)
+- [ ] 05-01-PLAN.md — TextMate grammar, language configuration, and code snippets (EXT-01, EXT-02, EXT-03)
+- [ ] 05-02-PLAN.md — LSP integration tests (TEST-10)
+- [ ] 05-03-PLAN.md — Extension packaging with production mode and VSIX build (EXT-04)
+- [ ] 05-04-PLAN.md — Verification checkpoint (visual testing)
+- [ ] 05-05-PLAN.md — VS Code Extension packaging tutorial in Korean (TUT-12)
 
 ---
 
@@ -178,7 +182,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Core Navigation | 5/5 | Complete | 2026-02-04 |
 | 3. Completion | 3/3 | Complete | 2026-02-05 |
 | 4. Advanced Features | 6/6 | Complete | 2026-02-05 |
-| 5. VS Code Extension | 0/TBD | Not started | - |
+| 5. VS Code Extension | 0/5 | Not started | - |
 
 ---
-*Last updated: 2026-02-05 — Phase 4 complete (6/6 plans, 116 tests, verified)*
+*Last updated: 2026-02-05 — Phase 5 planned (5 plans in 4 waves)*
