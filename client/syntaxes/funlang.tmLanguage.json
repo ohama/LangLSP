@@ -1,0 +1,119 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "FunLang",
+  "scopeName": "source.funlang",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#constants" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#operators" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.funlang",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.funlang",
+          "begin": "\\(\\*",
+          "end": "\\*\\)",
+          "patterns": [
+            { "include": "#block-comment-nested" }
+          ]
+        }
+      ]
+    },
+    "block-comment-nested": {
+      "name": "comment.block.nested.funlang",
+      "begin": "\\(\\*",
+      "end": "\\*\\)",
+      "patterns": [
+        { "include": "#block-comment-nested" }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.funlang",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.funlang",
+          "match": "\\\\[nrt\\\\\"']"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.numeric.integer.funlang",
+          "match": "\\b[0-9]+\\b"
+        },
+        {
+          "name": "constant.language.boolean.funlang",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "name": "keyword.control.funlang",
+      "match": "\\b(if|then|else|match|with|let|in|fun|rec)\\b"
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.funlang",
+          "match": "\\b(int|bool|string|list)\\b"
+        },
+        {
+          "name": "variable.parameter.type.funlang",
+          "match": "'[a-zA-Z][a-zA-Z0-9_]*"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arrow.funlang",
+          "match": "->"
+        },
+        {
+          "name": "keyword.operator.cons.funlang",
+          "match": "::"
+        },
+        {
+          "name": "keyword.operator.comparison.funlang",
+          "match": "<>|<=|>=|<|>"
+        },
+        {
+          "name": "keyword.operator.logical.funlang",
+          "match": "&&|\\|\\|"
+        },
+        {
+          "name": "keyword.operator.arithmetic.funlang",
+          "match": "[+\\-*/]"
+        },
+        {
+          "name": "keyword.operator.assignment.funlang",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.pipe.funlang",
+          "match": "\\|"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.language.wildcard.funlang",
+          "match": "\\b_\\b"
+        }
+      ]
+    }
+  }
+}

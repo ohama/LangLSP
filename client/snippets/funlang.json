@@ -1,0 +1,32 @@
+{
+  "Let Binding": {
+    "prefix": "let",
+    "body": ["let ${1:name} = ${2:value} in", "${0}"],
+    "description": "Let binding expression"
+  },
+  "Recursive Function": {
+    "prefix": "letrec",
+    "body": ["let rec ${1:name} ${2:param} =", "\t${3:body}", "in", "${0}"],
+    "description": "Recursive function definition"
+  },
+  "If-Then-Else": {
+    "prefix": "if",
+    "body": ["if ${1:condition}", "then ${2:consequent}", "else ${3:alternative}"],
+    "description": "If-then-else expression"
+  },
+  "Match Expression": {
+    "prefix": "match",
+    "body": ["match ${1:expr} with", "| ${2:pattern} -> ${3:body}", "| ${4:_} -> ${0:default}"],
+    "description": "Pattern match expression"
+  },
+  "Lambda": {
+    "prefix": "fun",
+    "body": ["fun ${1:x} -> ${0:body}"],
+    "description": "Lambda expression"
+  },
+  "Match List": {
+    "prefix": "matchlist",
+    "body": ["match ${1:xs} with", "| [] -> ${2:base}", "| ${3:h} :: ${4:t} -> ${0:recursive}"],
+    "description": "Pattern match on list (empty and cons)"
+  }
+}
