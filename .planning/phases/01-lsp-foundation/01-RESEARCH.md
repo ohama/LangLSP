@@ -72,7 +72,7 @@ LangLSP/
 ├── client/                       # VS Code extension (TypeScript)
 │   ├── src/extension.ts         # Client activation and LanguageClient setup
 │   └── package.json             # Extension manifest
-└── docs/
+└── documentation/
     └── tutorial/                # Korean LSP tutorial
         ├── 01-lsp-concepts.md
         ├── 02-library-choice.md
@@ -612,7 +612,7 @@ Things that couldn't be fully resolved:
 - [Ionide vscode-fsharp package.json](https://github.com/ionide/ionide-vscode-fsharp/blob/main/release/package.json) - Real-world VS Code extension example
 
 ### Tertiary (LOW confidence)
-- [F# LSP | F# Compiler Guide](https://fsharp.github.io/fsharp-compiler-docs/lsp.html) - Official F# compiler LSP documentation (general context)
+- [F# LSP | F# Compiler Guide](https://fsharp.github.io/fsharp-compiler-documentation/lsp.html) - Official F# compiler LSP documentation (general context)
 - WebSearch results for UTF-16 encoding issues - Multiple GitHub issues confirming UTF-16 as common pitfall
 - WebSearch results for incremental sync - LSP 3.14+ documentation on TextDocumentSyncKind
 

@@ -23,7 +23,7 @@ tech-stack:
 
 key-files:
   created:
-    - docs/tutorial/03-project-setup.md
+    - documentation/tutorial/03-project-setup.md
   modified: []
 
 key-decisions:
@@ -66,7 +66,7 @@ Each task was committed atomically:
 1. **Task 1: Write Project Setup Tutorial (TUT-03)** - `2241fe6` (docs)
 
 ## Files Created/Modified
-- `docs/tutorial/03-project-setup.md` - Complete F# project setup guide with prerequisites, structure, dependencies, and verification steps
+- `documentation/tutorial/03-project-setup.md` - Complete F# project setup guide with prerequisites, structure, dependencies, and verification steps
 
 ## Decisions Made
 

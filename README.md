@@ -19,7 +19,7 @@ FunLang을 위한 VS Code Language Server Protocol (LSP) 구현.
 LangLSP/
 ├── .claude/              # Claude 설정 (submodule)
 ├── LangTutorial/         # FunLang 언어 구현 (submodule)
-├── docs/                 # 문서
+├── documentation/                 # 문서
 │   ├── howto/            # 개발 지식 문서
 │   └── LangLSP-setup.md  # 프로젝트 설정 가이드
 ├── tutorial/             # LSP 구현 튜토리얼

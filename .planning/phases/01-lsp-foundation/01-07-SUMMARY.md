@@ -25,8 +25,8 @@ tech-stack:
 # File tracking
 key-files:
   created:
-    - "docs/tutorial/04-document-sync.md"
-    - "docs/tutorial/05-diagnostics.md"
+    - "documentation/tutorial/04-document-sync.md"
+    - "documentation/tutorial/05-diagnostics.md"
   modified: []
 
 # Decisions
@@ -188,12 +188,12 @@ None - plan executed exactly as written.
 ## Files Modified
 
 ### Created
-- `docs/tutorial/04-document-sync.md` (449 lines)
+- `documentation/tutorial/04-document-sync.md` (449 lines)
   - 문서 동기화 개념 및 구현
   - ConcurrentDictionary 사용법
   - Incremental Sync 알고리즘
 
-- `docs/tutorial/05-diagnostics.md` (653 lines)
+- `documentation/tutorial/05-diagnostics.md` (653 lines)
   - Diagnostics 프로토콜 설명
   - FunLang Diagnostic 시스템 통합
   - Span 변환 및 테스트 전략

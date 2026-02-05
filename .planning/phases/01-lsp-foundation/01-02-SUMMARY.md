@@ -20,8 +20,8 @@ tech-stack:
 
 key-files:
   created:
-    - docs/tutorial/01-lsp-concepts.md
-    - docs/tutorial/02-library-choice.md
+    - documentation/tutorial/01-lsp-concepts.md
+    - documentation/tutorial/02-library-choice.md
   modified: []
 
 key-decisions:
@@ -64,8 +64,8 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 
-- `docs/tutorial/01-lsp-concepts.md` (440 lines) - Explains LSP purpose, client-server model, JSON-RPC 2.0 message format, capability negotiation, document synchronization lifecycle, and diagnostic publishing
-- `docs/tutorial/02-library-choice.md` (310 lines) - Compares Ionide, OmniSharp, and custom implementation with detailed comparison table and rationale for Ionide selection
+- `documentation/tutorial/01-lsp-concepts.md` (440 lines) - Explains LSP purpose, client-server model, JSON-RPC 2.0 message format, capability negotiation, document synchronization lifecycle, and diagnostic publishing
+- `documentation/tutorial/02-library-choice.md` (310 lines) - Compares Ionide, OmniSharp, and custom implementation with detailed comparison table and rationale for Ionide selection
 
 ## Decisions Made
 
