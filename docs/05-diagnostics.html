@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -222,6 +222,17 @@ let publishParams : PublishDiagnosticsParams = {
 }
 lspClient.TextDocumentPublishDiagnostics publishParams
 </code></pre>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/didOpen(uri, text)
+    Note over S: 파싱 → 타입 검사
+    S--&gt;&gt;C: textDocument/publishDiagnostics(uri, diagnostics[])
+    C-&gt;&gt;S: textDocument/didChange(uri, changes[])
+    Note over S: 재파싱 → 재검사
+    S--&gt;&gt;C: textDocument/publishDiagnostics(uri, diagnostics[])
+</pre>
+
 <hr>
 <h2 id="funlang의-diagnostic-시스템"><a class="header" href="#funlang의-diagnostic-시스템">FunLang의 Diagnostic 시스템</a></h2>
 <p>FunLang 컴파일러는 이미 풍부한 진단 시스템을 갖추고 있습니다.</p>
@@ -793,6 +804,8 @@ let protocolTests =
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
 
 

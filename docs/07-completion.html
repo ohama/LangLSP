@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -262,6 +262,14 @@ let x = 42 in l█
 <li><strong>아이콘</strong>: <code>CompletionItemKind</code>에 따라 다른 아이콘 표시</li>
 <li><strong>타입 정보</strong>: <code>detail</code> 필드에 타입 표시</li>
 </ul>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/completion(uri, position)
+    Note over S: 키워드 + 스코프 내 심볼 수집
+    S-&gt;&gt;C: CompletionList(isIncomplete, items[])
+</pre>
+
 <hr>
 <h2 id="구현-전략"><a class="header" href="#구현-전략">구현 전략</a></h2>
 <p>Completion 기능은 두 가지 소스에서 완성 후보를 제공합니다:</p>
@@ -1030,6 +1038,8 @@ with _ -&gt;
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
 
 

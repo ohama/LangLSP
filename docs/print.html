@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -278,7 +278,7 @@
 </ol>
 <p>대부분의 LSP 서버는 stdin/stdout을 사용합니다. 에디터가 서버를 자식 프로세스로 실행하고, 표준 입출력을 통해 메시지를 주고받습니다.</p>
 <h3 id="아키텍처-다이어그램"><a class="header" href="#아키텍처-다이어그램">아키텍처 다이어그램</a></h3>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid">sequenceDiagram
     participant Editor as 에디터 (VS Code)
     participant Server as Language Server
 
@@ -291,7 +291,8 @@
 
     Editor-&gt;&gt;Server: textDocument/hover (사용자가 커서 올림)
     Server-&gt;&gt;Editor: hover response (타입 정보)
-</code></pre>
+</pre>
+
 <hr>
 <h2 id="json-rpc-프로토콜"><a class="header" href="#json-rpc-프로토콜">JSON-RPC 프로토콜</a></h2>
 <p>LSP는 <strong>JSON-RPC 2.0</strong> 프로토콜을 기반으로 합니다.</p>
@@ -803,6 +804,16 @@ type Hover = { ... }
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="f-프로젝트-설정"><a class="header" href="#f-프로젝트-설정">F# 프로젝트 설정</a></h1>
 <p>이 문서는 F# LSP 서버 프로젝트를 처음부터 만드는 방법을 단계별로 설명합니다. 이 튜토리얼을 따라하면 FunLang LSP 서버의 전체 프로젝트 구조를 생성할 수 있습니다.</p>
+<h3 id="lsp-initialize-핸드셰이크"><a class="header" href="#lsp-initialize-핸드셰이크">LSP Initialize 핸드셰이크</a></h3>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client (VS Code)
+    participant S as Server (LangLSP)
+    C-&gt;&gt;S: initialize(processId, capabilities, rootUri)
+    S-&gt;&gt;C: InitializeResult(serverCapabilities)
+    C-&gt;&gt;S: initialized()
+    Note over C,S: 서버 준비 완료, 문서 이벤트 수신 대기
+</pre>
+
 <h2 id="목차-2"><a class="header" href="#목차-2">목차</a></h2>
 <ol>
 <li><a href="#사전-요구사항">사전 요구사항</a></li>
@@ -1261,6 +1272,18 @@ let main argv =
 </tbody>
 </table>
 </div>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/didOpen(uri, text)
+    Note over S: 문서 저장소에 전체 텍스트 저장
+    C-&gt;&gt;S: textDocument/didChange(uri, contentChanges[])
+    Note over S: 변경 범위만 반영 (Incremental)
+    C-&gt;&gt;S: textDocument/didChange(uri, contentChanges[])
+    C-&gt;&gt;S: textDocument/didClose(uri)
+    Note over S: 문서 저장소에서 제거
+</pre>
+
 <h3 id="문서-동기화가-필요한-lsp-기능"><a class="header" href="#문서-동기화가-필요한-lsp-기능">문서 동기화가 필요한 LSP 기능</a></h3>
 <p>문서 동기화는 거의 모든 LSP 기능의 전제조건입니다.</p>
 <ul>
@@ -1667,6 +1690,17 @@ let publishParams : PublishDiagnosticsParams = {
 }
 lspClient.TextDocumentPublishDiagnostics publishParams
 </code></pre>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/didOpen(uri, text)
+    Note over S: 파싱 → 타입 검사
+    S--&gt;&gt;C: textDocument/publishDiagnostics(uri, diagnostics[])
+    C-&gt;&gt;S: textDocument/didChange(uri, changes[])
+    Note over S: 재파싱 → 재검사
+    S--&gt;&gt;C: textDocument/publishDiagnostics(uri, diagnostics[])
+</pre>
+
 <hr>
 <h2 id="funlang의-diagnostic-시스템"><a class="header" href="#funlang의-diagnostic-시스템">FunLang의 Diagnostic 시스템</a></h2>
 <p>FunLang 컴파일러는 이미 풍부한 진단 시스템을 갖추고 있습니다.</p>
@@ -2240,6 +2274,14 @@ let double = fun x -&gt; x * 2 in double 5
 <li><strong>팝업</strong>: <code>contents</code>의 내용이 툴팁으로 표시</li>
 <li><strong>Markdown 지원</strong>: 코드 블록, 볼드, 이탤릭 등 포맷팅 가능</li>
 </ul>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/hover(uri, position)
+    Note over S: AST에서 위치 조회 → 타입 정보 추출
+    S-&gt;&gt;C: Hover(contents, range)
+</pre>
+
 <hr>
 <h2 id="구현-전략"><a class="header" href="#구현-전략">구현 전략</a></h2>
 <p>Hover 기능은 두 가지를 제공합니다:</p>
@@ -2852,6 +2894,14 @@ let x = 42 in l█
 <li><strong>아이콘</strong>: <code>CompletionItemKind</code>에 따라 다른 아이콘 표시</li>
 <li><strong>타입 정보</strong>: <code>detail</code> 필드에 타입 표시</li>
 </ul>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/completion(uri, position)
+    Note over S: 키워드 + 스코프 내 심볼 수집
+    S-&gt;&gt;C: CompletionList(isIncomplete, items[])
+</pre>
+
 <hr>
 <h2 id="구현-전략-1"><a class="header" href="#구현-전략-1">구현 전략</a></h2>
 <p>Completion 기능은 두 가지 소스에서 완성 후보를 제공합니다:</p>
@@ -3610,6 +3660,15 @@ with _ -&gt;
 <li>서버가 해당 변수의 <strong>정의 위치</strong> 반환</li>
 <li>클라이언트가 해당 위치로 커서 이동</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/definition(uri, position)
+    Note over S: 심볼 테이블에서 바인딩 위치 조회
+    S-&gt;&gt;C: Location(uri, range)
+    Note over C: 정의 위치로 이동
+</pre>
+
 <hr>
 <h2 id="lsp-프로토콜"><a class="header" href="#lsp-프로토콜">LSP 프로토콜</a></h2>
 <h3 id="textdocumentdefinition-요청"><a class="header" href="#textdocumentdefinition-요청">textDocument/definition 요청</a></h3>
@@ -4302,6 +4361,15 @@ defs
 <li>서버가 해당 심볼의 <strong>모든 사용 위치</strong> 반환 (배열)</li>
 <li>클라이언트가 결과 패널에 위치 목록 표시</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/references(uri, position, includeDeclaration)
+    Note over S: 정의 + 모든 사용 위치 수집
+    S-&gt;&gt;C: Location[](정의, 참조1, 참조2, ...)
+    Note over C: 참조 목록 패널에 표시
+</pre>
+
 <h3 id="활용-사례"><a class="header" href="#활용-사례">활용 사례</a></h3>
 <div class="table-wrapper">
 <table>
@@ -5301,6 +5369,18 @@ let updateReferences (edit: TextEdit) (oldIndex: DefinitionIndex) : DefinitionIn
 <li>서버가 <code>WorkspaceEdit</code> 반환 (모든 변경사항)</li>
 <li>클라이언트가 파일 업데이트 적용</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/prepareRename(uri, position)
+    S-&gt;&gt;C: {range, placeholder}
+    Note over C: 사용자에게 새 이름 입력 요청
+    C-&gt;&gt;S: textDocument/rename(uri, position, newName)
+    Note over S: 모든 참조 위치 수집 → TextEdit 생성
+    S-&gt;&gt;C: WorkspaceEdit(changes: {uri: TextEdit[]})
+    Note over C: 모든 위치 일괄 변경
+</pre>
+
 <hr>
 <h2 id="lsp-프로토콜-2"><a class="header" href="#lsp-프로토콜-2">LSP 프로토콜</a></h2>
 <p>Rename은 <strong>두 단계</strong>로 구성됩니다:</p>
@@ -6312,6 +6392,17 @@ with _ -&gt;
 <li>클릭하면 Code Action 목록 표시</li>
 <li>선택하면 자동으로 코드 수정</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    S--&gt;&gt;C: textDocument/publishDiagnostics(diagnostics[])
+    Note over C: 💡 표시
+    C-&gt;&gt;S: textDocument/codeAction(uri, range, diagnostics[])
+    Note over S: 진단 분석 → 수정 제안 생성
+    S-&gt;&gt;C: CodeAction[](title, edit, kind)
+    Note over C: 사용자가 액션 선택 → WorkspaceEdit 적용
+</pre>
+
 <h3 id="code-action의-종류"><a class="header" href="#code-action의-종류">Code Action의 종류</a></h3>
 <p>LSP 스펙에서 정의한 <code>CodeActionKind</code>:</p>
 <div class="table-wrapper">
@@ -7210,6 +7301,22 @@ return Some [||]
 <li><strong><code>main</code> 진입점 실행</strong>: <code>extension.ts</code>의 <code>activate()</code> 함수 호출</li>
 <li><strong>명령적 기능 시작</strong>: LSP 클라이언트 시작, 서버 프로세스 생성</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant V as VS Code
+    participant E as Extension
+    participant S as LangLSP Server
+    V-&gt;&gt;E: activate()
+    E-&gt;&gt;S: 프로세스 시작 (stdin/stdout)
+    E-&gt;&gt;S: initialize(processId, capabilities)
+    S-&gt;&gt;E: InitializeResult(serverCapabilities)
+    E-&gt;&gt;S: initialized()
+    Note over V,S: LSP 세션 활성화
+    V-&gt;&gt;E: deactivate()
+    E-&gt;&gt;S: shutdown()
+    S-&gt;&gt;E: shutdown response
+    E-&gt;&gt;S: exit()
+</pre>
+
 <p>VS Code 1.74+에서는 <code>activationEvents</code>를 빈 배열(<code>[]</code>)로 두면, <code>contributes.languages</code>에 등록된 언어의 파일을 열 때 자동으로 활성화됩니다.</p>
 <h3 id="packagejson의-핵심-필드"><a class="header" href="#packagejson의-핵심-필드">package.json의 핵심 필드</a></h3>
 <pre><code class="language-json">{
@@ -8506,6 +8613,8 @@ x  ← 여기서 F2 → "y" 입력 → Enter
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
         <script>
         window.addEventListener('load', function() {

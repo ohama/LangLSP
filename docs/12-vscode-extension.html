@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -221,6 +221,22 @@
 <li><strong><code>main</code> 진입점 실행</strong>: <code>extension.ts</code>의 <code>activate()</code> 함수 호출</li>
 <li><strong>명령적 기능 시작</strong>: LSP 클라이언트 시작, 서버 프로세스 생성</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant V as VS Code
+    participant E as Extension
+    participant S as LangLSP Server
+    V-&gt;&gt;E: activate()
+    E-&gt;&gt;S: 프로세스 시작 (stdin/stdout)
+    E-&gt;&gt;S: initialize(processId, capabilities)
+    S-&gt;&gt;E: InitializeResult(serverCapabilities)
+    E-&gt;&gt;S: initialized()
+    Note over V,S: LSP 세션 활성화
+    V-&gt;&gt;E: deactivate()
+    E-&gt;&gt;S: shutdown()
+    S-&gt;&gt;E: shutdown response
+    E-&gt;&gt;S: exit()
+</pre>
+
 <p>VS Code 1.74+에서는 <code>activationEvents</code>를 빈 배열(<code>[]</code>)로 두면, <code>contributes.languages</code>에 등록된 언어의 파일을 열 때 자동으로 활성화됩니다.</p>
 <h3 id="packagejson의-핵심-필드"><a class="header" href="#packagejson의-핵심-필드">package.json의 핵심 필드</a></h3>
 <pre><code class="language-json">{
@@ -1523,6 +1539,8 @@ x  ← 여기서 F2 → "y" 입력 → Enter
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
 
 

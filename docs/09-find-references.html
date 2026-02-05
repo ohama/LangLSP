@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -215,6 +215,15 @@
 <li>서버가 해당 심볼의 <strong>모든 사용 위치</strong> 반환 (배열)</li>
 <li>클라이언트가 결과 패널에 위치 목록 표시</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/references(uri, position, includeDeclaration)
+    Note over S: 정의 + 모든 사용 위치 수집
+    S-&gt;&gt;C: Location[](정의, 참조1, 참조2, ...)
+    Note over C: 참조 목록 패널에 표시
+</pre>
+
 <h3 id="활용-사례"><a class="header" href="#활용-사례">활용 사례</a></h3>
 <div class="table-wrapper">
 <table>
@@ -1219,6 +1228,8 @@ let updateReferences (edit: TextEdit) (oldIndex: DefinitionIndex) : DefinitionIn
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
 
 

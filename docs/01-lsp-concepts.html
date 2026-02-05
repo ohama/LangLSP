@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -246,7 +246,7 @@
 </ol>
 <p>대부분의 LSP 서버는 stdin/stdout을 사용합니다. 에디터가 서버를 자식 프로세스로 실행하고, 표준 입출력을 통해 메시지를 주고받습니다.</p>
 <h3 id="아키텍처-다이어그램"><a class="header" href="#아키텍처-다이어그램">아키텍처 다이어그램</a></h3>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid">sequenceDiagram
     participant Editor as 에디터 (VS Code)
     participant Server as Language Server
 
@@ -259,7 +259,8 @@
 
     Editor-&gt;&gt;Server: textDocument/hover (사용자가 커서 올림)
     Server-&gt;&gt;Editor: hover response (타입 정보)
-</code></pre>
+</pre>
+
 <hr>
 <h2 id="json-rpc-프로토콜"><a class="header" href="#json-rpc-프로토콜">JSON-RPC 프로토콜</a></h2>
 <p>LSP는 <strong>JSON-RPC 2.0</strong> 프로토콜을 기반으로 합니다.</p>
@@ -569,6 +570,8 @@ textDocument/publishDiagnostics 알림
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
 
 

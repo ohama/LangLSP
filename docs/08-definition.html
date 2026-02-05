@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+            window.path_to_searchindex_js = "searchindex-18d22713.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b67c2577.js"></script>
@@ -215,6 +215,15 @@
 <li>서버가 해당 변수의 <strong>정의 위치</strong> 반환</li>
 <li>클라이언트가 해당 위치로 커서 이동</li>
 </ol>
+<pre class="mermaid">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: textDocument/definition(uri, position)
+    Note over S: 심볼 테이블에서 바인딩 위치 조회
+    S-&gt;&gt;C: Location(uri, range)
+    Note over C: 정의 위치로 이동
+</pre>
+
 <hr>
 <h2 id="lsp-프로토콜"><a class="header" href="#lsp-프로토콜">LSP 프로토콜</a></h2>
 <h3 id="textdocumentdefinition-요청"><a class="header" href="#textdocumentdefinition-요청">textDocument/definition 요청</a></h3>
@@ -917,6 +926,8 @@ defs
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
 
 
 
