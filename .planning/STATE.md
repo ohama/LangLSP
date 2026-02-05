@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2025-02-04)
 ## Current Position
 
 Phase: 5 of 5 (VS Code Extension)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-05 — Completed 05-02-PLAN.md
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-05 — Completed 05-03-PLAN.md
 
-Progress: [████████████████████░] 89% (24 of 27 total plans complete)
+Progress: [█████████████████████] 93% (25 of 27 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: 3.5min
+- Total plans completed: 25
+- Average duration: 3.4min
 - Total execution time: 1.4 hours
 
 **By Phase:**
@@ -31,10 +31,10 @@ Progress: [████████████████████░] 89% 
 | 02-core-navigation | 5 | 32min | 6.4min |
 | 03-completion | 3 | 9min | 3min |
 | 04-advanced-features | 6 | 19min | 3.2min |
-| 05-vs-code-extension | 2 | 4min | 2min |
+| 05-vs-code-extension | 3 | 6.5min | 2.2min |
 
 **Recent Trend:**
-- Last 5 plans: 04-03 (4min), 04-04 (3min), 04-05 (4min), 05-01 (2min), 05-02 (2min)
+- Last 5 plans: 04-04 (3min), 04-05 (4min), 05-01 (2min), 05-02 (2min), 05-03 (2.5min)
 - Trend: Consistent 2-4min execution for both implementation and tutorial plans
 
 *Updated after each plan completion*
@@ -104,6 +104,9 @@ Recent decisions affecting current work:
 - Integration test lifecycle pattern (05-02): didOpen -> diagnostics -> hover -> completion -> definition -> references -> rename -> didClose verifies all LSP features work together
 - Graceful degradation tests (05-02): Parse errors still return keywords, type errors integrate with code actions
 - Hover on usage for type inference (05-02): Hovering on variable usage shows inferred types, definition positions may show innermost AST nodes
+- Production mode detection via fs.existsSync (05-03): Extension checks for server/ directory to decide between bundled binary (production) or dotnet run (development)
+- Framework-dependent publish (05-03): Requires .NET runtime on target, smaller VSIX size (3.6 MB vs 50+ MB self-contained)
+- Exclude build artifacts from git (05-03): .gitignore for client/server/ and client/*.vsix prevents committing build outputs
 
 ### Pending Todos
 
@@ -116,6 +119,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 05-02-PLAN.md (LSP integration tests)
+Stopped at: Completed 05-03-PLAN.md (VS Code extension packaging)
 Resume file: None
-Next action: Continue Phase 5 - Plan 05-03 (VS Code extension tutorial) remaining
+Next action: Phase 5 complete. All VS Code extension plans (05-01, 05-02, 05-03) finished. Distributable funlang-0.1.0.vsix ready for installation.
