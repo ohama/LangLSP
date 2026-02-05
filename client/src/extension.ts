@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { workspace, ExtensionContext } from 'vscode';
 import {
   LanguageClient,
@@ -9,26 +10,37 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
-  // Path to the F# LSP server executable
-  // After `dotnet publish`, the executable is in the publish folder
-  const serverPath = context.asAbsolutePath(
-    path.join('server', 'LangLSP.Server')
-  );
+  // Detect whether running from VSIX (production) or development
+  const serverDir = context.asAbsolutePath(path.join('server'));
 
-  // For development: use dotnet run
-  // For production: use published executable
-  const serverOptions: ServerOptions = {
-    run: {
-      command: 'dotnet',
-      args: ['run', '--project', context.asAbsolutePath(path.join('..', 'src', 'LangLSP.Server', 'LangLSP.Server.fsproj'))],
-      options: { cwd: context.asAbsolutePath('..') }
-    },
-    debug: {
-      command: 'dotnet',
-      args: ['run', '--project', context.asAbsolutePath(path.join('..', 'src', 'LangLSP.Server', 'LangLSP.Server.fsproj'))],
-      options: { cwd: context.asAbsolutePath('..') }
-    }
-  };
+  let serverOptions: ServerOptions;
+
+  if (fs.existsSync(serverDir)) {
+    // Production: use published server binary from VSIX
+    const serverPath = path.join(serverDir, 'LangLSP.Server');
+    serverOptions = {
+      run: { command: serverPath, options: { cwd: serverDir } },
+      debug: { command: serverPath, options: { cwd: serverDir } }
+    };
+  } else {
+    // Development: use dotnet run
+    serverOptions = {
+      run: {
+        command: 'dotnet',
+        args: ['run', '--project', context.asAbsolutePath(
+          path.join('..', 'src', 'LangLSP.Server', 'LangLSP.Server.fsproj')
+        )],
+        options: { cwd: context.asAbsolutePath('..') }
+      },
+      debug: {
+        command: 'dotnet',
+        args: ['run', '--project', context.asAbsolutePath(
+          path.join('..', 'src', 'LangLSP.Server', 'LangLSP.Server.fsproj')
+        )],
+        options: { cwd: context.asAbsolutePath('..') }
+      }
+    };
+  }
 
   // Client options: what documents to sync
   const clientOptions: LanguageClientOptions = {
