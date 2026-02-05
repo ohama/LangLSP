@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2025-02-04)
 
 **Core value:** LSP 입문자가 실제 동작하는 Language Server를 만들면서 LSP 개념을 이해할 수 있는 실용적인 튜토리얼
-**Current focus:** Phase 4 - Advanced Features (COMPLETE)
+**Current focus:** Phase 5 - VS Code Extension (IN PROGRESS)
 
 ## Current Position
 
-Phase: 4 of 5 (Advanced Features)
-Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-02-05 — Completed Phase 4 (all 6 plans, 116 tests passing, verified 12/12)
+Phase: 5 of 5 (VS Code Extension)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-05 — Completed 05-01-PLAN.md
 
-Progress: [████████████████████] 100% (22 of 22 total plans complete)
+Progress: [████████████████████░] 85% (23 of 27 total plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
-- Average duration: 3.7min
+- Total plans completed: 23
+- Average duration: 3.6min
 - Total execution time: 1.4 hours
 
 **By Phase:**
@@ -31,9 +31,10 @@ Progress: [████████████████████] 100% (2
 | 02-core-navigation | 5 | 32min | 6.4min |
 | 03-completion | 3 | 9min | 3min |
 | 04-advanced-features | 6 | 19min | 3.2min |
+| 05-vs-code-extension | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 04-01 (2min), 04-02 (3min), 04-03 (4min), 04-04 (3min), 04-05 (4min)
+- Last 5 plans: 04-02 (3min), 04-03 (4min), 04-04 (3min), 04-05 (4min), 05-01 (2min)
 - Trend: Consistent 2-4min execution for both implementation and tutorial plans
 
 *Updated after each plan completion*
@@ -94,6 +95,12 @@ Recent decisions affecting current work:
 - Tutorial structure following 08-definition.md (04-04): 1058-line Find References tutorial with comprehensive shadowing examples and Definition module reuse explanation
 - Two-phase rename protocol emphasis (04-05): prepareRename validates before rename executes, matching LSP workflow
 - Comprehensive rename coverage (04-05): 1142-line tutorial exceeds target to cover WorkspaceEdit construction and edge cases
+- Multi-char operators before single-char (05-01): TextMate patterns checked in order, prevents tokenization splits like -> becoming - and >
+- Word boundaries in keyword patterns (05-01): \b prevents partial matches like "letter" matching "let"
+- Self-referencing nested comments (05-01): block-comment-nested pattern includes itself for unlimited nesting depth
+- Block comment auto-closing (05-01): (* *) added to autoClosingPairs for FunLang syntax
+- Removed curly braces (05-01): FunLang doesn't use {}, removed from brackets, autoClosingPairs, surroundingPairs
+- onEnterRules for comment continuation (05-01): // comments continue on new line automatically
 
 ### Pending Todos
 
@@ -106,6 +113,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed Phase 4 (Advanced Features) - all 6 plans, 116 tests passing, verified 12/12
+Stopped at: Completed 05-01-PLAN.md (TextMate grammar and snippets)
 Resume file: None
-Next action: Phase 4 complete. Ready for Phase 5 (VS Code Extension: TextMate grammar, snippets, .vsix packaging)
+Next action: Continue Phase 5 - Plan 05-02 (VS Code extension tutorial) and 05-03 (.vsix packaging)
