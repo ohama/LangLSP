@@ -1617,7 +1617,7 @@ FunLang Language Server는 이제 완성되었다. 당신은 이제:
 - VS Code Extension을 만들고 패키징할 수 있다
 - 구문 강조, 스니펫, 언어 설정을 정의할 수 있다
 
-**이 지식을 활용하여 당신만의 언어를 위한 Language Server를 만들어보세요!**
+**이 지식을 활용하여 당신만의 언어를 위한 Language Server를 만들어보라!**
 
 LSP 스펙 참조: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/
 
