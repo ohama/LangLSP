@@ -90,6 +90,68 @@ type FunLangLspServer(lspClient: FunLangLspClient) =
         handleDidClose p
     }
 
+    /// Handle textDocument/hover request
+    override _.TextDocumentHover(p: HoverParams) = async {
+        Log.Information("Hover request received: {Uri} at line {Line}, char {Char}",
+            p.TextDocument.Uri, p.Position.Line, p.Position.Character)
+        let! result = Server.Handlers.textDocumentHover p
+        match result with
+        | Some h -> Log.Information("Hover result: {Contents}", h.Contents)
+        | None -> Log.Information("Hover result: None")
+        return Ok result
+    }
+
+    /// Handle textDocument/definition request
+    override _.TextDocumentDefinition(p: DefinitionParams) = async {
+        Log.Information("Definition request: {Uri} at line {Line}, char {Char}",
+            p.TextDocument.Uri, p.Position.Line, p.Position.Character)
+        let! result = Server.Handlers.textDocumentDefinition p
+        match result with
+        | Some def -> Log.Information("Definition result: {Def}", def)
+        | None -> Log.Information("Definition result: None")
+        return result |> Option.map U2.C1 |> Ok
+    }
+
+    /// Handle textDocument/completion request
+    override _.TextDocumentCompletion(p: CompletionParams) = async {
+        let! result = Server.Handlers.textDocumentCompletion p
+        return result |> Option.map U2.C2 |> Ok
+    }
+
+    /// Handle textDocument/references request
+    override _.TextDocumentReferences(p: ReferenceParams) = async {
+        let! result = Server.Handlers.textDocumentReferences p
+        return Ok result
+    }
+
+    /// Handle textDocument/prepareRename request
+    override _.TextDocumentPrepareRename(p: PrepareRenameParams) = async {
+        let tdpp: TextDocumentPositionParams = { TextDocument = p.TextDocument; Position = p.Position }
+        let! result = Server.Handlers.textDocumentPrepareRename tdpp
+        return Ok result
+    }
+
+    /// Handle textDocument/rename request
+    override _.TextDocumentRename(p: RenameParams) = async {
+        let! result = Server.Handlers.textDocumentRename p
+        return Ok result
+    }
+
+    /// Handle textDocument/codeAction request
+    override _.TextDocumentCodeAction(p: CodeActionParams) = async {
+        Log.Information("CodeAction request at line {Line}, char {Char}, diagnostics={Count}",
+            p.Range.Start.Line, p.Range.Start.Character, p.Context.Diagnostics.Length)
+        let! result = Server.Handlers.textDocumentCodeAction p
+        match result with
+        | Some actions ->
+            Log.Information("CodeAction returning {Count} actions", actions.Length)
+            for a in actions do
+                Log.Information("  Action: {Title}", a.Title)
+        | None ->
+            Log.Information("CodeAction returning None")
+        return result |> Option.map (Array.map U2.C2) |> Ok
+    }
+
     /// Handle shutdown request
     override _.Shutdown() = async {
         Log.Information("Shutdown request received")

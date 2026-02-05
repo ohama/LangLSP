@@ -25,7 +25,7 @@ let findNameInSource (text: string) (name: string) (startLine: int) (startCol: i
                 StartLine = startLine
                 StartColumn = nameStart
                 EndLine = startLine
-                EndColumn = nameStart + name.Length - 1
+                EndColumn = nameStart + name.Length
             }
         else None
     else None
@@ -167,7 +167,7 @@ let handleRename (p: RenameParams) : Async<WorkspaceEdit option> =
                                     StartLine = defSpan.StartLine
                                     StartColumn = defSpan.StartColumn
                                     EndLine = defSpan.StartLine
-                                    EndColumn = defSpan.StartColumn + varName.Length - 1
+                                    EndColumn = defSpan.StartColumn + varName.Length
                                 }
 
                         // Combine definition name span + references

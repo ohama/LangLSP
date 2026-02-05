@@ -129,8 +129,8 @@ let definitionTests =
                 Expect.isSome result "Should find outer definition"
                 match extractLocation result with
                 | Some loc ->
-                    // Outer let starts at column 0
-                    Expect.equal (int loc.Range.Start.Character) 0 "Should be outer definition"
+                    // Outer x identifier at column 4 (after "let ")
+                    Expect.equal (int loc.Range.Start.Character) 4 "Should be outer definition"
                 | None -> failtest "Expected location"
             }
         ]

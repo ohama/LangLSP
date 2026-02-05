@@ -1,5 +1,6 @@
 module LangLSP.Server.Hover
 
+open Serilog
 open Ionide.LanguageServerProtocol.Types
 open LangLSP.Server.AstLookup
 open LangLSP.Server.DocumentSync
@@ -94,10 +95,11 @@ let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
     | Let(_, _, body, _) ->
         // Not this binding, search in body
         findVarTypeInAst varName body
-    | LetRec(name, param, fnBody, inExpr, _) when name = varName ->
-        // Recursive function - typecheck the whole let rec to get function type
-        match TypeCheck.typecheck ast with
-        | Ok ty -> Some ty  // This gives us the type of the whole expression
+    | LetRec(name, param, fnBody, inExpr, span) when name = varName ->
+        // Recursive function - synthesize "let rec f x = body in f" to get function type
+        let synthExpr = LetRec(name, param, fnBody, Var(name, span), span)
+        match TypeCheck.typecheck synthExpr with
+        | Ok ty -> Some ty
         | Error _ -> None
     | LetRec(_, _, _, inExpr, _) ->
         findVarTypeInAst varName inExpr
@@ -127,45 +129,62 @@ let handleHover (p: HoverParams) : Async<Hover option> =
     async {
         let uri = p.TextDocument.Uri
         let pos = p.Position
+        Log.Debug("handleHover: uri={Uri}, line={Line}, char={Char}", uri, pos.Line, pos.Character)
 
         match getDocument uri with
-        | None -> return None
+        | None ->
+            Log.Warning("handleHover: document not found for {Uri}", uri)
+            return None
         | Some text ->
+            Log.Debug("handleHover: document found, length={Len}", text.Length)
             // Check for keyword hover first
             match getWordAtPosition text pos with
             | Some word when keywordExplanations.ContainsKey word ->
+                Log.Debug("handleHover: keyword hover for '{Word}'", word)
                 return createKeywordHover word pos
-            | _ ->
+            | wordOpt ->
+                Log.Debug("handleHover: not a keyword, word={Word}", wordOpt)
                 // Try AST-based hover for types
                 try
                     let lexbuf = FSharp.Text.Lexing.LexBuffer<char>.FromString(text)
                     let ast = Parser.start Lexer.tokenize lexbuf
+                    Log.Debug("handleHover: parsed AST successfully")
 
-                    // First, type check the whole AST to ensure it's valid
-                    match TypeCheck.typecheck ast with
-                    | Error _ -> return None
-                    | Ok wholeType ->
-                        // Find the node at position
-                        match findNodeAtPosition pos ast with
-                        | None -> return None
-                        | Some node ->
-                            // Get type based on node kind
-                            let nodeType =
-                                match node with
-                                | Var(name, _) ->
-                                    // For Var, find binding in AST and get its type
-                                    // If it's the result of the whole expression, use wholeType
-                                    match findVarTypeInAst name ast with
-                                    | Some ty -> Some ty
-                                    | None ->
-                                        // Variable might be referenced at the end (result position)
-                                        // Use the whole expression type
-                                        Some wholeType
-                                | _ -> getNodeType node
+                    // Find the node at position
+                    match findNodeAtPosition pos ast with
+                    | None ->
+                        Log.Debug("handleHover: no AST node at position")
+                        return None
+                    | Some node ->
+                        Log.Debug("handleHover: found node {Node}", node)
+                        // Get type based on node kind
+                        let nodeType =
+                            match node with
+                            | Var(name, _) ->
+                                match findVarTypeInAst name ast with
+                                | Some ty -> Some ty
+                                | None -> None
+                            | Let(name, value, _, _) ->
+                                // Cursor on let binding name — show bound value type
+                                match TypeCheck.typecheck value with
+                                | Ok ty -> Some ty
+                                | Error _ -> None
+                            | LetRec(name, param, fnBody, _, span) ->
+                                // Cursor on let rec binding name — synthesize to get function type
+                                let synthExpr = LetRec(name, param, fnBody, Var(name, span), span)
+                                match TypeCheck.typecheck synthExpr with
+                                | Ok ty -> Some ty
+                                | Error _ -> None
+                            | _ -> getNodeType node
 
-                            match nodeType with
-                            | None -> return None
-                            | Some ty -> return Some (createTypeHover ty (spanOf node))
-                with _ ->
+                        match nodeType with
+                        | None ->
+                            Log.Debug("handleHover: no type for node")
+                            return None
+                        | Some ty ->
+                            Log.Debug("handleHover: returning type {Type}", Type.formatTypeNormalized ty)
+                            return Some (createTypeHover ty (spanOf node))
+                with ex ->
+                    Log.Error("handleHover: exception during hover: {Message}", ex.Message)
                     return None
     }

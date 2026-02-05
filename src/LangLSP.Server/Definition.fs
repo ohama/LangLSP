@@ -106,6 +106,20 @@ let findDefinitionForVar (varName: string) (ast: Expr) (usagePos: Position) : Sp
     |> List.tryHead
     |> Option.map snd
 
+/// Find the exact range of an identifier name in source text near a span
+let findIdentifierRange (text: string) (name: string) (span: Span) : Range =
+    let lines = text.Split('\n')
+    if span.StartLine < lines.Length then
+        let line = lines.[span.StartLine]
+        let idx = line.IndexOf(name, span.StartColumn)
+        if idx >= 0 then
+            { Start = { Line = uint32 span.StartLine; Character = uint32 idx }
+              End = { Line = uint32 span.StartLine; Character = uint32 (idx + name.Length) } }
+        else
+            spanToLspRange span
+    else
+        spanToLspRange span
+
 /// Handle textDocument/definition request
 /// Returns Definition.C1 for single location (GOTO-03: single-file scope)
 let handleDefinition (p: DefinitionParams) : Async<Definition option> =
@@ -131,7 +145,7 @@ let handleDefinition (p: DefinitionParams) : Async<Definition option> =
                         | Some defSpan ->
                             let location : Location = {
                                 Uri = uri
-                                Range = spanToLspRange defSpan
+                                Range = findIdentifierRange text name defSpan
                             }
                             return Some (U2.C1 location)
                     | _ ->

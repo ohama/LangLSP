@@ -1,5 +1,6 @@
 module LangLSP.Server.CodeActions
 
+open Serilog
 open Ionide.LanguageServerProtocol.Types
 open LangLSP.Server.Protocol
 open LangLSP.Server.DocumentSync
@@ -68,7 +69,13 @@ let handleCodeAction (p: CodeActionParams) : Async<CodeAction[] option> =
         let uri = p.TextDocument.Uri
         let diagnostics = p.Context.Diagnostics
 
+        Log.Information("CodeAction request: {Uri}, diagnostics count: {Count}", uri, diagnostics.Length)
+        for diag in diagnostics do
+            Log.Information("  Diagnostic: Code={Code}, Severity={Severity}, Message={Message}, Range={Range}",
+                diag.Code, diag.Severity, diag.Message, diag.Range)
+
         if Array.isEmpty diagnostics then
+            Log.Information("CodeAction: no diagnostics, returning None")
             return None
         else
             let actions = ResizeArray<CodeAction>()
@@ -78,16 +85,19 @@ let handleCodeAction (p: CodeActionParams) : Async<CodeAction[] option> =
                 match diag.Code with
                 | Some (U2.C2 "unused-variable") ->
                     // ACTION-01: Prefix with underscore
+                    Log.Information("CodeAction: matched unused-variable, creating prefix action")
                     let action = createPrefixUnderscoreAction diag uri
                     actions.Add(action)
 
                 | _ ->
                     // Check if it's a type error (severity Error)
+                    Log.Information("CodeAction: code did not match 'unused-variable', code={Code}", diag.Code)
                     if diag.Severity = Some DiagnosticSeverity.Error then
                         // ACTION-02: Informational type hint
                         let action = createTypeInfoAction diag
                         actions.Add(action)
 
+            Log.Information("CodeAction: returning {Count} actions", actions.Count)
             if actions.Count > 0 then
                 return Some (actions.ToArray())
             else

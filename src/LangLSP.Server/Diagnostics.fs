@@ -7,6 +7,7 @@ open Ionide.LanguageServerProtocol
 open Ionide.LanguageServerProtocol.Types
 open LangLSP.Server.Protocol
 open LangLSP.Server.References
+open LangLSP.Server.Definition
 
 /// Parse FunLang source code and catch syntax errors
 /// Returns Ok(ast) on success, Error(diagnostic) on parse error
@@ -24,16 +25,16 @@ let parseFunLang (source: string) (uri: string) : Result<Ast.Expr, Diagnostic> =
             else
                 "Parse error: " + ex.Message
 
-        // Use lexbuf position (1-based line, 0-based column in FsLexYacc)
+        // LexBuffer.FromString uses 0-based positions matching LSP
         let startPos = lexbuf.StartPos
         let endPos = lexbuf.EndPos
         Log.Debug("Parse error at StartPos: Line={StartLine}, Col={StartCol}; EndPos: Line={EndLine}, Col={EndCol}",
                   startPos.Line, startPos.Column, endPos.Line, endPos.Column)
         let span : Ast.Span = {
             FileName = uri
-            StartLine = startPos.Line + 1
+            StartLine = startPos.Line
             StartColumn = startPos.Column
-            EndLine = endPos.Line + 1
+            EndLine = endPos.Line
             EndColumn = endPos.Column
         }
 
@@ -162,7 +163,7 @@ let analyze (uri: string) (source: string) : Diagnostic list =
             unusedVars
             |> List.map (fun (name, span) ->
                 {
-                    Range = spanToLspRange span
+                    Range = findIdentifierRange source name span
                     Severity = Some DiagnosticSeverity.Warning
                     Code = Some (U2.C2 "unused-variable")
                     CodeDescription = None
