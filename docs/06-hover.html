@@ -1,0 +1,810 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Hover 구현하기 - FunLang LSP 튜토리얼</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-b67c2577.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FunLang LSP 튜토리얼</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="hover-구현하기"><a class="header" href="#hover-구현하기">Hover 구현하기</a></h1>
+<p>마우스 커서를 코드 위에 올리면 타입 정보나 설명이 팝업으로 표시됩니다. 이 기능은 IDE의 핵심 기능 중 하나로, 코드를 이해하는 데 큰 도움이 됩니다.</p>
+<p>이 튜토리얼에서는 FunLang LSP에 Hover 기능을 구현하는 방법을 배웁니다.</p>
+<h2 id="목차"><a class="header" href="#목차">목차</a></h2>
+<ol>
+<li><a href="#textdocumenthover-프로토콜">textDocument/hover 프로토콜</a></li>
+<li><a href="#구현-전략">구현 전략</a></li>
+<li><a href="#위치-기반-ast-조회">위치 기반 AST 조회</a></li>
+<li><a href="#키워드-hover">키워드 Hover</a></li>
+<li><a href="#타입-hover">타입 Hover</a></li>
+<li><a href="#서버-통합">서버 통합</a></li>
+<li><a href="#테스트-작성">테스트 작성</a></li>
+<li><a href="#흔한-실수와-해결책">흔한 실수와 해결책</a></li>
+</ol>
+<hr>
+<h2 id="textdocumenthover-프로토콜"><a class="header" href="#textdocumenthover-프로토콜">textDocument/hover 프로토콜</a></h2>
+<h3 id="요청-구조"><a class="header" href="#요청-구조">요청 구조</a></h3>
+<p>클라이언트(에디터)가 서버에 hover 정보를 요청할 때 사용하는 구조입니다.</p>
+<pre><code class="language-typescript">interface HoverParams {
+    textDocument: TextDocumentIdentifier  // 문서 URI
+    position: Position                     // 커서 위치 (0-based)
+}
+
+interface Position {
+    line: number       // 0-based 줄 번호
+    character: number  // 0-based 문자 위치
+}
+</code></pre>
+<h3 id="응답-구조"><a class="header" href="#응답-구조">응답 구조</a></h3>
+<p>서버가 반환하는 hover 정보입니다.</p>
+<pre><code class="language-typescript">interface Hover {
+    contents: MarkupContent     // 표시할 내용
+    range?: Range               // 하이라이트할 범위 (선택)
+}
+
+interface MarkupContent {
+    kind: "plaintext" | "markdown"  // 콘텐츠 종류
+    value: string                   // 실제 내용
+}
+</code></pre>
+<h3 id="vs-code에서의-표시"><a class="header" href="#vs-code에서의-표시">VS Code에서의 표시</a></h3>
+<pre><code>test.fun
+────────
+let double = fun x -&gt; x * 2 in double 5
+                               ~~~~~~
+                        int -&gt; int
+</code></pre>
+<p>커서를 <code>double</code>에 올리면:</p>
+<ul>
+<li><strong>하이라이트</strong>: <code>range</code>로 지정된 영역에 밑줄 표시</li>
+<li><strong>팝업</strong>: <code>contents</code>의 내용이 툴팁으로 표시</li>
+<li><strong>Markdown 지원</strong>: 코드 블록, 볼드, 이탤릭 등 포맷팅 가능</li>
+</ul>
+<hr>
+<h2 id="구현-전략"><a class="header" href="#구현-전략">구현 전략</a></h2>
+<p>Hover 기능은 두 가지를 제공합니다:</p>
+<ol>
+<li><strong>키워드 Hover</strong>: <code>let</code>, <code>if</code>, <code>fun</code> 등 키워드에 한국어 설명</li>
+<li><strong>타입 Hover</strong>: 변수, 함수, 표현식에 추론된 타입 표시</li>
+</ol>
+<h3 id="처리-흐름"><a class="header" href="#처리-흐름">처리 흐름</a></h3>
+<pre><code>HoverParams 수신
+    ↓
+문서 텍스트 조회
+    ↓
+커서 위치의 단어 확인
+    ↓ (키워드인 경우)
+키워드 설명 반환 ←─┐
+    ↓ (그 외)      │
+AST 파싱          │
+    ↓              │
+위치로 노드 찾기    │
+    ↓              │
+노드 타입 추론      │
+    ↓              │
+타입 정보 반환     │
+</code></pre>
+<h3 id="키워드-우선-확인"><a class="header" href="#키워드-우선-확인">키워드 우선 확인</a></h3>
+<p><strong>중요:</strong> 키워드는 AST에 포함되지 않습니다. <code>let x = 1 in x</code>를 파싱하면:</p>
+<ul>
+<li>AST: <code>Let("x", Number(1), Var("x"))</code></li>
+<li><code>let</code>, <code>in</code> 키워드는 AST 노드가 아닙니다!</li>
+</ul>
+<p>따라서 AST 조회 전에 키워드 체크를 먼저 해야 합니다.</p>
+<hr>
+<h2 id="위치-기반-ast-조회"><a class="header" href="#위치-기반-ast-조회">위치 기반 AST 조회</a></h2>
+<p>커서 위치에 해당하는 AST 노드를 찾는 모듈입니다.</p>
+<h3 id="astlookup-모듈"><a class="header" href="#astlookup-모듈">AstLookup 모듈</a></h3>
+<pre><code class="language-fsharp">// AstLookup.fs
+module LangLSP.Server.AstLookup
+
+open Ast
+open Ionide.LanguageServerProtocol.Types
+
+/// LSP Position(0-based)이 FunLang Span 내에 있는지 확인
+let positionInSpan (lspPos: Position) (span: Span) : bool =
+    // LSP와 FunLang 모두 0-based 사용 (LexBuffer.FromString 기본값)
+    let line = int lspPos.Line
+    let col = int lspPos.Character
+
+    // 범위 확인
+    if line &lt; span.StartLine || line &gt; span.EndLine then
+        false
+    elif line = span.StartLine &amp;&amp; line = span.EndLine then
+        // 단일 라인 span
+        col &gt;= span.StartColumn &amp;&amp; col &lt;= span.EndColumn
+    elif line = span.StartLine then
+        // 시작 라인에 있음
+        col &gt;= span.StartColumn
+    elif line = span.EndLine then
+        // 끝 라인에 있음
+        col &lt;= span.EndColumn
+    else
+        // 중간 라인에 있음
+        true
+</code></pre>
+<h3 id="좌표계-이해하기"><a class="header" href="#좌표계-이해하기">좌표계 이해하기</a></h3>
+<p><strong>FunLang의 특수 상황:</strong></p>
+<p>FsLexYacc 문서에는 Position이 1-based라고 되어 있지만, <code>LexBuffer.FromString</code>으로 생성하면 실제로는 <strong>0-based</strong>입니다!</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>항목</th><th>LSP</th><th>FunLang (LexBuffer.FromString)</th></tr>
+</thead>
+<tbody>
+<tr><td>첫 번째 줄</td><td>0</td><td>0</td></tr>
+<tr><td>첫 번째 열</td><td>0</td><td>0</td></tr>
+</tbody>
+</table>
+</div>
+<p>따라서 FunLang LSP에서는 <strong>좌표 변환이 필요 없습니다</strong>.</p>
+<pre><code class="language-fsharp">// Protocol.fs - 변환 없이 직접 사용
+let spanToLspRange (span: Span) : Range =
+    {
+        Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+        End = { Line = uint32 span.EndLine; Character = uint32 span.EndColumn }
+    }
+</code></pre>
+<h3 id="가장-안쪽-노드-찾기"><a class="header" href="#가장-안쪽-노드-찾기">가장 안쪽 노드 찾기</a></h3>
+<p>AST는 중첩 구조입니다. 커서 위치에 여러 노드가 겹칠 수 있습니다.</p>
+<pre><code>let f = fun x -&gt; x + 1 in f 5
+              ~~~~~~~ (x + 1) - Add 노드
+                    ~ (1) - Number 노드
+</code></pre>
+<p><strong>innermost(가장 안쪽) 노드</strong>를 반환해야 합니다.</p>
+<pre><code class="language-fsharp">/// 주어진 LSP 위치를 포함하는 가장 안쪽 AST 노드 찾기
+let rec findNodeAtPosition (lspPos: Position) (expr: Expr) : Expr option =
+    let span = spanOf expr
+
+    if not (positionInSpan lspPos span) then
+        None
+    else
+        // 현재 노드 안에 있음 - 자식 노드에서 더 구체적인 매칭 찾기
+        let childMatch =
+            match expr with
+            // 이항 연산자
+            | Add(left, right, _)
+            | Subtract(left, right, _)
+            | App(left, right, _) -&gt;
+                match findNodeAtPosition lspPos left with
+                | Some node -&gt; Some node
+                | None -&gt; findNodeAtPosition lspPos right
+
+            // Let 바인딩
+            | Let(_, bindExpr, bodyExpr, _) -&gt;
+                match findNodeAtPosition lspPos bindExpr with
+                | Some node -&gt; Some node
+                | None -&gt; findNodeAtPosition lspPos bodyExpr
+
+            // 람다
+            | Lambda(_, body, _) -&gt;
+                findNodeAtPosition lspPos body
+
+            // 리프 노드 - 자식 없음
+            | Number _ | Bool _ | Var _ -&gt; None
+
+            // ... 다른 노드 타입들
+
+        // 자식 매칭이 있으면 반환, 없으면 현재 노드 반환
+        match childMatch with
+        | Some node -&gt; Some node
+        | None -&gt; Some expr
+</code></pre>
+<p><strong>핵심 원리:</strong></p>
+<ol>
+<li>현재 노드가 위치를 포함하는지 확인</li>
+<li>포함하면 자식 노드들을 재귀적으로 확인</li>
+<li>자식 중 매칭이 있으면 그것을 반환</li>
+<li>없으면 현재 노드가 가장 구체적인 매칭</li>
+</ol>
+<hr>
+<h2 id="키워드-hover"><a class="header" href="#키워드-hover">키워드 Hover</a></h2>
+<h3 id="키워드-설명-맵"><a class="header" href="#키워드-설명-맵">키워드 설명 맵</a></h3>
+<p>FunLang의 키워드에 대한 한국어 설명입니다.</p>
+<pre><code class="language-fsharp">// Hover.fs
+module LangLSP.Server.Hover
+
+/// FunLang 키워드에 대한 한국어 설명
+let keywordExplanations = Map.ofList [
+    ("let", "변수 또는 함수를 정의합니다.\n예: `let x = 5`")
+    ("in", "let 바인딩의 범위를 지정합니다.\n예: `let x = 1 in x + 2`")
+    ("if", "조건 분기를 수행합니다.\n예: `if x &gt; 0 then 1 else -1`")
+    ("then", "if의 참 분기를 시작합니다.")
+    ("else", "if의 거짓 분기를 시작합니다.")
+    ("match", "패턴 매칭을 시작합니다.\n예: `match xs with | [] -&gt; 0 | h::t -&gt; h`")
+    ("with", "match의 패턴 절을 시작합니다.")
+    ("fun", "익명 함수를 정의합니다.\n예: `fun x -&gt; x + 1`")
+    ("rec", "재귀 함수를 정의합니다.\n예: `let rec sum n = if n = 0 then 0 else n + sum (n-1)`")
+    ("true", "불리언 참 값입니다.")
+    ("false", "불리언 거짓 값입니다.")
+]
+</code></pre>
+<h3 id="커서-위치의-단어-추출"><a class="header" href="#커서-위치의-단어-추출">커서 위치의 단어 추출</a></h3>
+<pre><code class="language-fsharp">/// 소스 텍스트에서 위치의 단어 추출
+let getWordAtPosition (text: string) (pos: Position) : string option =
+    let lines = text.Split('\n')
+    let lineIdx = int pos.Line
+    if lineIdx &gt;= lines.Length then None
+    else
+        let line = lines.[lineIdx]
+        let col = int pos.Character
+        if col &gt;= line.Length then None
+        else
+            // 단어 경계 찾기 (알파벳, 숫자, 언더스코어)
+            let isWordChar c = System.Char.IsLetterOrDigit(c) || c = '_'
+            let mutable startCol = col
+            while startCol &gt; 0 &amp;&amp; isWordChar line.[startCol - 1] do
+                startCol &lt;- startCol - 1
+            let mutable endCol = col
+            while endCol &lt; line.Length &amp;&amp; isWordChar line.[endCol] do
+                endCol &lt;- endCol + 1
+            if startCol = endCol then None
+            else Some (line.Substring(startCol, endCol - startCol))
+</code></pre>
+<h3 id="키워드-hover-생성"><a class="header" href="#키워드-hover-생성">키워드 Hover 생성</a></h3>
+<pre><code class="language-fsharp">/// 키워드에 대한 Hover 생성
+let createKeywordHover (keyword: string) (pos: Position) : Hover option =
+    keywordExplanations
+    |&gt; Map.tryFind keyword
+    |&gt; Option.map (fun explanation -&gt;
+        {
+            Contents = U3.C1 {
+                Kind = MarkupKind.Markdown
+                Value = sprintf "**%s** (키워드)\n\n%s" keyword explanation
+            }
+            Range = None  // 키워드 전체 범위 계산은 생략
+        })
+</code></pre>
+<p><strong>Ionide Union 타입:</strong></p>
+<ul>
+<li><code>Hover.Contents</code>는 <code>U3&lt;MarkupContent, MarkedString, MarkedString[]&gt;</code> 타입</li>
+<li><code>U3.C1</code>은 첫 번째 케이스인 <code>MarkupContent</code>를 의미</li>
+<li>Markdown으로 포맷팅하면 에디터에서 예쁘게 표시됨</li>
+</ul>
+<hr>
+<h2 id="타입-hover"><a class="header" href="#타입-hover">타입 Hover</a></h2>
+<h3 id="타입-정보-표시"><a class="header" href="#타입-정보-표시">타입 정보 표시</a></h3>
+<pre><code class="language-fsharp">/// 타입 정보를 담은 Hover 생성
+let createTypeHover (ty: Type.Type) (span: Span) : Hover =
+    let typeStr = Type.formatTypeNormalized ty
+    {
+        Contents = U3.C1 {
+            Kind = MarkupKind.Markdown
+            Value = sprintf "```funlang\n%s\n```" typeStr
+        }
+        Range = Some (Protocol.spanToLspRange span)
+    }
+</code></pre>
+<p><strong>formatTypeNormalized:</strong></p>
+<ul>
+<li>FunLang의 타입을 읽기 좋은 문자열로 변환</li>
+<li>타입 변수 정규화: <code>TVar(1000)</code> → <code>'a</code>, <code>TVar(1001)</code> → <code>'b</code></li>
+<li>예: <code>TFunc(TInt, TFunc(TInt, TInt))</code> → <code>int -&gt; int -&gt; int</code></li>
+</ul>
+<h3 id="노드-타입-추론"><a class="header" href="#노드-타입-추론">노드 타입 추론</a></h3>
+<pre><code class="language-fsharp">/// 노드의 타입 추론 (단순 케이스)
+let getNodeType (node: Expr) : Type.Type option =
+    match node with
+    | Number(_, _) -&gt; Some TInt
+    | Bool(_, _) -&gt; Some TBool
+    | String(_, _) -&gt; Some TString
+    | EmptyList _ -&gt; None  // 요소 타입을 알 수 없음
+    | _ -&gt;
+        // 그 외 노드는 타입 체커 사용
+        match TypeCheck.typecheck node with
+        | Ok ty -&gt; Some ty
+        | Error _ -&gt; None
+</code></pre>
+<h3 id="변수-타입-조회의-어려움"><a class="header" href="#변수-타입-조회의-어려움">변수 타입 조회의 어려움</a></h3>
+<p><strong>문제:</strong> <code>Var("x")</code>만 단독으로 타입 체크하면 실패합니다.</p>
+<pre><code class="language-fsharp">// 이 코드는 실패!
+let code = "let x = 42 in x"
+let ast = parse code  // Let("x", Number(42), Var("x"))
+let varNode = Var("x", span)
+TypeCheck.typecheck varNode  // Error: x is unbound!
+</code></pre>
+<p>변수 <code>x</code>가 어디서 바인딩되었는지 컨텍스트가 없기 때문입니다.</p>
+<h3 id="해결책-바인딩-사이트-검색"><a class="header" href="#해결책-바인딩-사이트-검색">해결책: 바인딩 사이트 검색</a></h3>
+<p>AST를 순회하며 변수가 정의된 위치를 찾고, 바인딩된 값의 타입을 추론합니다.</p>
+<pre><code class="language-fsharp">/// AST에서 변수의 바인딩 사이트를 찾아 타입 반환
+let rec findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option =
+    match ast with
+    | Let(name, value, body, _) when name = varName -&gt;
+        // 바인딩을 찾음 - value의 타입 추론
+        match TypeCheck.typecheck value with
+        | Ok ty -&gt; Some ty
+        | Error _ -&gt; None
+    | Let(_, _, body, _) -&gt;
+        // 이 바인딩이 아님, body에서 계속 검색
+        findVarTypeInAst varName body
+    | LetRec(name, param, fnBody, inExpr, span) when name = varName -&gt;
+        // 재귀 함수 - "let rec f x = body in f"를 합성하여 함수 타입 추론
+        let synthExpr = LetRec(name, param, fnBody, Var(name, span), span)
+        match TypeCheck.typecheck synthExpr with
+        | Ok ty -&gt; Some ty
+        | Error _ -&gt; None
+    | LetRec(_, _, _, inExpr, _) -&gt;
+        findVarTypeInAst varName inExpr
+    | Lambda(param, body, _) when param = varName -&gt;
+        // 람다 매개변수 - 컨텍스트 필요
+        None
+    | Lambda(_, body, _) -&gt;
+        findVarTypeInAst varName body
+    | LambdaAnnot(param, typeAnnot, body, _) when param = varName -&gt;
+        // 타입 어노테이션이 있는 람다
+        Some (Elaborate.elaborateTypeExpr typeAnnot)
+    | If(_, thenExpr, elseExpr, _) -&gt;
+        match findVarTypeInAst varName thenExpr with
+        | Some ty -&gt; Some ty
+        | None -&gt; findVarTypeInAst varName elseExpr
+    | _ -&gt; None
+</code></pre>
+<hr>
+<h2 id="서버-통합"><a class="header" href="#서버-통합">서버 통합</a></h2>
+<h3 id="handlehover-함수"><a class="header" href="#handlehover-함수">handleHover 함수</a></h3>
+<p>전체 흐름을 조합한 핸들러입니다.</p>
+<pre><code class="language-fsharp">/// textDocument/hover 요청 처리
+let handleHover (p: HoverParams) : Async&lt;Hover option&gt; =
+    async {
+        let uri = p.TextDocument.Uri
+        let pos = p.Position
+
+        match DocumentSync.getDocument uri with
+        | None -&gt; return None
+        | Some text -&gt;
+            // 1. 키워드 체크 우선
+            match getWordAtPosition text pos with
+            | Some word when keywordExplanations.ContainsKey word -&gt;
+                return createKeywordHover word pos
+            | _ -&gt;
+                // 2. AST 기반 타입 hover
+                try
+                    let lexbuf = FSharp.Text.Lexing.LexBuffer&lt;char&gt;.FromString(text)
+                    let ast = Parser.start Lexer.tokenize lexbuf
+
+                    // 위치에서 노드 찾기 (전체 typecheck 없이 진행)
+                    match findNodeAtPosition pos ast with
+                    | None -&gt; return None
+                    | Some node -&gt;
+                        let nodeType =
+                            match node with
+                            | Var(name, _) -&gt;
+                                // 변수는 바인딩 사이트에서 타입 찾기
+                                match findVarTypeInAst name ast with
+                                | Some ty -&gt; Some ty
+                                | None -&gt; None
+                            | Let(name, value, _, _) -&gt;
+                                // let 바인딩 이름 위 — 바인딩 값의 타입
+                                match TypeCheck.typecheck value with
+                                | Ok ty -&gt; Some ty
+                                | Error _ -&gt; None
+                            | LetRec(name, param, fnBody, _, span) -&gt;
+                                // let rec 바인딩 이름 위 — 함수 타입 추론
+                                let synthExpr = LetRec(name, param, fnBody, Var(name, span), span)
+                                match TypeCheck.typecheck synthExpr with
+                                | Ok ty -&gt; Some ty
+                                | Error _ -&gt; None
+                            | _ -&gt; getNodeType node
+
+                        match nodeType with
+                        | None -&gt; return None
+                        | Some ty -&gt; return Some (createTypeHover ty (spanOf node))
+                with _ -&gt;
+                    return None
+    }
+</code></pre>
+<h3 id="serverfs-등록"><a class="header" href="#serverfs-등록">Server.fs 등록</a></h3>
+<pre><code class="language-fsharp">// Server.fs
+override this.Initialize(p: InitializeParams) =
+    async {
+        return {
+            Capabilities = {
+                // ... 다른 capability들
+                HoverProvider = Some true  // Hover 지원 활성화
+            }
+        }
+    }
+
+override this.TextDocumentHover(p: HoverParams) =
+    async {
+        let! result = Hover.handleHover p
+        return result
+    }
+</code></pre>
+<hr>
+<h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
+<h3 id="테스트-헬퍼"><a class="header" href="#테스트-헬퍼">테스트 헬퍼</a></h3>
+<pre><code class="language-fsharp">// HoverTests.fs
+module LangLSP.Tests.HoverTests
+
+open Expecto
+open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.Hover
+open LangLSP.Server.DocumentSync
+
+/// HoverParams 생성 헬퍼
+let makeHoverParams uri line char : HoverParams =
+    {
+        TextDocument = { Uri = uri }
+        Position = { Line = uint32 line; Character = uint32 char }
+        WorkDoneToken = None
+    }
+
+/// 문서 설정 후 hover 수행
+let setupAndHover uri text line char =
+    clearAll()  // 문서 저장소 초기화
+    handleDidOpen (makeDidOpenParams uri text)
+    handleHover (makeHoverParams uri line char) |&gt; Async.RunSynchronously
+</code></pre>
+<h3 id="키워드-hover-테스트"><a class="header" href="#키워드-hover-테스트">키워드 Hover 테스트</a></h3>
+<pre><code class="language-fsharp">[&lt;Tests&gt;]
+let hoverTests = testList "Hover" [
+    testList "Keyword hover" [
+        testCase "hover over 'let' shows Korean explanation" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "let x = 42 in x" 0 0
+            Expect.isSome hover "Should return hover"
+            match hover.Value.Contents with
+            | U3.C1 markup -&gt;
+                Expect.stringContains markup.Value "let" "Should mention keyword"
+                Expect.stringContains markup.Value "변수" "Should have Korean explanation"
+            | _ -&gt; failtest "Expected MarkupContent"
+
+        testCase "hover over 'if' shows Korean explanation" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "if true then 1 else 0" 0 0
+            Expect.isSome hover "Should return hover"
+            match hover.Value.Contents with
+            | U3.C1 markup -&gt;
+                Expect.stringContains markup.Value "조건" "Should explain conditionals"
+            | _ -&gt; failtest "Expected MarkupContent"
+    ]
+]
+</code></pre>
+<h3 id="타입-hover-테스트"><a class="header" href="#타입-hover-테스트">타입 Hover 테스트</a></h3>
+<pre><code class="language-fsharp">    testList "Type hover" [
+        testCase "hover over variable shows inferred int type" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "let x = 42 in x" 0 14
+            Expect.isSome hover "Should return hover for variable"
+            match hover.Value.Contents with
+            | U3.C1 markup -&gt;
+                Expect.stringContains markup.Value "int" "Should show int type"
+            | _ -&gt; failtest "Expected MarkupContent"
+
+        testCase "hover over function shows signature" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "let f = fun x -&gt; x + 1 in f" 0 26
+            Expect.isSome hover "Should return hover for function"
+            match hover.Value.Contents with
+            | U3.C1 markup -&gt;
+                Expect.stringContains markup.Value "int -&gt; int" "Should show function signature"
+            | _ -&gt; failtest "Expected MarkupContent"
+
+        testCase "hover over polymorphic function shows generic type" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "let id = fun x -&gt; x in id" 0 23
+            Expect.isSome hover "Should return hover"
+            match hover.Value.Contents with
+            | U3.C1 markup -&gt;
+                Expect.stringContains markup.Value "'a" "Should show polymorphic type"
+            | _ -&gt; failtest "Expected MarkupContent"
+    ]
+</code></pre>
+<h3 id="edge-case-테스트"><a class="header" href="#edge-case-테스트">Edge Case 테스트</a></h3>
+<pre><code class="language-fsharp">    testList "Edge cases" [
+        testCase "hover on parse error returns None" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "let x =" 0 4
+            Expect.isNone hover "Should return None on parse error"
+
+        testCase "hover outside code returns None" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "42" 5 0
+            Expect.isNone hover "Should return None for out-of-bounds"
+
+        testCase "hover returns markdown format" &lt;| fun _ -&gt;
+            let hover = setupAndHover "file:///test.fun" "let x = 42 in x" 0 14
+            Expect.isSome hover "Should return hover"
+            match hover.Value.Contents with
+            | U3.C1 markup -&gt;
+                Expect.equal markup.Kind MarkupKind.Markdown "Should use Markdown"
+            | _ -&gt; failtest "Expected MarkupContent"
+    ]
+] |&gt; testSequenced  // 공유 상태로 인해 순차 실행
+</code></pre>
+<h3 id="테스트-실행"><a class="header" href="#테스트-실행">테스트 실행</a></h3>
+<pre><code class="language-bash">dotnet test src/LangLSP.Tests
+
+# 결과:
+# [Hover/Keyword hover] hover over 'let' shows Korean explanation - Passed
+# [Hover/Keyword hover] hover over 'if' shows Korean explanation - Passed
+# [Hover/Type hover] hover over variable shows inferred int type - Passed
+# [Hover/Type hover] hover over function shows signature - Passed
+# [Hover/Type hover] hover over polymorphic function shows generic type - Passed
+# [Hover/Edge cases] hover on parse error returns None - Passed
+# ...
+</code></pre>
+<hr>
+<h2 id="흔한-실수와-해결책"><a class="header" href="#흔한-실수와-해결책">흔한 실수와 해결책</a></h2>
+<h3 id="1-키워드-hover가-작동하지-않음"><a class="header" href="#1-키워드-hover가-작동하지-않음">1. 키워드 Hover가 작동하지 않음</a></h3>
+<p><strong>증상:</strong> <code>let</code>, <code>if</code> 위에 hover해도 아무것도 표시 안됨</p>
+<p><strong>원인:</strong> 키워드 체크 없이 AST만 조회</p>
+<p><strong>해결:</strong> AST 조회 전에 <code>getWordAtPosition</code>으로 키워드 체크</p>
+<pre><code class="language-fsharp">// 올바른 순서
+match getWordAtPosition text pos with
+| Some word when keywordExplanations.ContainsKey word -&gt;
+    createKeywordHover word pos  // 키워드 먼저!
+| _ -&gt;
+    // AST 조회
+</code></pre>
+<h3 id="2-복잡한-파일에서-hover가-전혀-작동하지-않음"><a class="header" href="#2-복잡한-파일에서-hover가-전혀-작동하지-않음">2. 복잡한 파일에서 hover가 전혀 작동하지 않음</a></h3>
+<p><strong>증상:</strong> 간단한 파일은 되지만, 큰 파일에서는 모든 hover가 None</p>
+<p><strong>원인:</strong> 전체 AST <code>TypeCheck.typecheck ast</code>를 가드로 사용하면, 파일에 타입 에러가 있거나 타입 추론이 복잡한 경우 전체 hover가 차단됨</p>
+<p><strong>해결:</strong> 전체 typecheck 가드를 제거하고, 개별 노드별로 독립적으로 타입 추론</p>
+<h3 id="3-letletrec-바인딩-이름에서-hover가-안됨"><a class="header" href="#3-letletrec-바인딩-이름에서-hover가-안됨">3. Let/LetRec 바인딩 이름에서 hover가 안됨</a></h3>
+<p><strong>증상:</strong> <code>let count = 1 in count</code>에서 뒤의 <code>count</code>는 되지만 앞의 <code>count</code>는 안됨</p>
+<p><strong>원인:</strong> <code>findNodeAtPosition</code>이 바인딩 이름 위치에서 <code>Let</code> 노드를 반환하지만, handler가 <code>Let</code> 케이스를 처리하지 않음</p>
+<p><strong>해결:</strong> <code>Let</code>은 <code>TypeCheck.typecheck value</code>, <code>LetRec</code>은 합성 표현식으로 함수 타입 추론</p>
+<h3 id="4-변수-타입이-표시되지-않음"><a class="header" href="#4-변수-타입이-표시되지-않음">4. 변수 타입이 표시되지 않음</a></h3>
+<p><strong>증상:</strong> <code>42</code> 위에서는 <code>int</code> 표시되지만, 변수 <code>x</code> 위에서는 None</p>
+<p><strong>원인:</strong> 변수를 단독으로 타입 체크하면 바인딩 컨텍스트가 없음</p>
+<p><strong>해결:</strong> <code>findVarTypeInAst</code>로 바인딩 사이트에서 타입 추론</p>
+<h3 id="5-좌표가-어긋남"><a class="header" href="#5-좌표가-어긋남">5. 좌표가 어긋남</a></h3>
+<p><strong>증상:</strong> 클릭한 위치와 다른 노드의 정보가 표시됨</p>
+<p><strong>원인:</strong> LSP와 파서의 좌표계 혼동</p>
+<p><strong>해결:</strong> FunLang은 <code>LexBuffer.FromString</code>을 사용하므로 LSP와 동일하게 0-based. 변환 불필요.</p>
+<h3 id="4-markupcontent가-제대로-표시-안됨"><a class="header" href="#4-markupcontent가-제대로-표시-안됨">4. MarkupContent가 제대로 표시 안됨</a></h3>
+<p><strong>증상:</strong> 에디터에서 raw Markdown 텍스트가 보임</p>
+<p><strong>원인:</strong> <code>MarkupKind.PlainText</code> 사용 또는 잘못된 Union 타입</p>
+<p><strong>해결:</strong></p>
+<pre><code class="language-fsharp">// 올바른 방법
+Contents = U3.C1 {
+    Kind = MarkupKind.Markdown  // Markdown 명시
+    Value = "```funlang\nint\n```"  // 코드 펜스로 구문 강조
+}
+</code></pre>
+<h3 id="5-다형-타입이-이상하게-표시됨"><a class="header" href="#5-다형-타입이-이상하게-표시됨">5. 다형 타입이 이상하게 표시됨</a></h3>
+<p><strong>증상:</strong> <code>'a -&gt; 'a</code> 대신 <code>TVar(1234) -&gt; TVar(1234)</code> 표시</p>
+<p><strong>원인:</strong> 내부 타입 표현을 직접 출력</p>
+<p><strong>해결:</strong> <code>Type.formatTypeNormalized</code> 사용 - 타입 변수를 <code>'a</code>, <code>'b</code> 등으로 정규화</p>
+<hr>
+<h2 id="정리"><a class="header" href="#정리">정리</a></h2>
+<p>Hover 구현의 핵심은:</p>
+<ol>
+<li><strong>키워드 우선 체크</strong> - 키워드는 AST에 없으므로 먼저 확인</li>
+<li><strong>innermost 노드 찾기</strong> - 중첩된 표현식에서 가장 구체적인 노드 반환</li>
+<li><strong>바인딩 컨텍스트</strong> - 변수 타입은 바인딩 사이트에서 추론</li>
+<li><strong>Markdown 사용</strong> - 코드 펜스로 구문 강조 제공</li>
+</ol>
+<hr>
+<h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
+<blockquote>
+<p><a href="07-definition.html">07. Go to Definition 구현하기</a></p>
+</blockquote>
+<p>Go to Definition은 Hover와 비슷한 위치 조회 로직을 사용합니다. 다만 타입 대신 <strong>정의 위치</strong>를 반환합니다.</p>
+<hr>
+<h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
+<ul>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover">LSP Specification - textDocument/hover</a></li>
+<li><a href="https://github.com/kodu-ai/LangTutorial/blob/main/FunLang/Type.fs">FunLang Type 모듈</a></li>
+<li><a href="https://github.com/ionide/LanguageServerProtocol">Ionide.LanguageServerProtocol</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="05-diagnostics.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="07-completion.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="05-diagnostics.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="07-completion.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

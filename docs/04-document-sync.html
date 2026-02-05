@@ -1,0 +1,620 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>문서 동기화 구현 - FunLang LSP 튜토리얼</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-b67c2577.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FunLang LSP 튜토리얼</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="문서-동기화-구현"><a class="header" href="#문서-동기화-구현">문서 동기화 구현</a></h1>
+<p>이 문서는 LSP 서버에서 <strong>Document Sync</strong>(문서 동기화)를 구현하는 방법을 설명합니다. 문서 동기화는 에디터에서 파일을 열고, 수정하고, 닫을 때마다 LSP 서버가 최신 텍스트를 유지하도록 합니다.</p>
+<h2 id="목차"><a class="header" href="#목차">목차</a></h2>
+<ol>
+<li><a href="#문서-동기화란">문서 동기화란</a></li>
+<li><a href="#동기화-모드">동기화 모드</a></li>
+<li><a href="#concurrentdictionary로-문서-저장">ConcurrentDictionary로 문서 저장</a></li>
+<li><a href="#didopen-핸들러">didOpen 핸들러</a></li>
+<li><a href="#didchange-핸들러">didChange 핸들러</a></li>
+<li><a href="#didclose-핸들러">didClose 핸들러</a></li>
+<li><a href="#테스트-작성">테스트 작성</a></li>
+</ol>
+<hr>
+<h2 id="문서-동기화란"><a class="header" href="#문서-동기화란">문서 동기화란</a></h2>
+<p><strong>Document Sync</strong>는 LSP의 핵심 기능 중 하나로, 에디터와 Language Server 간에 문서 텍스트를 동기화하는 프로세스입니다.</p>
+<h3 id="왜-필요한가"><a class="header" href="#왜-필요한가">왜 필요한가?</a></h3>
+<p>LSP 서버는 별도 프로세스로 실행되므로, 에디터가 파일을 읽거나 수정해도 서버는 그 내용을 자동으로 알 수 없습니다. 따라서 에디터는 다음 이벤트를 서버로 전송해야 합니다.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>이벤트</th><th>LSP 메서드</th><th>설명</th></tr>
+</thead>
+<tbody>
+<tr><td>파일 열기</td><td><code>textDocument/didOpen</code></td><td>에디터에서 파일을 처음 열 때 전체 텍스트 전송</td></tr>
+<tr><td>파일 수정</td><td><code>textDocument/didChange</code></td><td>파일이 수정될 때마다 변경 사항 전송</td></tr>
+<tr><td>파일 닫기</td><td><code>textDocument/didClose</code></td><td>에디터에서 파일을 닫을 때 알림</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="문서-동기화가-필요한-lsp-기능"><a class="header" href="#문서-동기화가-필요한-lsp-기능">문서 동기화가 필요한 LSP 기능</a></h3>
+<p>문서 동기화는 거의 모든 LSP 기능의 전제조건입니다.</p>
+<ul>
+<li><strong>Diagnostics</strong>: 문서 텍스트를 파싱/타입체킹하여 에러 검출</li>
+<li><strong>Hover</strong>: 커서 위치의 텍스트를 분석하여 타입 정보 표시</li>
+<li><strong>Completion</strong>: 현재 텍스트 맥락에서 자동완성 제안</li>
+<li><strong>Go to Definition</strong>: 심볼 위치를 찾기 위해 전체 텍스트 분석</li>
+</ul>
+<hr>
+<h2 id="동기화-모드"><a class="header" href="#동기화-모드">동기화 모드</a></h2>
+<p>LSP는 두 가지 동기화 모드를 지원합니다.</p>
+<h3 id="1-full-sync-전체-동기화"><a class="header" href="#1-full-sync-전체-동기화">1. Full Sync (전체 동기화)</a></h3>
+<p>매번 변경 시 <strong>전체 텍스트</strong>를 전송합니다.</p>
+<p><strong>장점:</strong></p>
+<ul>
+<li>구현이 간단 (문자열 교체만 하면 됨)</li>
+<li>동기화 오류 가능성 낮음</li>
+</ul>
+<p><strong>단점:</strong></p>
+<ul>
+<li>대용량 파일에서 비효율적 (1줄 변경해도 100KB 파일 전체 전송)</li>
+</ul>
+<pre><code class="language-fsharp">// Full Sync 예시
+let handleDidChangeFullSync (p: DidChangeTextDocumentParams) : unit =
+    let uri = p.TextDocument.Uri
+    let newText = p.ContentChanges.[0].Text  // 전체 텍스트
+    documents.[uri] &lt;- newText
+</code></pre>
+<h3 id="2-incremental-sync-증분-동기화"><a class="header" href="#2-incremental-sync-증분-동기화">2. Incremental Sync (증분 동기화)</a></h3>
+<p>변경된 <strong>부분(Range)만</strong> 전송합니다.</p>
+<p><strong>장점:</strong></p>
+<ul>
+<li>대용량 파일에서 효율적 (변경된 10자만 전송)</li>
+<li>네트워크 트래픽 감소</li>
+</ul>
+<p><strong>단점:</strong></p>
+<ul>
+<li>구현이 복잡 (Range 기반 문자열 교체 로직 필요)</li>
+</ul>
+<pre><code class="language-fsharp">// Incremental Sync 예시
+// "let x = 1"을 "let y = 1"로 변경하려면:
+// Range: line 0, character 4-5 (x의 위치)
+// Text: "y"
+</code></pre>
+<p>FunLang LSP는 <strong>Incremental Sync</strong>를 사용합니다. (성능과 실용성의 균형)</p>
+<h3 id="server-capabilities-선언"><a class="header" href="#server-capabilities-선언">Server Capabilities 선언</a></h3>
+<p>서버가 어떤 동기화 모드를 지원하는지 <code>initialize</code> 응답에서 선언합니다.</p>
+<pre><code class="language-fsharp">// Server.fs
+let serverCapabilities : ServerCapabilities =
+    { ServerCapabilities.Default with
+        TextDocumentSync =
+            Some (U2.C1 {
+                TextDocumentSyncOptions.Default with
+                    OpenClose = Some true  // didOpen/didClose 지원
+                    Change = Some TextDocumentSyncKind.Incremental  // 증분 동기화
+            })
+    }
+</code></pre>
+<hr>
+<h2 id="concurrentdictionary로-문서-저장"><a class="header" href="#concurrentdictionary로-문서-저장">ConcurrentDictionary로 문서 저장</a></h2>
+<p>LSP 서버는 여러 문서를 동시에 추적해야 하므로, 스레드 안전한 저장소가 필요합니다.</p>
+<h3 id="왜-concurrentdictionary인가"><a class="header" href="#왜-concurrentdictionary인가">왜 ConcurrentDictionary인가?</a></h3>
+<p>LSP 서버는 <strong>다중 스레드 환경</strong>에서 동작합니다:</p>
+<ul>
+<li>에디터가 <code>didOpen</code>, <code>didChange</code>, <code>didClose</code> 알림을 비동기로 보냄</li>
+<li>서버는 여러 요청을 병렬로 처리할 수 있음</li>
+<li>단순 <code>Dictionary</code>는 스레드 안전하지 않아 Race Condition 발생 가능</li>
+</ul>
+<p><code>ConcurrentDictionary</code>는 .NET의 스레드 안전한 해시맵으로, 락 없이 동시 읽기/쓰기가 가능합니다.</p>
+<h3 id="구현"><a class="header" href="#구현">구현</a></h3>
+<pre><code class="language-fsharp">// DocumentSync.fs
+module LangLSP.Server.DocumentSync
+
+open System.Collections.Concurrent
+open Ionide.LanguageServerProtocol.Types
+
+/// Thread-safe document storage (URI -&gt; text content)
+let private documents = ConcurrentDictionary&lt;string, string&gt;()
+
+/// Get document text by URI (for diagnostics, hover, etc.)
+let getDocument (uri: string) : string option =
+    match documents.TryGetValue(uri) with
+    | true, text -&gt; Some text
+    | false, _ -&gt; None
+</code></pre>
+<p><strong>설계 포인트:</strong></p>
+<ul>
+<li><code>private documents</code>: 모듈 내부에서만 접근 가능 (캡슐화)</li>
+<li><code>URI -&gt; string</code>: 파일 경로(URI)를 키로, 텍스트를 값으로 저장</li>
+<li><code>getDocument</code>: 외부 모듈이 문서 내용을 안전하게 읽을 수 있도록 제공</li>
+</ul>
+<hr>
+<h2 id="didopen-핸들러"><a class="header" href="#didopen-핸들러">didOpen 핸들러</a></h2>
+<p>파일이 에디터에서 열릴 때 호출되는 핸들러입니다.</p>
+<h3 id="프로토콜-구조"><a class="header" href="#프로토콜-구조">프로토콜 구조</a></h3>
+<pre><code class="language-typescript">// LSP 프로토콜 (TypeScript 정의)
+interface DidOpenTextDocumentParams {
+    textDocument: {
+        uri: string          // 파일 URI (예: "file:///path/to/test.fun")
+        languageId: string   // 언어 ID (예: "funlang")
+        version: number      // 문서 버전 (1부터 시작)
+        text: string         // 전체 파일 텍스트
+    }
+}
+</code></pre>
+<h3 id="구현-1"><a class="header" href="#구현-1">구현</a></h3>
+<pre><code class="language-fsharp">/// Handle textDocument/didOpen
+let handleDidOpen (p: DidOpenTextDocumentParams) : unit =
+    let uri = p.TextDocument.Uri
+    let text = p.TextDocument.Text
+    documents.[uri] &lt;- text
+</code></pre>
+<p><strong>동작 흐름:</strong></p>
+<ol>
+<li>파라미터에서 <code>Uri</code>와 <code>Text</code> 추출</li>
+<li><code>ConcurrentDictionary</code>에 저장</li>
+<li>이제 <code>getDocument(uri)</code>로 텍스트 조회 가능</li>
+</ol>
+<p><strong>예시:</strong></p>
+<pre><code class="language-fsharp">// 에디터에서 "test.fun" 파일을 열면:
+// Uri = "file:///home/user/test.fun"
+// Text = "let x = 1 + 2"
+
+handleDidOpen { TextDocument = { Uri = "file:///home/user/test.fun"; Text = "let x = 1 + 2"; ... } }
+
+// 이후 getDocument로 조회 가능
+getDocument "file:///home/user/test.fun"
+// -&gt; Some "let x = 1 + 2"
+</code></pre>
+<hr>
+<h2 id="didchange-핸들러"><a class="header" href="#didchange-핸들러">didChange 핸들러</a></h2>
+<p>파일이 수정될 때 호출되는 핸들러로, <strong>증분 변경</strong>을 처리합니다.</p>
+<h3 id="프로토콜-구조-1"><a class="header" href="#프로토콜-구조-1">프로토콜 구조</a></h3>
+<pre><code class="language-typescript">interface DidChangeTextDocumentParams {
+    textDocument: {
+        uri: string
+        version: number
+    }
+    contentChanges: TextDocumentContentChangeEvent[]
+}
+
+type TextDocumentContentChangeEvent =
+    | { range: Range; text: string }  // 증분 변경 (C1)
+    | { text: string }                // 전체 변경 (C2)
+</code></pre>
+<p>Ionide.LanguageServerProtocol은 Union 타입을 <code>U2&lt;C1, C2&gt;</code>로 표현합니다.</p>
+<h3 id="range-기반-텍스트-교체"><a class="header" href="#range-기반-텍스트-교체">Range 기반 텍스트 교체</a></h3>
+<p>증분 변경은 <strong>Range</strong>로 교체할 영역을 지정합니다.</p>
+<pre><code class="language-fsharp">// LSP Range 구조
+type Range = {
+    Start: Position  // { Line: uint32; Character: uint32 }
+    End: Position
+}
+</code></pre>
+<p><strong>예시:</strong> <code>"let x = 1"</code>을 <code>"let y = 1"</code>로 변경</p>
+<pre><code>텍스트:  l  e  t     x     =     1
+인덱스:  0  1  2  3  4  5  6  7  8
+
+Range: { Start: { Line: 0, Character: 4 }, End: { Line: 0, Character: 5 } }
+Text: "y"
+
+결과: "let " + "y" + " = 1" = "let y = 1"
+</code></pre>
+<h3 id="구현-2"><a class="header" href="#구현-2">구현</a></h3>
+<pre><code class="language-fsharp">/// Convert line/character to string offset
+/// Note: LSP positions are 0-based
+let private getOffset (lines: string[]) (line: int) (character: int) : int =
+    let mutable offset = 0
+    for i in 0 .. line - 1 do
+        if i &lt; lines.Length then
+            offset &lt;- offset + lines.[i].Length + 1  // +1 for newline
+    offset + min character (if line &lt; lines.Length then lines.[line].Length else 0)
+
+/// Apply incremental text changes to document
+/// LSP changes are applied in order; each change has a Range to replace
+let private applyContentChanges (text: string) (changes: TextDocumentContentChangeEvent array) : string =
+    changes
+    |&gt; Array.fold (fun currentText change -&gt;
+        match change with
+        | U2.C1 incrementalChange -&gt;
+            // Incremental change: replace text at range
+            let range = incrementalChange.Range
+            let lines = currentText.Split([|'\n'|], System.StringSplitOptions.None)
+            let startOffset = getOffset lines (int range.Start.Line) (int range.Start.Character)
+            let endOffset = getOffset lines (int range.End.Line) (int range.End.Character)
+            currentText.Substring(0, startOffset) + incrementalChange.Text + currentText.Substring(endOffset)
+        | U2.C2 fullChange -&gt;
+            // Full sync fallback
+            fullChange.Text
+    ) text
+
+/// Handle textDocument/didChange
+let handleDidChange (p: DidChangeTextDocumentParams) : unit =
+    let uri = p.TextDocument.Uri
+    match documents.TryGetValue(uri) with
+    | true, currentText -&gt;
+        let newText = applyContentChanges currentText p.ContentChanges
+        documents.[uri] &lt;- newText
+    | false, _ -&gt;
+        // Document not tracked - this shouldn't happen, but handle gracefully
+        ()
+</code></pre>
+<p><strong>핵심 로직:</strong></p>
+<ol>
+<li><strong>getOffset</strong>: LSP Position (line, character)을 문자열 오프셋으로 변환
+<ul>
+<li>줄바꿈(<code>\n</code>)을 고려하여 절대 위치 계산</li>
+</ul>
+</li>
+<li><strong>applyContentChanges</strong>: 여러 변경 사항을 순차적으로 적용
+<ul>
+<li><code>U2.C1</code>: 증분 변경 → Range로 부분 문자열 교체</li>
+<li><code>U2.C2</code>: 전체 변경 → 전체 텍스트 교체 (Fallback)</li>
+</ul>
+</li>
+<li><strong>handleDidChange</strong>: 문서를 조회하여 변경 적용 후 다시 저장</li>
+</ol>
+<p><strong>멀티라인 예시:</strong></p>
+<pre><code>원본:
+"let x = 1\nlet y = 2"
+
+Range: { Start: { Line: 1, Character: 4 }, End: { Line: 1, Character: 5 } }
+Text: "z"
+
+Step 1: lines = ["let x = 1", "let y = 2"]
+Step 2: startOffset = (len("let x = 1") + 1) + 4 = 10 + 4 = 14
+Step 3: endOffset = 15
+Step 4: "let x = 1\nlet " + "z" + " = 2" = "let x = 1\nlet z = 2"
+</code></pre>
+<hr>
+<h2 id="didclose-핸들러"><a class="header" href="#didclose-핸들러">didClose 핸들러</a></h2>
+<p>파일이 에디터에서 닫힐 때 호출되는 핸들러입니다.</p>
+<h3 id="구현-3"><a class="header" href="#구현-3">구현</a></h3>
+<pre><code class="language-fsharp">/// Handle textDocument/didClose
+let handleDidClose (p: DidCloseTextDocumentParams) : unit =
+    let uri = p.TextDocument.Uri
+    documents.TryRemove(uri) |&gt; ignore
+</code></pre>
+<p><strong>동작:</strong></p>
+<ul>
+<li><code>ConcurrentDictionary</code>에서 문서 제거</li>
+<li><code>TryRemove</code>는 <code>(bool * string)</code> 튜플을 반환하지만, 성공 여부는 무시 (<code>|&gt; ignore</code>)</li>
+</ul>
+<p><strong>왜 제거해야 하나?</strong></p>
+<ul>
+<li>메모리 절약: 닫힌 파일은 더 이상 추적할 필요 없음</li>
+<li>에디터가 파일을 다시 열면 <code>didOpen</code>으로 새로 추가됨</li>
+</ul>
+<hr>
+<h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
+<p>Expecto를 사용하여 Document Sync 기능을 테스트합니다.</p>
+<h3 id="테스트-헬퍼-함수"><a class="header" href="#테스트-헬퍼-함수">테스트 헬퍼 함수</a></h3>
+<pre><code class="language-fsharp">// DocumentSyncTests.fs
+module LangLSP.Tests.DocumentSyncTests
+
+open Expecto
+open LangLSP.Server.DocumentSync
+open Ionide.LanguageServerProtocol.Types
+
+let makeDidOpenParams uri text : DidOpenTextDocumentParams =
+    {
+        TextDocument = {
+            Uri = uri
+            LanguageId = "funlang"
+            Version = 1
+            Text = text
+        }
+    }
+
+let makeDidCloseParams uri : DidCloseTextDocumentParams =
+    { TextDocument = { Uri = uri } }
+
+let makeDidChangeParams uri version changes : DidChangeTextDocumentParams =
+    {
+        TextDocument = { Uri = uri; Version = version }
+        ContentChanges = changes
+    }
+</code></pre>
+<h3 id="테스트-케이스"><a class="header" href="#테스트-케이스">테스트 케이스</a></h3>
+<pre><code class="language-fsharp">[&lt;Tests&gt;]
+let documentSyncTests =
+    testSequenced &lt;| testList "DocumentSync" [
+
+        testCase "didOpen stores document text" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test.fun"
+            let text = "let x = 1"
+            handleDidOpen (makeDidOpenParams uri text)
+            Expect.equal (getDocument uri) (Some text) "Document should be stored"
+
+        testCase "didClose removes document" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test.fun"
+            handleDidOpen (makeDidOpenParams uri "let x = 1")
+            handleDidClose (makeDidCloseParams uri)
+            Expect.equal (getDocument uri) None "Document should be removed"
+
+        testCase "didChange with full sync replaces text" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test.fun"
+            handleDidOpen (makeDidOpenParams uri "let x = 1")
+            let change = U2.C2 { Text = "let y = 2" }
+            handleDidChange (makeDidChangeParams uri 2 [| change |])
+            Expect.equal (getDocument uri) (Some "let y = 2") "Text should be replaced"
+
+        testCase "didChange with incremental sync modifies range" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test.fun"
+            handleDidOpen (makeDidOpenParams uri "let x = 1")
+            // Change 'x' to 'y' (position 4, length 1)
+            let range = { Start = { Line = 0u; Character = 4u }; End = { Line = 0u; Character = 5u } }
+            let change = U2.C1 { Range = range; RangeLength = None; Text = "y" }
+            handleDidChange (makeDidChangeParams uri 2 [| change |])
+            Expect.equal (getDocument uri) (Some "let y = 1") "Variable name should be changed"
+
+        testCase "getDocument returns None for unknown URI" &lt;| fun _ -&gt;
+            clearAll()
+            Expect.equal (getDocument "file:///unknown.fun") None "Unknown document should return None"
+    ]
+</code></pre>
+<p><strong>중요 포인트:</strong></p>
+<ul>
+<li><code>testSequenced</code>: <code>ConcurrentDictionary</code>는 테스트 간 공유되므로 순차 실행 필요</li>
+<li><code>clearAll()</code>: 각 테스트 시작 전 상태 초기화</li>
+<li>증분 변경 테스트: Range를 명시하여 정확한 교체 검증</li>
+</ul>
+<h3 id="테스트-실행"><a class="header" href="#테스트-실행">테스트 실행</a></h3>
+<pre><code class="language-bash">dotnet run --project src/LangLSP.Tests
+
+# 출력:
+# [DocumentSync] didOpen stores document text - Passed
+# [DocumentSync] didClose removes document - Passed
+# [DocumentSync] didChange with full sync replaces text - Passed
+# [DocumentSync] didChange with incremental sync modifies range - Passed
+# [DocumentSync] getDocument returns None for unknown URI - Passed
+</code></pre>
+<hr>
+<h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
+<p>문서 동기화가 완료되었으므로, 이제 <strong>Diagnostics</strong>(진단)를 구현할 수 있습니다.</p>
+<p><strong>다음 튜토리얼:</strong> <a href="./05-diagnostics.html">05-diagnostics.md</a></p>
+<p>Diagnostics 구현에서는 다음을 다룹니다:</p>
+<ol>
+<li>FunLang의 Diagnostic 시스템 활용</li>
+<li>Span을 LSP Range로 변환 (1-based → 0-based)</li>
+<li>문법 오류 및 타입 오류 처리</li>
+<li><code>publishDiagnostics</code>로 에디터에 에러 전송</li>
+<li>FsCheck를 활용한 Property-based Testing</li>
+</ol>
+<hr>
+<h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
+<ul>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_synchronization">LSP Specification - Text Synchronization</a></li>
+<li><a href="https://docs.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2">ConcurrentDictionary 문서</a></li>
+<li><a href="https://github.com/ionide/LanguageServerProtocol">Ionide.LanguageServerProtocol GitHub</a></li>
+</ul>
+<hr>
+<p><strong>→ 다음: <a href="./05-diagnostics.html">05-diagnostics.md</a></strong> - 진단 구현</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="03-project-setup.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="05-diagnostics.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="03-project-setup.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="05-diagnostics.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

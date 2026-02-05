@@ -1,0 +1,577 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>LSP 개념 소개 - FunLang LSP 튜토리얼</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-b67c2577.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FunLang LSP 튜토리얼</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="lsp-개념-소개"><a class="header" href="#lsp-개념-소개">LSP 개념 소개</a></h1>
+<p>이 문서는 Language Server Protocol(LSP)의 핵심 개념을 설명합니다. LSP 서버를 구현하기 전에 반드시 이해해야 할 기초 개념들을 다룹니다.</p>
+<h2 id="목차"><a class="header" href="#목차">목차</a></h2>
+<ol>
+<li><a href="#lsp란-무엇인가">LSP란 무엇인가</a></li>
+<li><a href="#클라이언트-서버-아키텍처">클라이언트-서버 아키텍처</a></li>
+<li><a href="#json-rpc-프로토콜">JSON-RPC 프로토콜</a></li>
+<li><a href="#capability-negotiation-기능-협상">Capability Negotiation</a></li>
+<li><a href="#document-synchronization-문서-동기화">Document Synchronization</a></li>
+<li><a href="#실시간-진단-real-time-diagnostics">실시간 진단</a></li>
+</ol>
+<hr>
+<h2 id="lsp란-무엇인가"><a class="header" href="#lsp란-무엇인가">LSP란 무엇인가</a></h2>
+<p>**Language Server Protocol(LSP)**은 프로그래밍 언어 지원 기능(자동 완성, 정의 찾기, 오류 진단 등)을 에디터/IDE와 언어 분석 엔진 사이에서 표준화한 프로토콜입니다.</p>
+<h3 id="문제-에디터-종속성"><a class="header" href="#문제-에디터-종속성">문제: 에디터 종속성</a></h3>
+<p>LSP 이전에는 각 에디터마다 각 언어에 대한 별도의 플러그인이 필요했습니다.</p>
+<pre><code>M개 에디터 × N개 언어 = M × N개 플러그인
+</code></pre>
+<p>예시:</p>
+<ul>
+<li>VS Code용 Python 플러그인</li>
+<li>Vim용 Python 플러그인</li>
+<li>Emacs용 Python 플러그인</li>
+<li>Sublime용 Python 플러그인</li>
+<li>… (각 에디터마다 반복)</li>
+</ul>
+<p>이 방식은 유지보수가 어렵고 중복 개발이 심했습니다.</p>
+<h3 id="해결책-lsp-표준화"><a class="header" href="#해결책-lsp-표준화">해결책: LSP 표준화</a></h3>
+<p>LSP는 이 문제를 <strong>M + N</strong> 구조로 바꿨습니다.</p>
+<pre><code>M개 에디터 (LSP 클라이언트) + N개 언어 (LSP 서버) = M + N개 구현
+</code></pre>
+<p>각 에디터는 LSP 클라이언트만 구현하면 되고, 각 언어는 LSP 서버만 구현하면 됩니다. 그러면 모든 조합이 자동으로 작동합니다.</p>
+<h3 id="역사"><a class="header" href="#역사">역사</a></h3>
+<ul>
+<li><strong>2016년</strong>: Microsoft가 VS Code와 함께 LSP 발표</li>
+<li><strong>2017-2019년</strong>: Vim, Emacs, Sublime, IntelliJ 등 주요 에디터에서 LSP 클라이언트 구현</li>
+<li><strong>2025년</strong>: 사실상 업계 표준으로 정착, LSP 3.17 스펙 릴리스</li>
+</ul>
+<hr>
+<h2 id="클라이언트-서버-아키텍처"><a class="header" href="#클라이언트-서버-아키텍처">클라이언트-서버 아키텍처</a></h2>
+<p>LSP는 <strong>클라이언트-서버 모델</strong>로 동작합니다.</p>
+<h3 id="구성-요소"><a class="header" href="#구성-요소">구성 요소</a></h3>
+<p><strong>클라이언트 (Client)</strong></p>
+<ul>
+<li>에디터/IDE가 실행하는 부분</li>
+<li>사용자 인터페이스 담당</li>
+<li>예: VS Code, Neovim, Emacs, Helix</li>
+</ul>
+<p><strong>서버 (Server)</strong></p>
+<ul>
+<li>별도 프로세스로 실행되는 언어 분석 엔진</li>
+<li>코드 파싱, 타입 체킹, 진단 생성 등 담당</li>
+<li>예: <code>pyright</code> (Python), <code>rust-analyzer</code> (Rust), <code>gopls</code> (Go)</li>
+</ul>
+<h3 id="프로세스-간-통신"><a class="header" href="#프로세스-간-통신">프로세스 간 통신</a></h3>
+<p>클라이언트와 서버는 <strong>별도 프로세스</strong>로 실행되며, 다음 방법으로 통신합니다.</p>
+<pre><code>┌─────────────┐                          ┌─────────────┐
+│             │                          │             │
+│  VS Code    │  ◄─── JSON-RPC ───►     │   Language  │
+│  (Client)   │       over stdio         │   Server    │
+│             │                          │             │
+└─────────────┘                          └─────────────┘
+   Process 1                                Process 2
+</code></pre>
+<p><strong>통신 방식:</strong></p>
+<ol>
+<li><strong>stdin/stdout</strong> (가장 일반적) - 표준 입출력을 통한 파이프 통신</li>
+<li><strong>Socket</strong> - TCP 소켓 연결</li>
+<li><strong>Named Pipe</strong> - Windows 명명된 파이프</li>
+</ol>
+<p>대부분의 LSP 서버는 stdin/stdout을 사용합니다. 에디터가 서버를 자식 프로세스로 실행하고, 표준 입출력을 통해 메시지를 주고받습니다.</p>
+<h3 id="아키텍처-다이어그램"><a class="header" href="#아키텍처-다이어그램">아키텍처 다이어그램</a></h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Editor as 에디터 (VS Code)
+    participant Server as Language Server
+
+    Editor-&gt;&gt;Server: initialize request
+    Server-&gt;&gt;Editor: initialize response (capabilities)
+    Editor-&gt;&gt;Server: initialized notification
+
+    Editor-&gt;&gt;Server: textDocument/didOpen
+    Server-&gt;&gt;Editor: textDocument/publishDiagnostics
+
+    Editor-&gt;&gt;Server: textDocument/hover (사용자가 커서 올림)
+    Server-&gt;&gt;Editor: hover response (타입 정보)
+</code></pre>
+<hr>
+<h2 id="json-rpc-프로토콜"><a class="header" href="#json-rpc-프로토콜">JSON-RPC 프로토콜</a></h2>
+<p>LSP는 <strong>JSON-RPC 2.0</strong> 프로토콜을 기반으로 합니다.</p>
+<h3 id="메시지-형식"><a class="header" href="#메시지-형식">메시지 형식</a></h3>
+<p>모든 LSP 메시지는 다음 형식을 따릅니다.</p>
+<pre><code>Content-Length: &lt;바이트 수&gt;\r\n
+\r\n
+{JSON 본문}
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><code>Content-Length: 123\r\n
+\r\n
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{...}}
+</code></pre>
+<h3 id="메시지-타입"><a class="header" href="#메시지-타입">메시지 타입</a></h3>
+<p>LSP는 3가지 메시지 타입을 사용합니다.</p>
+<h4 id="1-request-요청"><a class="header" href="#1-request-요청">1. Request (요청)</a></h4>
+<p>클라이언트 또는 서버가 상대방에게 작업을 요청하고 응답을 기다립니다.</p>
+<pre><code class="language-json">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "textDocument/hover",
+  "params": {
+    "textDocument": {"uri": "file:///path/to/file.fun"},
+    "position": {"line": 5, "character": 10}
+  }
+}
+</code></pre>
+<h4 id="2-response-응답"><a class="header" href="#2-response-응답">2. Response (응답)</a></h4>
+<p>Request에 대한 응답입니다.</p>
+<pre><code class="language-json">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "contents": {
+      "kind": "markdown",
+      "value": "**함수**: `add`\n\n타입: `(Int, Int) -&gt; Int`"
+    }
+  }
+}
+</code></pre>
+<h4 id="3-notification-알림"><a class="header" href="#3-notification-알림">3. Notification (알림)</a></h4>
+<p>응답을 기대하지 않는 단방향 메시지입니다. <code>id</code> 필드가 없습니다.</p>
+<pre><code class="language-json">{
+  "jsonrpc": "2.0",
+  "method": "textDocument/didChange",
+  "params": {
+    "textDocument": {"uri": "file:///path/to/file.fun", "version": 2},
+    "contentChanges": [...]
+  }
+}
+</code></pre>
+<h3 id="initialize-핸드셰이크"><a class="header" href="#initialize-핸드셰이크">Initialize 핸드셰이크</a></h3>
+<p>모든 LSP 세션은 <code>initialize</code> 요청으로 시작됩니다.</p>
+<p><strong>클라이언트 → 서버:</strong></p>
+<pre><code class="language-json">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "processId": 1234,
+    "rootUri": "file:///path/to/project",
+    "capabilities": {
+      "textDocument": {
+        "hover": {"contentFormat": ["markdown", "plaintext"]}
+      }
+    }
+  }
+}
+</code></pre>
+<p><strong>서버 → 클라이언트:</strong></p>
+<pre><code class="language-json">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "capabilities": {
+      "hoverProvider": true,
+      "completionProvider": {"triggerCharacters": ["."]},
+      "textDocumentSync": 2
+    }
+  }
+}
+</code></pre>
+<hr>
+<h2 id="capability-negotiation-기능-협상"><a class="header" href="#capability-negotiation-기능-협상">Capability Negotiation (기능 협상)</a></h2>
+<p>LSP의 핵심 설계 원칙 중 하나는 <strong>기능 협상</strong>입니다. 모든 서버가 모든 기능을 구현할 필요는 없습니다.</p>
+<h3 id="클라이언트-capabilities"><a class="header" href="#클라이언트-capabilities">클라이언트 Capabilities</a></h3>
+<p><code>initialize</code> 요청에서 클라이언트가 지원하는 기능을 알립니다.</p>
+<pre><code class="language-fsharp">type ClientCapabilities = {
+    textDocument: TextDocumentClientCapabilities option
+    workspace: WorkspaceClientCapabilities option
+}
+</code></pre>
+<p><strong>예시:</strong></p>
+<ul>
+<li>Markdown 포맷 지원 여부</li>
+<li>동적 등록(dynamic registration) 지원 여부</li>
+<li>특정 LSP 메서드 지원 여부</li>
+</ul>
+<h3 id="서버-capabilities"><a class="header" href="#서버-capabilities">서버 Capabilities</a></h3>
+<p><code>initialize</code> 응답에서 서버가 제공하는 기능을 선언합니다.</p>
+<pre><code class="language-fsharp">type ServerCapabilities = {
+    textDocumentSync: TextDocumentSyncKind option
+    hoverProvider: bool option
+    completionProvider: CompletionOptions option
+    definitionProvider: bool option
+    referencesProvider: bool option
+    documentSymbolProvider: bool option
+    renameProvider: bool option
+    codeActionProvider: bool option
+}
+</code></pre>
+<h3 id="주요-capabilities"><a class="header" href="#주요-capabilities">주요 Capabilities</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Capability</th><th>설명</th><th>에디터에서 보이는 기능</th></tr>
+</thead>
+<tbody>
+<tr><td><code>textDocumentSync</code></td><td>문서 동기화 방식 (Full/Incremental)</td><td>필수</td></tr>
+<tr><td><code>hoverProvider</code></td><td>커서 아래 정보 제공</td><td>호버 툴팁</td></tr>
+<tr><td><code>completionProvider</code></td><td>자동 완성 제안</td><td>IntelliSense</td></tr>
+<tr><td><code>definitionProvider</code></td><td>정의 위치 찾기</td><td>“Go to Definition”</td></tr>
+<tr><td><code>referencesProvider</code></td><td>참조 찾기</td><td>“Find All References”</td></tr>
+<tr><td><code>renameProvider</code></td><td>심볼 이름 변경</td><td>“Rename Symbol”</td></tr>
+<tr><td><code>diagnosticProvider</code></td><td>오류/경고 진단</td><td>빨간 밑줄</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>중요</strong>: 서버가 <code>hoverProvider: true</code>를 선언하지 않으면, 클라이언트는 <code>textDocument/hover</code> 요청을 보내지 않습니다.</p>
+<hr>
+<h2 id="document-synchronization-문서-동기화"><a class="header" href="#document-synchronization-문서-동기화">Document Synchronization (문서 동기화)</a></h2>
+<p>에디터에서 파일을 열고 편집하면, 서버는 그 변경사항을 알아야 합니다. 이를 <strong>문서 동기화</strong>라고 합니다.</p>
+<h3 id="lifecycle-이벤트"><a class="header" href="#lifecycle-이벤트">Lifecycle 이벤트</a></h3>
+<h4 id="textdocumentdidopen"><a class="header" href="#textdocumentdidopen">textDocument/didOpen</a></h4>
+<p>사용자가 파일을 열면 클라이언트가 보내는 알림입니다.</p>
+<pre><code class="language-json">{
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///path/to/file.fun",
+      "languageId": "funlang",
+      "version": 1,
+      "text": "let x = 42\nlet y = x + 10"
+    }
+  }
+}
+</code></pre>
+<h4 id="textdocumentdidchange"><a class="header" href="#textdocumentdidchange">textDocument/didChange</a></h4>
+<p>사용자가 파일을 편집하면 보내는 알림입니다.</p>
+<pre><code class="language-json">{
+  "method": "textDocument/didChange",
+  "params": {
+    "textDocument": {
+      "uri": "file:///path/to/file.fun",
+      "version": 2
+    },
+    "contentChanges": [
+      {
+        "range": {"start": {"line": 1, "character": 8}, "end": {"line": 1, "character": 10}},
+        "text": "20"
+      }
+    ]
+  }
+}
+</code></pre>
+<h4 id="textdocumentdidclose"><a class="header" href="#textdocumentdidclose">textDocument/didClose</a></h4>
+<p>파일을 닫으면 보내는 알림입니다. 서버는 메모리에서 해당 파일 정보를 제거할 수 있습니다.</p>
+<h3 id="sync-방식"><a class="header" href="#sync-방식">Sync 방식</a></h3>
+<p>서버는 두 가지 동기화 방식 중 하나를 선택할 수 있습니다.</p>
+<h4 id="1-full-sync-textdocumentsynckindfull--1"><a class="header" href="#1-full-sync-textdocumentsynckindfull--1">1. Full Sync (TextDocumentSyncKind.Full = 1)</a></h4>
+<p>매번 <strong>전체 문서 내용</strong>을 전송합니다.</p>
+<p><strong>장점</strong>: 구현이 간단
+<strong>단점</strong>: 큰 파일에서 네트워크 비용 증가</p>
+<h4 id="2-incremental-sync-textdocumentsynckindincremental--2"><a class="header" href="#2-incremental-sync-textdocumentsynckindincremental--2">2. Incremental Sync (TextDocumentSyncKind.Incremental = 2)</a></h4>
+<p><strong>변경된 부분만</strong> (range + text) 전송합니다.</p>
+<p><strong>장점</strong>: 효율적, 네트워크 비용 감소
+<strong>단점</strong>: 구현 복잡도 증가 (range 관리)</p>
+<p><strong>권장</strong>: 대부분의 프로덕션 서버는 Incremental Sync를 사용합니다.</p>
+<hr>
+<h2 id="실시간-진단-real-time-diagnostics"><a class="header" href="#실시간-진단-real-time-diagnostics">실시간 진단 (Real-time Diagnostics)</a></h2>
+<p>LSP의 가장 강력한 기능 중 하나는 <strong>실시간 오류/경고 표시</strong>입니다.</p>
+<h3 id="textdocumentpublishdiagnostics"><a class="header" href="#textdocumentpublishdiagnostics">textDocument/publishDiagnostics</a></h3>
+<p>서버가 클라이언트에게 진단 정보를 보내는 알림입니다. (Request가 아닌 <strong>Notification</strong>)</p>
+<pre><code class="language-json">{
+  "method": "textDocument/publishDiagnostics",
+  "params": {
+    "uri": "file:///path/to/file.fun",
+    "diagnostics": [
+      {
+        "range": {
+          "start": {"line": 5, "character": 10},
+          "end": {"line": 5, "character": 15}
+        },
+        "severity": 1,
+        "message": "Undefined variable 'hello'",
+        "source": "FunLang"
+      }
+    ]
+  }
+}
+</code></pre>
+<h3 id="diagnostic-구조"><a class="header" href="#diagnostic-구조">Diagnostic 구조</a></h3>
+<pre><code class="language-fsharp">type Diagnostic = {
+    range: Range              // 오류 위치
+    severity: DiagnosticSeverity option  // 1=Error, 2=Warning, 3=Info, 4=Hint
+    code: string option       // 오류 코드 (예: "E0001")
+    source: string option     // "FunLang", "TypeChecker" 등
+    message: string           // 오류 메시지
+    relatedInformation: DiagnosticRelatedInformation[] option
+}
+</code></pre>
+<h3 id="severity-레벨"><a class="header" href="#severity-레벨">Severity 레벨</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Severity</th><th>값</th><th>의미</th><th>에디터 표시</th></tr>
+</thead>
+<tbody>
+<tr><td>Error</td><td>1</td><td>컴파일 불가능한 오류</td><td>빨간 밑줄</td></tr>
+<tr><td>Warning</td><td>2</td><td>잠재적 문제</td><td>노란 밑줄</td></tr>
+<tr><td>Information</td><td>3</td><td>정보성 메시지</td><td>파란 밑줄</td></tr>
+<tr><td>Hint</td><td>4</td><td>제안</td><td>회색 점선</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="진단-흐름"><a class="header" href="#진단-흐름">진단 흐름</a></h3>
+<pre><code>사용자가 코드 편집
+    ↓
+textDocument/didChange 알림
+    ↓
+서버가 코드 분석 (파싱 → 타입 체킹)
+    ↓
+textDocument/publishDiagnostics 알림
+    ↓
+에디터가 빨간 밑줄 표시
+</code></pre>
+<p><strong>중요</strong>: <code>publishDiagnostics</code>는 서버가 능동적으로 보내는 알림입니다. 클라이언트가 요청하지 않아도 서버가 변경 감지 시 자동으로 전송합니다.</p>
+<hr>
+<h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
+<p>이제 LSP의 핵심 개념을 이해했습니다.</p>
+<ul>
+<li><strong>클라이언트-서버 아키텍처</strong>: 별도 프로세스로 동작</li>
+<li><strong>JSON-RPC</strong>: Content-Length 헤더 + JSON 본문</li>
+<li><strong>Capability Negotiation</strong>: 서버가 지원하는 기능 선언</li>
+<li><strong>Document Sync</strong>: didOpen, didChange, didClose</li>
+<li><strong>Diagnostics</strong>: 실시간 오류 표시</li>
+</ul>
+<p>다음 문서에서는 F#으로 LSP 서버를 구현하기 위한 라이브러리 선택을 다룹니다.</p>
+<p><strong>→ <a href="./02-library-choice.html">02-library-choice.md</a></strong></p>
+<hr>
+<h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
+<ul>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/">LSP 공식 스펙</a></li>
+<li><a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0 스펙</a></li>
+<li><a href="https://microsoft.github.io/language-server-protocol/">LSP 공식 웹사이트</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="02-library-choice.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="02-library-choice.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

@@ -1,0 +1,1243 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rename Symbol 구현하기 - FunLang LSP 튜토리얼</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-b67c2577.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FunLang LSP 튜토리얼</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="rename-symbol-구현하기"><a class="header" href="#rename-symbol-구현하기">Rename Symbol 구현하기</a></h1>
+<p>이 문서는 LSP 서버에서 <strong>Rename Symbol</strong> 기능을 구현하는 방법을 설명합니다. 변수나 함수 이름을 변경하면 해당 심볼의 정의와 모든 사용처가 동시에 업데이트됩니다. 이 기능은 리팩토링의 핵심으로, 안전하게 코드베이스 전체의 식별자 이름을 변경할 수 있게 해줍니다.</p>
+<h2 id="목차"><a class="header" href="#목차">목차</a></h2>
+<ol>
+<li><a href="#rename-symbol이란">Rename Symbol이란</a></li>
+<li><a href="#lsp-프로토콜">LSP 프로토콜</a></li>
+<li><a href="#workspaceedit-이해하기">WorkspaceEdit 이해하기</a></li>
+<li><a href="#preparerename-구현">prepareRename 구현</a></li>
+<li><a href="#레퍼런스-수집과-이름-변경">레퍼런스 수집과 이름 변경</a></li>
+<li><a href="#바인딩-사이트-이름-스팬-계산">바인딩 사이트 이름 스팬 계산</a></li>
+<li><a href="#handlerename-구현">handleRename 구현</a></li>
+<li><a href="#protocolfs-헬퍼-함수">Protocol.fs 헬퍼 함수</a></li>
+<li><a href="#serverfs-통합">Server.fs 통합</a></li>
+<li><a href="#테스트-작성">테스트 작성</a></li>
+<li><a href="#주의사항과-엣지-케이스">주의사항과 엣지 케이스</a></li>
+</ol>
+<hr>
+<h2 id="rename-symbol이란"><a class="header" href="#rename-symbol이란">Rename Symbol이란</a></h2>
+<p><strong>Rename Symbol</strong>은 변수, 함수, 파라미터의 이름을 변경할 때 해당 심볼의 <strong>정의와 모든 사용처</strong>를 동시에 업데이트하는 기능입니다.</p>
+<h3 id="vs-code에서의-사용"><a class="header" href="#vs-code에서의-사용">VS Code에서의 사용</a></h3>
+<pre><code>test.fun
+────────
+1 | let add = fun x -&gt; fun y -&gt; x + y in
+2 | let result = add 1 2 in
+3 | result
+    ^^^^^^
+    [F2] 또는 우클릭 → "Rename Symbol"
+    → 새 이름 입력: "finalValue"
+    → 모든 "result" 사용처가 "finalValue"로 변경됨
+</code></pre>
+<p><strong>트리거 방법:</strong></p>
+<ul>
+<li><code>F2</code> 키</li>
+<li>우클릭 → “Rename Symbol”</li>
+<li>명령 팔레트 → “Rename Symbol”</li>
+</ul>
+<h3 id="핵심-동작"><a class="header" href="#핵심-동작">핵심 동작</a></h3>
+<ol>
+<li>사용자가 커서를 변수 위에 놓고 F2 입력</li>
+<li>클라이언트가 <code>textDocument/prepareRename</code> 요청 (옵셔널)</li>
+<li>서버가 rename 가능 여부 확인, 범위와 현재 이름 반환</li>
+<li>사용자가 새 이름 입력</li>
+<li>클라이언트가 <code>textDocument/rename</code> 요청 전송</li>
+<li>서버가 <code>WorkspaceEdit</code> 반환 (모든 변경사항)</li>
+<li>클라이언트가 파일 업데이트 적용</li>
+</ol>
+<hr>
+<h2 id="lsp-프로토콜"><a class="header" href="#lsp-프로토콜">LSP 프로토콜</a></h2>
+<p>Rename은 <strong>두 단계</strong>로 구성됩니다:</p>
+<h3 id="1-textdocumentpreparerename-옵셔널"><a class="header" href="#1-textdocumentpreparerename-옵셔널">1. textDocument/prepareRename (옵셔널)</a></h3>
+<p>Rename 전에 검증 단계입니다. 이 요청으로 다음을 확인합니다:</p>
+<ul>
+<li>커서 위치가 rename 가능한 심볼인가?</li>
+<li>Rename할 범위와 현재 이름은?</li>
+</ul>
+<pre><code class="language-typescript">interface TextDocumentPositionParams {
+    textDocument: TextDocumentIdentifier  // { uri: "file:///test.fun" }
+    position: Position                     // { line: 1, character: 13 }
+}
+</code></pre>
+<p><strong>요청 예시:</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 7,
+    "method": "textDocument/prepareRename",
+    "params": {
+        "textDocument": { "uri": "file:///test.fun" },
+        "position": { "line": 1, "character": 13 }
+    }
+}
+</code></pre>
+<p><strong>응답 형식:</strong></p>
+<p>PrepareRenameResult는 세 가지 형태를 지원합니다:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>형식</th><th>사용 시기</th><th>구조</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Range</code></td><td>간단한 범위만 반환</td><td><code>{ start, end }</code></td></tr>
+<tr><td><code>RangeWithPlaceholder</code></td><td>범위 + 현재 이름</td><td><code>{ range, placeholder }</code></td></tr>
+<tr><td><code>DefaultBehavior</code></td><td>범위 + 이름 + 가이드</td><td><code>{ defaultBehavior: true }</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>FunLang은 <strong>RangeWithPlaceholder</strong>를 사용합니다 (가장 일반적).</p>
+<p><strong>응답 예시:</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 7,
+    "result": {
+        "range": {
+            "start": { "line": 1, "character": 4 },
+            "end": { "line": 1, "character": 10 }
+        },
+        "placeholder": "result"
+    }
+}
+</code></pre>
+<p><strong>에러 응답 (rename 불가):</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 7,
+    "error": {
+        "code": -32600,
+        "message": "Cannot rename this symbol"
+    }
+}
+</code></pre>
+<h3 id="2-textdocumentrename-필수"><a class="header" href="#2-textdocumentrename-필수">2. textDocument/rename (필수)</a></h3>
+<p>실제 rename 작업을 수행합니다.</p>
+<pre><code class="language-typescript">interface RenameParams {
+    textDocument: TextDocumentIdentifier
+    position: Position
+    newName: string  // 사용자가 입력한 새 이름
+}
+</code></pre>
+<p><strong>요청 예시:</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 8,
+    "method": "textDocument/rename",
+    "params": {
+        "textDocument": { "uri": "file:///test.fun" },
+        "position": { "line": 1, "character": 13 },
+        "newName": "finalValue"
+    }
+}
+</code></pre>
+<p><strong>응답: WorkspaceEdit</strong></p>
+<pre><code class="language-typescript">interface WorkspaceEdit {
+    changes?: { [uri: string]: TextEdit[] }  // 파일별 편집 목록
+    documentChanges?: (TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[]
+    changeAnnotations?: { [id: string]: ChangeAnnotation }
+}
+
+interface TextEdit {
+    range: Range      // 교체할 범위
+    newText: string   // 새 텍스트
+}
+</code></pre>
+<p><strong>응답 예시:</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 8,
+    "result": {
+        "changes": {
+            "file:///test.fun": [
+                {
+                    "range": {
+                        "start": { "line": 1, "character": 4 },
+                        "end": { "line": 1, "character": 10 }
+                    },
+                    "newText": "finalValue"
+                },
+                {
+                    "range": {
+                        "start": { "line": 2, "character": 0 },
+                        "end": { "line": 2, "character": 6 }
+                    },
+                    "newText": "finalValue"
+                }
+            ]
+        }
+    }
+}
+</code></pre>
+<hr>
+<h2 id="workspaceedit-이해하기"><a class="header" href="#workspaceedit-이해하기">WorkspaceEdit 이해하기</a></h2>
+<p><code>WorkspaceEdit</code>는 하나 이상의 파일에 적용할 <strong>편집 작업들의 집합</strong>입니다.</p>
+<h3 id="구조"><a class="header" href="#구조">구조</a></h3>
+<pre><code class="language-fsharp">type WorkspaceEdit = {
+    Changes: Map&lt;string, TextEdit[]&gt; option       // 간단한 형태: URI → 편집 배열
+    DocumentChanges: DocumentChange[] option       // 고급 형태: 순서 보장, 파일 생성/삭제 포함
+    ChangeAnnotations: Map&lt;string, ChangeAnnotation&gt; option  // 변경 설명 메타데이터
+}
+</code></pre>
+<p><strong>FunLang은 <code>Changes</code>만 사용합니다:</strong></p>
+<ul>
+<li>싱글 파일 언어 (모듈 시스템 없음)</li>
+<li>텍스트 편집만 필요 (파일 생성/삭제 불필요)</li>
+<li>간단하고 충분함</li>
+</ul>
+<h3 id="textedit-구조"><a class="header" href="#textedit-구조">TextEdit 구조</a></h3>
+<p>각 TextEdit는 <strong>범위 + 새 텍스트</strong>입니다:</p>
+<pre><code class="language-fsharp">type TextEdit = {
+    Range: Range      // 교체할 소스 위치
+    NewText: string   // 새 텍스트 (rename의 경우 새 이름)
+}
+</code></pre>
+<h3 id="예시-3개-위치-rename"><a class="header" href="#예시-3개-위치-rename">예시: 3개 위치 rename</a></h3>
+<pre><code class="language-funlang">let x = 1 in x + x
+</code></pre>
+<p><code>x</code>를 <code>y</code>로 rename하면:</p>
+<pre><code class="language-fsharp">let edits = [|
+    { Range = (0:4)-(0:5); NewText = "y" }  // 정의
+    { Range = (0:13)-(0:14); NewText = "y" }  // 첫 번째 사용
+    { Range = (0:17)-(0:18); NewText = "y" }  // 두 번째 사용
+|]
+
+let workspaceEdit = {
+    Changes = Some (Map.ofList [ ("file:///test.fun", edits) ])
+    DocumentChanges = None
+    ChangeAnnotations = None
+}
+</code></pre>
+<p>VS Code는 이 <code>WorkspaceEdit</code>를 받아서:</p>
+<ol>
+<li>각 <code>TextEdit</code>의 <code>Range</code> 위치의 텍스트를 찾음</li>
+<li>해당 범위를 <code>NewText</code>로 교체</li>
+<li>파일 저장 또는 변경사항 표시</li>
+</ol>
+<hr>
+<h2 id="preparerename-구현"><a class="header" href="#preparerename-구현">prepareRename 구현</a></h2>
+<p><code>prepareRename</code>은 rename 가능 여부를 검증하고, 정확한 범위를 반환합니다.</p>
+<h3 id="왜-필요한가"><a class="header" href="#왜-필요한가">왜 필요한가?</a></h3>
+<ol>
+<li><strong>조기 실패</strong>: 사용자가 이름을 입력하기 전에 불가능한 경우 알림</li>
+<li><strong>정확한 범위</strong>: 전체 표현식 span이 아닌 <strong>이름만</strong>의 정확한 위치</li>
+<li><strong>현재 이름 제공</strong>: VS Code가 입력창에 미리 채워줌</li>
+</ol>
+<h3 id="rename-가능한-심볼"><a class="header" href="#rename-가능한-심볼">Rename 가능한 심볼</a></h3>
+<p>FunLang에서 rename 가능한 것:</p>
+<ul>
+<li><code>Var</code> - 변수 참조</li>
+<li><code>Let</code> - let 바인딩</li>
+<li><code>LetRec</code> - 재귀 함수 바인딩</li>
+<li><code>Lambda</code> - 람다 파라미터</li>
+<li><code>LambdaAnnot</code> - 타입 주석 람다 파라미터</li>
+</ul>
+<p>Rename <strong>불가능</strong>한 것:</p>
+<ul>
+<li>숫자, 문자열, 불리언 리터럴</li>
+<li>키워드 (<code>let</code>, <code>in</code>, <code>if</code> 등)</li>
+<li>연산자 (<code>+</code>, <code>-</code>, <code>*</code> 등)</li>
+</ul>
+<h3 id="findnameinsource-헬퍼-함수"><a class="header" href="#findnameinsource-헬퍼-함수">findNameInSource 헬퍼 함수</a></h3>
+<p>Let/LetRec/Lambda의 span은 <strong>전체 표현식</strong>을 커버합니다:</p>
+<pre><code class="language-funlang">let result = 42 in result
+^^^^^^^^^^^^^^
+전체 Let 표현식 span (0:0)-(0:15)
+
+    ^^^^^^
+    이름만의 span이 필요: (0:4)-(0:10)
+</code></pre>
+<p><code>findNameInSource</code>는 소스 텍스트에서 정확한 이름 위치를 찾습니다:</p>
+<pre><code class="language-fsharp">// Rename.fs
+/// Find the exact character range of an identifier name within source text
+/// Given a definition span (which may cover whole expression), find just the name
+/// Searches first ~15 chars after startCol for the identifier
+let findNameInSource (text: string) (name: string) (startLine: int) (startCol: int) : Span option =
+    let lines = text.Split('\n')
+    if startLine &lt; lines.Length then
+        let line = lines.[startLine]
+        let searchEnd = min (startCol + 15) line.Length
+        let searchArea = line.Substring(startCol, searchEnd - startCol)
+        let idx = searchArea.IndexOf(name)
+        if idx &gt;= 0 then
+            let nameStart = startCol + idx
+            Some {
+                FileName = ""
+                StartLine = startLine
+                StartColumn = nameStart
+                EndLine = startLine
+                EndColumn = nameStart + name.Length - 1
+            }
+        else None
+    else None
+</code></pre>
+<p><strong>동작:</strong></p>
+<ol>
+<li>해당 라인 추출</li>
+<li>startCol부터 ~15자 범위 검색 (키워드 <code>let </code>, <code>fun </code> 등 건너뛰기)</li>
+<li>이름 문자열 위치 찾기</li>
+<li>정확한 span 반환</li>
+</ol>
+<p><strong>예시:</strong></p>
+<pre><code class="language-funlang">let result = 42
+</code></pre>
+<ul>
+<li>입력: <code>name="result"</code>, <code>startLine=0</code>, <code>startCol=0</code></li>
+<li><code>searchArea = "let result = 42"</code> (최대 15자)</li>
+<li><code>idx = searchArea.IndexOf("result") = 4</code></li>
+<li><code>nameStart = 0 + 4 = 4</code></li>
+<li>반환: <code>Span(0, 4, 0, 10)</code> - “result“의 정확한 위치</li>
+</ul>
+<h3 id="handlepreparerename-구현"><a class="header" href="#handlepreparerename-구현">handlePrepareRename 구현</a></h3>
+<pre><code class="language-fsharp">// Rename.fs
+open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.AstLookup
+open LangLSP.Server.DocumentSync
+open LangLSP.Server.Protocol
+open Ast
+
+/// Handle textDocument/prepareRename request
+/// Validates that cursor is on a renameable symbol and returns range + placeholder
+let handlePrepareRename (p: TextDocumentPositionParams) : Async&lt;PrepareRenameResult option&gt; =
+    async {
+        match getDocument p.TextDocument.Uri with
+        | None -&gt; return None
+        | Some text -&gt;
+            try
+                let lexbuf = FSharp.Text.Lexing.LexBuffer&lt;char&gt;.FromString(text)
+                let ast = Parser.start Lexer.tokenize lexbuf
+
+                match findNodeAtPosition p.Position ast with
+                | None -&gt; return None
+                | Some node -&gt;
+                    let result =
+                        match node with
+                        | Var(name, span) -&gt;
+                            // Variable reference - renameable
+                            Some (U3.C2 { Range = spanToLspRange span; Placeholder = name })
+
+                        | Let(name, _, _, span) -&gt;
+                            // Let binding - find tight range for name
+                            match findNameInSource text name span.StartLine span.StartColumn with
+                            | Some nameSpan -&gt;
+                                Some (U3.C2 { Range = spanToLspRange nameSpan; Placeholder = name })
+                            | None -&gt;
+                                // Fallback to start position
+                                let fallbackRange = {
+                                    Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+                                    End = { Line = uint32 span.StartLine; Character = uint32 (span.StartColumn + name.Length) }
+                                }
+                                Some (U3.C2 { Range = fallbackRange; Placeholder = name })
+
+                        | LetRec(name, _, _, _, span) -&gt;
+                            // Recursive function - find tight range
+                            match findNameInSource text name span.StartLine span.StartColumn with
+                            | Some nameSpan -&gt;
+                                Some (U3.C2 { Range = spanToLspRange nameSpan; Placeholder = name })
+                            | None -&gt;
+                                let fallbackRange = {
+                                    Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+                                    End = { Line = uint32 span.StartLine; Character = uint32 (span.StartColumn + name.Length) }
+                                }
+                                Some (U3.C2 { Range = fallbackRange; Placeholder = name })
+
+                        | Lambda(param, _, span) -&gt;
+                            // Lambda parameter - find tight range
+                            match findNameInSource text param span.StartLine span.StartColumn with
+                            | Some nameSpan -&gt;
+                                Some (U3.C2 { Range = spanToLspRange nameSpan; Placeholder = param })
+                            | None -&gt;
+                                let fallbackRange = {
+                                    Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+                                    End = { Line = uint32 span.StartLine; Character = uint32 (span.StartColumn + param.Length) }
+                                }
+                                Some (U3.C2 { Range = fallbackRange; Placeholder = param })
+
+                        | LambdaAnnot(param, _, _, span) -&gt;
+                            // Annotated lambda parameter - find tight range
+                            match findNameInSource text param span.StartLine span.StartColumn with
+                            | Some nameSpan -&gt;
+                                Some (U3.C2 { Range = spanToLspRange nameSpan; Placeholder = param })
+                            | None -&gt;
+                                let fallbackRange = {
+                                    Start = { Line = uint32 span.StartLine; Character = uint32 span.StartColumn }
+                                    End = { Line = uint32 span.StartLine; Character = uint32 (span.StartColumn + param.Length) }
+                                }
+                                Some (U3.C2 { Range = fallbackRange; Placeholder = param })
+
+                        | _ -&gt;
+                            // Not a renameable symbol (numbers, keywords, operators)
+                            None
+
+                    return result
+
+            with _ -&gt;
+                return None
+    }
+</code></pre>
+<p><strong>동작 흐름:</strong></p>
+<pre><code>TextDocumentPositionParams 수신
+    ↓
+문서 텍스트 조회
+    ↓
+AST 파싱
+    ↓
+findNodeAtPosition으로 노드 찾기
+    ↓
+    ├─ Var → span 그대로 사용 (이미 정확함)
+    ├─ Let/LetRec/Lambda → findNameInSource로 이름만 span 추출
+    └─ 기타 → None (rename 불가)
+    ↓
+RangeWithPlaceholder 반환 (U3.C2)
+</code></pre>
+<p><strong>핵심 포인트:</strong></p>
+<ol>
+<li><code>Var</code> 노드는 이미 정확한 범위를 가짐 → 그대로 사용</li>
+<li><code>Let</code>/<code>LetRec</code>/<code>Lambda</code>는 전체 표현식 span → <code>findNameInSource</code>로 이름만 추출</li>
+<li>모든 경우 fallback 제공 (findNameInSource 실패 시)</li>
+<li><code>U3.C2</code>는 Ionide의 union type (RangeWithPlaceholder)</li>
+</ol>
+<hr>
+<h2 id="레퍼런스-수집과-이름-변경"><a class="header" href="#레퍼런스-수집과-이름-변경">레퍼런스 수집과 이름 변경</a></h2>
+<p>Rename은 <strong>정의 + 모든 레퍼런스</strong>를 동시에 변경해야 합니다.</p>
+<h3 id="collectreferencesforbinding-섀도잉-인식"><a class="header" href="#collectreferencesforbinding-섀도잉-인식">collectReferencesForBinding (섀도잉 인식)</a></h3>
+<p>단순히 이름이 같은 모든 <code>Var</code> 노드를 찾으면 안 됩니다:</p>
+<pre><code class="language-funlang">let x = 1 in
+  let x = 2 in
+    x + 1
+</code></pre>
+<p>마지막 <code>x</code>는 **내부 <code>let x = 2</code>**를 참조합니다. 외부 <code>x</code>를 rename하면 내부 <code>x</code>는 변경되면 안 됩니다.</p>
+<p><code>collectReferencesForBinding</code>은 <strong>특정 정의에 속하는</strong> 레퍼런스만 수집합니다:</p>
+<pre><code class="language-fsharp">// References.fs (이전 튜토리얼에서 구현)
+/// Collect references to a SPECIFIC binding (shadowing-aware)
+/// Only returns Var nodes that resolve to the definition at defSpan
+let collectReferencesForBinding (varName: string) (defSpan: Span) (ast: Expr) : Span list =
+    // Find all Var nodes with matching name
+    let allRefs = collectReferences varName ast
+
+    // Filter to only those that resolve to our specific definition
+    allRefs
+    |&gt; List.filter (fun refSpan -&gt;
+        // Create Position from the reference span
+        let pos : Position = {
+            Line = uint32 refSpan.StartLine
+            Character = uint32 refSpan.StartColumn
+        }
+        // Check if this reference resolves to our target definition
+        match findDefinitionForVar varName ast pos with
+        | Some foundDefSpan -&gt;
+            foundDefSpan.StartLine = defSpan.StartLine &amp;&amp;
+            foundDefSpan.StartColumn = defSpan.StartColumn
+        | None -&gt; false
+    )
+</code></pre>
+<p><strong>알고리즘:</strong></p>
+<ol>
+<li><code>collectReferences</code>로 이름이 같은 모든 <code>Var</code> 노드 찾기</li>
+<li>각 <code>Var</code>에 대해 <code>findDefinitionForVar</code> 호출</li>
+<li>반환된 정의 span이 우리의 타겟 <code>defSpan</code>과 일치하는 것만 필터링</li>
+<li>섀도잉으로 인한 다른 정의의 레퍼런스는 제외됨</li>
+</ol>
+<h3 id="예시"><a class="header" href="#예시">예시</a></h3>
+<pre><code class="language-funlang">let x = 1 in        (* defSpan1: (0, 4) *)
+  let x = 2 in      (* defSpan2: (1, 6) *)
+    x + x           (* 두 x 모두 defSpan2 참조 *)
+</code></pre>
+<p><code>defSpan1</code>에서 rename 요청 시:</p>
+<ol>
+<li><code>collectReferences "x"</code> → 4개 Var 노드 (정의 2개는 제외, 사용 2개만)</li>
+<li>사용처 2개에 대해 <code>findDefinitionForVar</code>:
+<ul>
+<li>(2, 4)의 x → defSpan2 반환 → 필터링됨</li>
+<li>(2, 8)의 x → defSpan2 반환 → 필터링됨</li>
+</ul>
+</li>
+<li>결과: 빈 배열 (외부 x는 사용되지 않음)</li>
+</ol>
+<hr>
+<h2 id="바인딩-사이트-이름-스팬-계산"><a class="header" href="#바인딩-사이트-이름-스팬-계산">바인딩 사이트 이름 스팬 계산</a></h2>
+<p>레퍼런스는 <code>Var</code> 노드이므로 정확한 span을 가지지만, <strong>정의 사이트</strong>는 전체 표현식 span을 가집니다.</p>
+<p>Rename의 TextEdit는 <strong>이름만</strong> 교체해야 하므로, 정의 사이트에도 <code>findNameInSource</code>를 사용합니다:</p>
+<pre><code class="language-fsharp">// For definition site, get tight name-only span from source
+let defNameSpan =
+    match findNameInSource text varName defSpan.StartLine defSpan.StartColumn with
+    | Some nameSpan -&gt; nameSpan
+    | None -&gt;
+        // Fallback: create span from definition position
+        {
+            FileName = ""
+            StartLine = defSpan.StartLine
+            StartColumn = defSpan.StartColumn
+            EndLine = defSpan.StartLine
+            EndColumn = defSpan.StartColumn + varName.Length - 1
+        }
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><code class="language-funlang">let result = 42 in result
+</code></pre>
+<ul>
+<li><code>defSpan = (0, 0)-(0, 15)</code> (전체 Let 표현식)</li>
+<li><code>findNameInSource text "result" 0 0</code> → <code>(0, 4)-(0, 10)</code></li>
+<li><code>defNameSpan = (0, 4)-(0, 10)</code> ← 이것만 TextEdit에 포함</li>
+</ul>
+<hr>
+<h2 id="handlerename-구현"><a class="header" href="#handlerename-구현">handleRename 구현</a></h2>
+<p>실제 rename 로직입니다.</p>
+<pre><code class="language-fsharp">// Rename.fs
+/// Handle textDocument/rename request
+/// Collects all references + definition and returns WorkspaceEdit
+let handleRename (p: RenameParams) : Async&lt;WorkspaceEdit option&gt; =
+    async {
+        match getDocument p.TextDocument.Uri with
+        | None -&gt; return None
+        | Some text -&gt;
+            try
+                let lexbuf = FSharp.Text.Lexing.LexBuffer&lt;char&gt;.FromString(text)
+                let ast = Parser.start Lexer.tokenize lexbuf
+
+                match findNodeAtPosition p.Position ast with
+                | None -&gt; return None
+                | Some node -&gt;
+                    // Determine variable name and definition span
+                    let varNameOpt, defSpanOpt =
+                        match node with
+                        | Var(name, _) -&gt;
+                            // Variable reference - find its definition
+                            let def = findDefinitionForVar name ast p.Position
+                            (Some name, def)
+
+                        | Let(name, _, _, span) -&gt;
+                            // Let binding site
+                            (Some name, Some span)
+
+                        | LetRec(name, _, _, _, span) -&gt;
+                            // Recursive function binding
+                            (Some name, Some span)
+
+                        | Lambda(param, _, span) -&gt;
+                            // Lambda parameter
+                            (Some param, Some span)
+
+                        | LambdaAnnot(param, _, _, span) -&gt;
+                            // Annotated lambda parameter
+                            (Some param, Some span)
+
+                        | _ -&gt;
+                            // Not a renameable symbol
+                            (None, None)
+
+                    match varNameOpt, defSpanOpt with
+                    | Some varName, Some defSpan -&gt;
+                        // Collect all scoped references
+                        let references = collectReferencesForBinding varName defSpan ast
+
+                        // For definition site, get tight name-only span from source
+                        let defNameSpan =
+                            match findNameInSource text varName defSpan.StartLine defSpan.StartColumn with
+                            | Some nameSpan -&gt; nameSpan
+                            | None -&gt;
+                                // Fallback: create span from definition position
+                                {
+                                    FileName = ""
+                                    StartLine = defSpan.StartLine
+                                    StartColumn = defSpan.StartColumn
+                                    EndLine = defSpan.StartLine
+                                    EndColumn = defSpan.StartColumn + varName.Length - 1
+                                }
+
+                        // Combine definition name span + references
+                        let allSpans = defNameSpan :: references
+
+                        // Remove duplicates (may have overlapping spans)
+                        let distinctSpans =
+                            allSpans
+                            |&gt; List.distinctBy (fun span -&gt;
+                                (span.StartLine, span.StartColumn, span.EndLine, span.EndColumn))
+
+                        // Create TextEdit for each span
+                        let edits =
+                            distinctSpans
+                            |&gt; List.map (fun span -&gt; createTextEdit span p.NewName)
+                            |&gt; Array.ofList
+
+                        // Create WorkspaceEdit
+                        let workspaceEdit = createWorkspaceEdit p.TextDocument.Uri edits
+
+                        return Some workspaceEdit
+
+                    | _ -&gt;
+                        return None
+
+            with _ -&gt;
+                return None
+    }
+</code></pre>
+<p><strong>동작 흐름:</strong></p>
+<pre><code>RenameParams 수신 (position + newName)
+    ↓
+문서 텍스트 조회 + AST 파싱
+    ↓
+findNodeAtPosition으로 커서 위치 노드 찾기
+    ↓
+노드 타입별 처리:
+    ├─ Var → findDefinitionForVar로 정의 찾기
+    ├─ Let/LetRec/Lambda → span이 곧 정의
+    └─ 기타 → None
+    ↓
+collectReferencesForBinding으로 섀도잉 인식 레퍼런스 수집
+    ↓
+findNameInSource로 정의 사이트 이름만 span 추출
+    ↓
+정의 + 레퍼런스 span 결합
+    ↓
+distinctBy로 중복 제거
+    ↓
+각 span → TextEdit (range + newName)
+    ↓
+WorkspaceEdit 생성 (URI → TextEdit[])
+    ↓
+반환
+</code></pre>
+<p><strong>핵심 포인트:</strong></p>
+<ol>
+<li><strong>Var 노드에서 시작해도 동작</strong>: <code>findDefinitionForVar</code>로 정의를 먼저 찾음</li>
+<li><strong>섀도잉 처리</strong>: <code>collectReferencesForBinding</code> 사용</li>
+<li><strong>정확한 범위</strong>: <code>findNameInSource</code>로 이름만 교체</li>
+<li><strong>중복 제거</strong>: <code>distinctBy</code>로 동일한 span 제거 (AST 구조상 발생 가능)</li>
+</ol>
+<hr>
+<h2 id="protocolfs-헬퍼-함수"><a class="header" href="#protocolfs-헬퍼-함수">Protocol.fs 헬퍼 함수</a></h2>
+<p><code>createTextEdit</code>와 <code>createWorkspaceEdit</code>는 반복 코드를 줄이기 위한 헬퍼입니다.</p>
+<h3 id="createtextedit"><a class="header" href="#createtextedit">createTextEdit</a></h3>
+<p>Span과 새 텍스트로 TextEdit 생성:</p>
+<pre><code class="language-fsharp">// Protocol.fs
+/// Create TextEdit from span and new text
+let createTextEdit (span: Span) (newText: string) : TextEdit =
+    {
+        Range = spanToLspRange span
+        NewText = newText
+    }
+</code></pre>
+<p><strong>사용:</strong></p>
+<pre><code class="language-fsharp">let edit = createTextEdit span "newName"
+// { Range = (0:4)-(0:10); NewText = "newName" }
+</code></pre>
+<h3 id="createworkspaceedit"><a class="header" href="#createworkspaceedit">createWorkspaceEdit</a></h3>
+<p>단일 파일 변경을 위한 WorkspaceEdit 생성:</p>
+<pre><code class="language-fsharp">// Protocol.fs
+/// Create WorkspaceEdit for single-file changes
+let createWorkspaceEdit (uri: string) (edits: TextEdit[]) : WorkspaceEdit =
+    {
+        Changes = Some (Map.ofList [ (uri, edits) ])
+        DocumentChanges = None
+        ChangeAnnotations = None
+    }
+</code></pre>
+<p><strong>사용:</strong></p>
+<pre><code class="language-fsharp">let edits = [|
+    createTextEdit span1 "newName"
+    createTextEdit span2 "newName"
+    createTextEdit span3 "newName"
+|]
+let workspaceEdit = createWorkspaceEdit uri edits
+</code></pre>
+<p><strong>왜 헬퍼가 필요한가?</strong></p>
+<ul>
+<li>FunLang은 싱글 파일이므로 항상 동일한 구조</li>
+<li>Rename과 Find References 모두 사용 (코드 재사용)</li>
+<li>LSP 타입의 복잡한 구조를 숨김</li>
+</ul>
+<hr>
+<h2 id="serverfs-통합"><a class="header" href="#serverfs-통합">Server.fs 통합</a></h2>
+<h3 id="서버-기능-등록"><a class="header" href="#서버-기능-등록">서버 기능 등록</a></h3>
+<pre><code class="language-fsharp">// Server.fs
+let serverCapabilities : ServerCapabilities =
+    { ServerCapabilities.Default with
+        TextDocumentSync = ...
+        HoverProvider = Some (U2.C1 true)
+        DefinitionProvider = Some (U2.C1 true)
+        ReferencesProvider = Some (U2.C1 true)
+        RenameProvider = Some (U3.C3 {           // 추가!
+            PrepareProvider = Some true           // prepareRename 지원
+            WorkDoneProgress = None
+        })
+    }
+</code></pre>
+<p><strong>RenameOptions 구조:</strong></p>
+<pre><code class="language-fsharp">type RenameOptions = {
+    PrepareProvider: bool option    // prepareRename 지원 여부
+    WorkDoneProgress: bool option   // 진행 상황 보고 지원
+}
+</code></pre>
+<p><code>PrepareProvider = Some true</code>로 설정하면 클라이언트는 <code>prepareRename</code> 요청을 먼저 보냅니다.</p>
+<h3 id="핸들러-등록"><a class="header" href="#핸들러-등록">핸들러 등록</a></h3>
+<pre><code class="language-fsharp">// Server.fs
+module Handlers =
+    /// Handle textDocument/prepareRename request
+    let textDocumentPrepareRename (p: TextDocumentPositionParams) : Async&lt;PrepareRenameResult option&gt; =
+        handlePrepareRename p
+
+    /// Handle textDocument/rename request
+    let textDocumentRename (p: RenameParams) : Async&lt;WorkspaceEdit option&gt; =
+        handleRename p
+</code></pre>
+<h3 id="전체-연결"><a class="header" href="#전체-연결">전체 연결</a></h3>
+<ol>
+<li>
+<p><strong>초기화 시:</strong></p>
+<ul>
+<li>클라이언트 → <code>initialize</code> 요청</li>
+<li>서버 → <code>RenameProvider = { PrepareProvider = true }</code> 응답</li>
+<li>클라이언트는 Rename 기능 활성화</li>
+</ul>
+</li>
+<li>
+<p><strong>사용자가 F2를 누르면:</strong></p>
+<ul>
+<li>클라이언트 → <code>textDocument/prepareRename</code> 요청</li>
+<li>서버 → 범위 + 현재 이름 반환 (또는 에러)</li>
+<li>클라이언트 → 입력창 표시, 현재 이름 미리 채움</li>
+</ul>
+</li>
+<li>
+<p><strong>사용자가 새 이름 입력 후 Enter:</strong></p>
+<ul>
+<li>클라이언트 → <code>textDocument/rename</code> 요청 (newName 포함)</li>
+<li>서버 → <code>WorkspaceEdit</code> 반환</li>
+<li>클라이언트 → 모든 TextEdit 적용</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
+<h3 id="기본-테스트-구조"><a class="header" href="#기본-테스트-구조">기본 테스트 구조</a></h3>
+<pre><code class="language-fsharp">// RenameTests.fs
+module LangLSP.Tests.RenameTests
+
+open Expecto
+open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.Rename
+open LangLSP.Server.DocumentSync
+
+/// Create RenameParams for testing
+let makeRenameParams uri line char newName : RenameParams =
+    {
+        TextDocument = { Uri = uri }
+        Position = { Line = uint32 line; Character = uint32 char }
+        NewName = newName
+        WorkDoneToken = None
+    }
+
+/// Create TextDocumentPositionParams for prepareRename
+let makePrepareRenameParams uri line char : TextDocumentPositionParams =
+    {
+        TextDocument = { Uri = uri }
+        Position = { Line = uint32 line; Character = uint32 char }
+    }
+</code></pre>
+<h3 id="헬퍼-함수들"><a class="header" href="#헬퍼-함수들">헬퍼 함수들</a></h3>
+<pre><code class="language-fsharp">/// Helper: setup document and perform rename
+let setupAndRename uri text line char newName =
+    clearAll()
+    handleDidOpen (makeDidOpenParams uri text)
+    handleRename (makeRenameParams uri line char newName) |&gt; Async.RunSynchronously
+
+/// Helper: setup document and prepare rename
+let setupAndPrepareRename uri text line char =
+    clearAll()
+    handleDidOpen (makeDidOpenParams uri text)
+    handlePrepareRename (makePrepareRenameParams uri line char) |&gt; Async.RunSynchronously
+
+/// Extract edits count from WorkspaceEdit
+let countEdits (workspaceEdit: WorkspaceEdit option) : int =
+    match workspaceEdit with
+    | Some edit -&gt;
+        match edit.Changes with
+        | Some changes -&gt;
+            changes.Values
+            |&gt; Seq.map Array.length
+            |&gt; Seq.sum
+        | None -&gt; 0
+    | None -&gt; 0
+</code></pre>
+<p><strong>왜 <code>countEdits</code>가 유요한가?</strong></p>
+<ul>
+<li>WorkspaceEdit 구조가 복잡함 (중첩된 option)</li>
+<li>테스트에서는 “몇 개 변경되었나?“만 확인하면 충분</li>
+<li>정확한 Range까지 검증하면 테스트가 brittle해짐</li>
+</ul>
+<h3 id="테스트-케이스들"><a class="header" href="#테스트-케이스들">테스트 케이스들</a></h3>
+<pre><code class="language-fsharp">[&lt;Tests&gt;]
+let renameTests =
+    testSequenced &lt;| testList "Rename" [
+        testList "Variable rename (RENAME-01)" [
+            test "renames all variable occurrences" {
+                // "let x = 1 in x + x"
+                //      ^ position (0, 4) - at definition
+                let result = setupAndRename "file:///test.fun" "let x = 1 in x + x" 0 4 "newX"
+                Expect.isSome result "Should return WorkspaceEdit"
+                // Should rename definition + 2 usages = 3 edits
+                let editCount = countEdits result
+                Expect.equal editCount 3 "Should have 3 edits (def + 2 usages)"
+            }
+
+            test "renames from usage position" {
+                // "let x = 1 in x + x"
+                //              ^ position (0, 13) - at usage
+                let result = setupAndRename "file:///test.fun" "let x = 1 in x + x" 0 13 "y"
+                Expect.isSome result "Should return WorkspaceEdit"
+                let editCount = countEdits result
+                Expect.equal editCount 3 "Should rename all occurrences from usage position"
+            }
+        ]
+
+        testList "Function rename (RENAME-02)" [
+            test "renames function and all calls" {
+                // "let f = fun x -&gt; x in f 1"
+                //      ^ position (0, 4) - function definition
+                let result = setupAndRename "file:///test.fun" "let f = fun x -&gt; x in f 1" 0 4 "g"
+                Expect.isSome result "Should return WorkspaceEdit"
+                let editCount = countEdits result
+                Expect.isGreaterThanOrEqual editCount 2 "Should rename function and calls"
+            }
+
+            test "renames recursive function" {
+                // "let rec fact n = if n = 0 then 1 else n * fact (n - 1) in fact 5"
+                //         ^ position around (0, 8) - function name
+                let code = "let rec fact n = if n = 0 then 1 else n * fact (n - 1) in fact 5"
+                let result = setupAndRename "file:///test.fun" code 0 8 "factorial"
+                Expect.isSome result "Should return WorkspaceEdit"
+                let editCount = countEdits result
+                Expect.isGreaterThanOrEqual editCount 2 "Should rename all function occurrences"
+            }
+        ]
+
+        testList "Prepare rename (RENAME-03)" [
+            test "validates rename on variable" {
+                let result = setupAndPrepareRename "file:///test.fun" "let x = 42 in x" 0 4
+                Expect.isSome result "Should allow rename on variable"
+                match result with
+                | Some (U3.C2 rangeWithPlaceholder) -&gt;
+                    Expect.equal rangeWithPlaceholder.Placeholder "x" "Placeholder should be variable name"
+                | _ -&gt; failtest "Expected RangeWithPlaceholder"
+            }
+
+            test "rejects rename on number literal" {
+                let result = setupAndPrepareRename "file:///test.fun" "42" 0 0
+                Expect.isNone result "Should reject rename on number literal"
+            }
+
+            test "validates rename on lambda parameter" {
+                let result = setupAndPrepareRename "file:///test.fun" "fun x -&gt; x" 0 4
+                Expect.isSome result "Should allow rename on lambda parameter"
+            }
+        ]
+
+        testList "Edge cases" [
+            test "handles shadowing correctly" {
+                // "let x = 1 in let x = 2 in x"
+                //                   ^ position (0, 17) - inner x definition
+                let result = setupAndRename "file:///test.fun" "let x = 1 in let x = 2 in x" 0 17 "y"
+                Expect.isSome result "Should handle shadowed variable"
+                // Should only rename inner x occurrences
+                let editCount = countEdits result
+                Expect.equal editCount 2 "Should rename inner x (def + usage)"
+            }
+
+            test "returns None for parse error" {
+                let text = "let x ="  // Incomplete/invalid
+                let result = setupAndRename "file:///test.fun" text 0 0 "newName"
+                Expect.isNone result "Parse error should return None"
+            }
+        ]
+    ]
+</code></pre>
+<h3 id="테스트-실행"><a class="header" href="#테스트-실행">테스트 실행</a></h3>
+<pre><code class="language-bash">dotnet run --project src/LangLSP.Tests
+
+# 출력:
+# [Rename] Variable rename - renames all variable occurrences - Passed
+# [Rename] Variable rename - renames from usage position - Passed
+# [Rename] Function rename - renames function and all calls - Passed
+# [Rename] Prepare rename - validates rename on variable - Passed
+# [Rename] Edge cases - handles shadowing correctly - Passed
+</code></pre>
+<hr>
+<h2 id="주의사항과-엣지-케이스"><a class="header" href="#주의사항과-엣지-케이스">주의사항과 엣지 케이스</a></h2>
+<h3 id="1-섀도잉-처리-필수"><a class="header" href="#1-섀도잉-처리-필수">1. 섀도잉 처리 필수</a></h3>
+<p><strong>잘못된 구현:</strong></p>
+<pre><code class="language-fsharp">// 이름만 보고 모든 Var 수집
+let allRefs = collectReferences varName ast
+let allSpans = defNameSpan :: allRefs  // 잘못됨!
+</code></pre>
+<pre><code class="language-funlang">let x = 1 in
+  let x = 2 in
+    x
+</code></pre>
+<p>외부 <code>x</code>를 rename하면 내부 <code>x</code>까지 변경됨 → <strong>버그!</strong></p>
+<p><strong>올바른 구현:</strong></p>
+<pre><code class="language-fsharp">// 특정 정의에 속하는 레퍼런스만
+let references = collectReferencesForBinding varName defSpan ast
+</code></pre>
+<h3 id="2-정의-사이트-이름만-교체"><a class="header" href="#2-정의-사이트-이름만-교체">2. 정의 사이트 이름만 교체</a></h3>
+<p><strong>잘못된 구현:</strong></p>
+<pre><code class="language-fsharp">// 전체 Let 표현식 span 사용
+let allSpans = defSpan :: references  // 잘못됨!
+</code></pre>
+<pre><code class="language-funlang">let result = 42 in result
+^^^^^^^^^^^^^^
+전체 span을 교체하면 "= 42 in result"까지 삭제됨!
+</code></pre>
+<p><strong>올바른 구현:</strong></p>
+<pre><code class="language-fsharp">// findNameInSource로 이름만 추출
+let defNameSpan = findNameInSource text varName defSpan.StartLine defSpan.StartColumn
+</code></pre>
+<h3 id="3-중복-제거"><a class="header" href="#3-중복-제거">3. 중복 제거</a></h3>
+<p><code>Let(name, ...)</code>와 <code>Var(name, ...)</code>가 AST에 동시에 존재할 수 있습니다.</p>
+<p><strong>예시:</strong></p>
+<pre><code class="language-funlang">let rec f n = f (n - 1)
+</code></pre>
+<ul>
+<li><code>LetRec("f", ...)</code> 노드</li>
+<li>본문에 <code>Var("f", ...)</code> 노드 (재귀 호출)</li>
+</ul>
+<p>둘 다 수집하면 중복 가능 → <code>distinctBy</code>로 제거:</p>
+<pre><code class="language-fsharp">let distinctSpans =
+    allSpans
+    |&gt; List.distinctBy (fun span -&gt;
+        (span.StartLine, span.StartColumn, span.EndLine, span.EndColumn))
+</code></pre>
+<h3 id="4-preparerename-실패-처리"><a class="header" href="#4-preparerename-실패-처리">4. prepareRename 실패 처리</a></h3>
+<p><strong>시나리오:</strong></p>
+<ul>
+<li>사용자가 키워드 위에서 F2 입력</li>
+<li>또는 숫자 리터럴 위에서 rename 시도</li>
+</ul>
+<p><strong>올바른 응답:</strong></p>
+<pre><code class="language-fsharp">| _ -&gt;
+    // Not a renameable symbol
+    return None
+</code></pre>
+<p>VS Code는 <code>None</code>을 받으면 “Cannot rename this symbol” 메시지 표시</p>
+<h3 id="5-var-노드에서-시작-시-정의-찾기"><a class="header" href="#5-var-노드에서-시작-시-정의-찾기">5. Var 노드에서 시작 시 정의 찾기</a></h3>
+<p><strong>시나리오:</strong></p>
+<pre><code class="language-funlang">let x = 1 in x
+             ^
+             여기서 F2
+</code></pre>
+<p>Var 노드는 <strong>사용처</strong>이지 정의가 아닙니다. 먼저 정의를 찾아야 합니다:</p>
+<pre><code class="language-fsharp">| Var(name, _) -&gt;
+    // Variable reference - find its definition
+    let def = findDefinitionForVar name ast p.Position
+    (Some name, def)
+</code></pre>
+<p>이렇게 해야 정의 + 모든 사용처를 함께 rename할 수 있습니다.</p>
+<h3 id="6-파싱-에러-처리"><a class="header" href="#6-파싱-에러-처리">6. 파싱 에러 처리</a></h3>
+<p><strong>시나리오:</strong></p>
+<pre><code class="language-funlang">let x =
+</code></pre>
+<p>불완전한 코드에서 rename 시도</p>
+<p><strong>올바른 처리:</strong></p>
+<pre><code class="language-fsharp">try
+    let ast = Parser.start Lexer.tokenize lexbuf
+    ...
+with _ -&gt;
+    return None
+</code></pre>
+<p>VS Code는 <code>None</code>을 받으면 조용히 실패 (에러 메시지 없이)</p>
+<hr>
+<h2 id="정리"><a class="header" href="#정리">정리</a></h2>
+<p>Rename Symbol 구현의 핵심:</p>
+<ol>
+<li>
+<p><strong>prepareRename</strong> - 조기 검증</p>
+<ul>
+<li>Rename 가능 여부 확인</li>
+<li>정확한 범위 반환 (findNameInSource)</li>
+<li>현재 이름 제공 (placeholder)</li>
+</ul>
+</li>
+<li>
+<p><strong>섀도잉 인식 레퍼런스 수집</strong></p>
+<ul>
+<li><code>collectReferencesForBinding</code> 사용</li>
+<li>각 Var가 어떤 정의를 참조하는지 확인</li>
+<li>타겟 정의와 일치하는 것만 수집</li>
+</ul>
+</li>
+<li>
+<p><strong>정의 사이트 이름 추출</strong></p>
+<ul>
+<li>Let/LetRec/Lambda span은 전체 표현식</li>
+<li><code>findNameInSource</code>로 이름만 span 추출</li>
+<li>Fallback으로 startCol + name.Length 사용</li>
+</ul>
+</li>
+<li>
+<p><strong>WorkspaceEdit 생성</strong></p>
+<ul>
+<li>정의 + 레퍼런스 span 결합</li>
+<li>중복 제거 (<code>distinctBy</code>)</li>
+<li>각 span → TextEdit</li>
+<li>단일 파일 WorkspaceEdit 반환</li>
+</ul>
+</li>
+<li>
+<p><strong>엣지 케이스 처리</strong></p>
+<ul>
+<li>Var에서 시작 → 정의 먼저 찾기</li>
+<li>섀도잉 정확히 처리</li>
+<li>파싱 에러 → None 반환</li>
+<li>Rename 불가능한 노드 → None 반환</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
+<p>Rename Symbol을 완성했습니다! 이제 사용자는 안전하게 식별자 이름을 변경할 수 있습니다.</p>
+<p>다음 Phase에서 구현할 기능들:</p>
+<ul>
+<li><strong>Code Actions</strong>: 자동 수정 제안 (미사용 변수 제거, 타입 주석 추가 등)</li>
+<li><strong>Folding Ranges</strong>: 코드 접기</li>
+<li><strong>Document Symbols</strong>: 아웃라인 뷰</li>
+</ul>
+<hr>
+<h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
+<ul>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_rename">LSP Specification - textDocument/rename</a></li>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_prepareRename">LSP Specification - textDocument/prepareRename</a></li>
+<li><a href="https://langserver.org/renaming/">Rename Symbol in LSP - Language Server Tutorial</a></li>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#workspaceEdit">WorkspaceEdit - LSP</a></li>
+</ul>
+<hr>
+<p><strong>-&gt; 다음: Phase 4 - Code Actions 구현</strong></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="09-find-references.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="11-code-actions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="09-find-references.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="11-code-actions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

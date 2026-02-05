@@ -1,0 +1,1038 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>자동 완성(Completion) 구현하기 - FunLang LSP 튜토리얼</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-b67c2577.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FunLang LSP 튜토리얼</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="자동-완성completion-구현하기"><a class="header" href="#자동-완성completion-구현하기">자동 완성(Completion) 구현하기</a></h1>
+<p>자동 완성은 사용자가 코드를 입력할 때 키워드, 변수, 함수 등의 후보를 제안하는 LSP의 핵심 기능입니다. 코드 작성 속도를 높이고 오타를 줄이며, 사용 가능한 심볼을 쉽게 발견할 수 있게 해줍니다.</p>
+<p>이 튜토리얼에서는 FunLang LSP에 Completion 기능을 구현하는 방법을 배웁니다.</p>
+<h2 id="목차"><a class="header" href="#목차">목차</a></h2>
+<ol>
+<li><a href="#textdocumentcompletion-프로토콜">textDocument/completion 프로토콜</a></li>
+<li><a href="#구현-전략">구현 전략</a></li>
+<li><a href="#키워드-완성">키워드 완성</a></li>
+<li><a href="#스코프-기반-심볼-완성">스코프 기반 심볼 완성</a></li>
+<li><a href="#타입-정보-표시">타입 정보 표시</a></li>
+<li><a href="#서버-통합">서버 통합</a></li>
+<li><a href="#테스트-작성">테스트 작성</a></li>
+<li><a href="#흔한-실수와-해결책">흔한 실수와 해결책</a></li>
+</ol>
+<hr>
+<h2 id="textdocumentcompletion-프로토콜"><a class="header" href="#textdocumentcompletion-프로토콜">textDocument/completion 프로토콜</a></h2>
+<h3 id="요청-구조"><a class="header" href="#요청-구조">요청 구조</a></h3>
+<p>클라이언트(에디터)가 자동 완성을 요청할 때 사용하는 구조입니다.</p>
+<pre><code class="language-typescript">interface CompletionParams {
+    textDocument: TextDocumentIdentifier  // 문서 URI
+    position: Position                     // 커서 위치 (0-based)
+    context?: CompletionContext           // 트리거 정보 (선택)
+}
+
+interface Position {
+    line: number       // 0-based 줄 번호
+    character: number  // 0-based 문자 위치
+}
+
+interface CompletionContext {
+    triggerKind: CompletionTriggerKind  // 수동(1) vs 트리거 문자(2) vs 재트리거(3)
+    triggerCharacter?: string            // 트리거 문자 (예: ".")
+}
+</code></pre>
+<h3 id="응답-구조"><a class="header" href="#응답-구조">응답 구조</a></h3>
+<p>서버가 반환하는 완성 후보 목록입니다.</p>
+<pre><code class="language-typescript">interface CompletionList {
+    isIncomplete: boolean      // 추가 후보가 있는지 (스트리밍용)
+    items: CompletionItem[]    // 완성 후보들
+}
+
+interface CompletionItem {
+    label: string                        // 표시될 텍스트
+    kind?: CompletionItemKind           // 아이콘 종류 (Keyword, Variable, Function 등)
+    detail?: string                      // 우측 추가 정보 (예: 타입)
+    documentation?: string | MarkupContent  // 상세 설명
+    insertText?: string                  // 삽입될 텍스트 (기본값: label)
+    insertTextFormat?: InsertTextFormat  // PlainText(1) vs Snippet(2)
+    // ... 기타 필드들
+}
+</code></pre>
+<h3 id="completionitemkind-열거형"><a class="header" href="#completionitemkind-열거형">CompletionItemKind 열거형</a></h3>
+<p>완성 항목의 종류를 나타내며, VS Code는 각 종류마다 다른 아이콘을 표시합니다.</p>
+<pre><code class="language-fsharp">type CompletionItemKind =
+    | Text = 1
+    | Method = 2
+    | Function = 3
+    | Constructor = 4
+    | Field = 5
+    | Variable = 6
+    | Class = 7
+    | Interface = 8
+    | Module = 9
+    | Property = 10
+    | Unit = 11
+    | Value = 12
+    | Enum = 13
+    | Keyword = 14
+    // ... 더 많은 종류
+</code></pre>
+<h3 id="vs-code에서의-표시"><a class="header" href="#vs-code에서의-표시">VS Code에서의 표시</a></h3>
+<pre><code>test.fun
+────────
+let x = 42 in l█
+
+완성 목록 팝업:
+┌─────────────────────────┐
+│ [키워드] let   keyword  │  ← 키워드 아이콘
+│ [키워드] in    keyword  │
+│ [변수]   x     x: int   │  ← 변수 아이콘, 우측에 타입
+└─────────────────────────┘
+</code></pre>
+<p>사용자가 <code>l</code>을 입력하면:</p>
+<ul>
+<li><strong>필터링</strong>: 클라이언트가 퍼지 매칭으로 <code>let</code>, <code>in</code> 등을 필터링</li>
+<li><strong>아이콘</strong>: <code>CompletionItemKind</code>에 따라 다른 아이콘 표시</li>
+<li><strong>타입 정보</strong>: <code>detail</code> 필드에 타입 표시</li>
+</ul>
+<hr>
+<h2 id="구현-전략"><a class="header" href="#구현-전략">구현 전략</a></h2>
+<p>Completion 기능은 두 가지 소스에서 완성 후보를 제공합니다:</p>
+<ol>
+<li><strong>키워드 완성</strong>: FunLang의 키워드 목록 (let, in, if, then, else 등)</li>
+<li><strong>스코프 기반 심볼 완성</strong>: 현재 커서 위치에서 접근 가능한 변수/함수</li>
+</ol>
+<h3 id="처리-흐름"><a class="header" href="#처리-흐름">처리 흐름</a></h3>
+<pre><code>CompletionParams 수신
+    ↓
+문서 텍스트 조회
+    ↓
+AST 파싱 시도
+    ↓
+    ├─ 성공 ──────────────────┐
+    │                         ↓
+    │                   키워드 완성 생성
+    │                         ↓
+    │                   스코프 심볼 수집
+    │                   (collectDefinitions)
+    │                         ↓
+    │                   커서 이전 정의만 필터링
+    │                         ↓
+    │                   타입 정보 추가
+    │                   (findVarTypeInAst)
+    │                         ↓
+    │                   심볼 완성 생성
+    │                         ↓
+    │                   키워드 + 심볼 병합
+    │                         ↓
+    └─ 실패 ────→ 키워드만 반환 (graceful degradation)
+                              ↓
+                   CompletionList 반환
+</code></pre>
+<h3 id="기존-인프라-재사용"><a class="header" href="#기존-인프라-재사용">기존 인프라 재사용</a></h3>
+<p>Phase 2에서 구현한 모듈들을 적극 활용합니다:</p>
+<ul>
+<li>
+<p><strong>Definition.collectDefinitions</strong>: 모든 변수/함수 정의 위치 수집</p>
+<ul>
+<li>이미 AST 전체를 순회하며 바인딩 사이트를 찾음</li>
+<li>Completion에서는 스코프 필터링만 추가하면 됨</li>
+</ul>
+</li>
+<li>
+<p><strong>Hover.findVarTypeInAst</strong>: 변수의 타입 정보 조회</p>
+<ul>
+<li>바인딩 사이트를 찾아 값의 타입을 추론</li>
+<li>Completion의 <code>detail</code> 필드에 타입 표시</li>
+</ul>
+</li>
+</ul>
+<h3 id="클라이언트-필터링-위임"><a class="header" href="#클라이언트-필터링-위임">클라이언트 필터링 위임</a></h3>
+<p><strong>중요한 설계 결정:</strong> 서버는 모든 후보를 반환하고, 클라이언트가 필터링합니다.</p>
+<pre><code class="language-fsharp">// ❌ 서버에서 prefix 필터링 (권장하지 않음)
+let symbols = getSymbolsInScope ast pos
+              |&gt; List.filter (fun (name, _) -&gt; name.StartsWith "l")
+
+// ✅ 모든 후보 반환, 클라이언트가 퍼지 매칭
+let symbols = getSymbolsInScope ast pos  // 모든 심볼
+</code></pre>
+<p>왜냐하면:</p>
+<ul>
+<li>VS Code는 퍼지 매칭 알고리즘 사용 (<code>l</code> → <code>let</code>, <code>list</code>, <code>tail</code> 등)</li>
+<li>사용자가 타이핑할 때마다 재요청하므로 필터링은 클라이언트가 더 효율적</li>
+</ul>
+<hr>
+<h2 id="키워드-완성"><a class="header" href="#키워드-완성">키워드 완성</a></h2>
+<h3 id="funlang-키워드-목록"><a class="header" href="#funlang-키워드-목록">FunLang 키워드 목록</a></h3>
+<p>FunLang의 예약어를 정적 리스트로 정의합니다.</p>
+<pre><code class="language-fsharp">// Completion.fs
+module LangLSP.Server.Completion
+
+open Ionide.LanguageServerProtocol.Types
+
+/// FunLang keywords for completion
+let funlangKeywords = [
+    "let"; "in"; "if"; "then"; "else"; "match"; "with"
+    "fun"; "rec"; "true"; "false"
+]
+</code></pre>
+<p><strong>왜 정적 리스트인가?</strong></p>
+<ul>
+<li>Parser에서 동적으로 가져올 수도 있지만, 키워드는 거의 변하지 않음</li>
+<li>간단하고 명확한 구현</li>
+<li>Phase 3 MVP에 충분</li>
+</ul>
+<h3 id="키워드-completionitem-생성"><a class="header" href="#키워드-completionitem-생성">키워드 CompletionItem 생성</a></h3>
+<pre><code class="language-fsharp">/// Create completion items for keywords
+let getKeywordCompletions () : CompletionItem list =
+    funlangKeywords
+    |&gt; List.map (fun kw -&gt;
+        {
+            Label = kw
+            LabelDetails = None
+            Kind = Some CompletionItemKind.Keyword
+            Detail = Some "keyword"
+            Documentation = None
+            Deprecated = Some false
+            Preselect = Some false
+            SortText = None
+            FilterText = None
+            InsertText = Some kw
+            InsertTextFormat = Some InsertTextFormat.PlainText
+            InsertTextMode = None
+            TextEdit = None
+            TextEditText = None
+            AdditionalTextEdits = None
+            CommitCharacters = None
+            Command = None
+            Data = None
+            Tags = None
+        })
+</code></pre>
+<h3 id="주요-필드-설명"><a class="header" href="#주요-필드-설명">주요 필드 설명</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>필드</th><th>값</th><th>설명</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Label</code></td><td><code>"let"</code></td><td>완성 목록에 표시될 텍스트</td></tr>
+<tr><td><code>Kind</code></td><td><code>CompletionItemKind.Keyword</code></td><td>키워드 아이콘 표시</td></tr>
+<tr><td><code>Detail</code></td><td><code>"keyword"</code></td><td>우측에 표시될 추가 정보</td></tr>
+<tr><td><code>InsertText</code></td><td><code>"let"</code></td><td>선택 시 삽입될 텍스트 (기본값: Label)</td></tr>
+<tr><td><code>InsertTextFormat</code></td><td><code>PlainText</code></td><td>일반 텍스트 (Snippet은 <code>$1</code>, <code>${2:name}</code> 같은 플레이스홀더)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>생략 가능한 필드:</strong></p>
+<ul>
+<li><code>Documentation</code>: 키워드 설명은 Hover에서 제공</li>
+<li><code>SortText</code>: 기본 알파벳 정렬 사용</li>
+<li><code>FilterText</code>: Label과 동일하게 사용됨</li>
+</ul>
+<hr>
+<h2 id="스코프-기반-심볼-완성"><a class="header" href="#스코프-기반-심볼-완성">스코프 기반 심볼 완성</a></h2>
+<h3 id="definitioncollectdefinitions-재사용"><a class="header" href="#definitioncollectdefinitions-재사용">Definition.collectDefinitions 재사용</a></h3>
+<p>Phase 2의 Go to Definition에서 구현한 함수를 그대로 사용합니다.</p>
+<pre><code class="language-fsharp">// Definition.fs에서 이미 구현됨
+let collectDefinitions (ast: Expr) : (string * Span) list
+</code></pre>
+<p>이 함수는:</p>
+<ul>
+<li>AST를 재귀적으로 순회</li>
+<li><code>Let</code>, <code>LetRec</code>, <code>Lambda</code>, <code>Match</code> 등의 바인딩 사이트 수집</li>
+<li><code>(변수명, Span)</code> 쌍의 리스트 반환</li>
+</ul>
+<h3 id="스코프-필터링"><a class="header" href="#스코프-필터링">스코프 필터링</a></h3>
+<p><strong>핵심:</strong> 커서 위치 <strong>이전</strong>에 정의된 심볼만 포함해야 합니다.</p>
+<pre><code class="language-fsharp">/// Get symbol completions from current scope
+/// Filters to symbols defined before cursor position
+let getSymbolCompletions (ast: Expr) (pos: Position) : CompletionItem list =
+    let definitions = Definition.collectDefinitions ast
+
+    // Filter to symbols defined before cursor position (scope filtering)
+    let inScope =
+        definitions
+        |&gt; List.filter (fun (_, span) -&gt;
+            // 커서보다 앞에 정의된 것만
+            span.StartLine &lt; int pos.Line ||
+            (span.StartLine = int pos.Line &amp;&amp; span.StartColumn &lt; int pos.Character))
+        // 섀도잉 처리: 중복 이름은 마지막 정의만 유지
+        |&gt; List.rev
+        |&gt; List.distinctBy fst
+        |&gt; List.rev
+</code></pre>
+<h3 id="섀도잉-처리"><a class="header" href="#섀도잉-처리">섀도잉 처리</a></h3>
+<p>같은 이름이 여러 번 정의되면 마지막 정의가 유효합니다.</p>
+<pre><code class="language-fsharp">// 예시 코드
+let x = 1 in
+let x = 2 in
+let x = 3 in
+x + █   // 여기서 x는 3을 의미
+</code></pre>
+<p><code>collectDefinitions</code>는 세 개의 <code>("x", span)</code> 항목을 반환합니다.
+<code>List.distinctBy fst</code>로 중복을 제거하면 <strong>마지막 <code>x</code>만 남습니다</strong>.</p>
+<pre><code class="language-fsharp">// 섀도잉 처리 단계별 설명
+definitions = [("x", span1); ("x", span2); ("x", span3)]
+  |&gt; List.rev                 // [("x", span3); ("x", span2); ("x", span1)]
+  |&gt; List.distinctBy fst      // [("x", span3)]  ← 첫 번째 x만 남음 (rev 후라 실제로는 마지막)
+  |&gt; List.rev                 // [("x", span3)]
+</code></pre>
+<hr>
+<h2 id="타입-정보-표시"><a class="header" href="#타입-정보-표시">타입 정보 표시</a></h2>
+<h3 id="hoverfindvartypeinast-재사용"><a class="header" href="#hoverfindvartypeinast-재사용">Hover.findVarTypeInAst 재사용</a></h3>
+<p>Phase 2의 Hover에서 구현한 함수를 사용합니다.</p>
+<pre><code class="language-fsharp">// Hover.fs에서 이미 구현됨
+let findVarTypeInAst (varName: string) (ast: Expr) : Type.Type option
+</code></pre>
+<p>이 함수는:</p>
+<ul>
+<li>AST를 순회하며 변수의 바인딩 사이트 찾기</li>
+<li>바인딩된 값의 타입 추론</li>
+<li>타입 어노테이션이 있으면 그것 사용</li>
+</ul>
+<h3 id="타입-정보가-포함된-completionitem-생성"><a class="header" href="#타입-정보가-포함된-completionitem-생성">타입 정보가 포함된 CompletionItem 생성</a></h3>
+<pre><code class="language-fsharp">// Create completion items with type information
+inScope
+|&gt; List.map (fun (name, span) -&gt;
+    // Try to get type for this symbol
+    let typeInfo = Hover.findVarTypeInAst name ast
+
+    let detail =
+        match typeInfo with
+        | Some ty -&gt; Some (sprintf "%s: %s" name (Type.formatTypeNormalized ty))
+        | None -&gt; Some name
+
+    {
+        Label = name
+        LabelDetails = None
+        Kind = Some CompletionItemKind.Variable
+        Detail = detail
+        Documentation = None
+        Deprecated = Some false
+        Preselect = Some false
+        SortText = None
+        FilterText = None
+        InsertText = Some name
+        InsertTextFormat = Some InsertTextFormat.PlainText
+        InsertTextMode = None
+        TextEdit = None
+        TextEditText = None
+        AdditionalTextEdits = None
+        CommitCharacters = None
+        Command = None
+        Data = None
+        Tags = None
+    })
+</code></pre>
+<h3 id="detail-필드-형식"><a class="header" href="#detail-필드-형식">Detail 필드 형식</a></h3>
+<pre><code>VS Code 완성 목록:
+┌────────────────────────────┐
+│ [변수] x     x: int        │  ← detail: "x: int"
+│ [변수] double  double: int -&gt; int │
+│ [변수] id    id: 'a -&gt; 'a  │  ← 다형 타입
+└────────────────────────────┘
+</code></pre>
+<p><strong>Type.formatTypeNormalized의 역할:</strong></p>
+<ul>
+<li><code>TInt</code> → <code>"int"</code></li>
+<li><code>TFunc(TInt, TInt)</code> → <code>"int -&gt; int"</code></li>
+<li><code>TVar(1000)</code> → <code>"'a"</code> (타입 변수 정규화)</li>
+<li><code>TTuple([TInt; TBool])</code> → <code>"int * bool"</code></li>
+</ul>
+<h3 id="variable-vs-function-구분"><a class="header" href="#variable-vs-function-구분">Variable vs Function 구분</a></h3>
+<p>Phase 3에서는 모든 심볼을 <code>CompletionItemKind.Variable</code>로 표시합니다.</p>
+<pre><code class="language-fsharp">Kind = Some CompletionItemKind.Variable  // 함수도 Variable로 표시
+</code></pre>
+<p><strong>왜?</strong></p>
+<ul>
+<li>FunLang에서 함수도 일급 값(first-class value)</li>
+<li>타입이 <code>TArrow</code>인지 확인하면 Function으로 구분 가능하지만, Phase 3은 단순하게 유지</li>
+<li>Phase 4에서 타입 기반 구분 추가 가능</li>
+</ul>
+<hr>
+<h2 id="서버-통합"><a class="header" href="#서버-통합">서버 통합</a></h2>
+<h3 id="handlecompletion-메인-함수"><a class="header" href="#handlecompletion-메인-함수">handleCompletion 메인 함수</a></h3>
+<p>전체 로직을 조합한 핸들러입니다.</p>
+<pre><code class="language-fsharp">/// Handle textDocument/completion request
+let handleCompletion (p: CompletionParams) : Async&lt;CompletionList option&gt; =
+    async {
+        let uri = p.TextDocument.Uri
+        let pos = p.Position
+
+        match getDocument uri with
+        | None -&gt; return None
+        | Some text -&gt;
+            try
+                let lexbuf = FSharp.Text.Lexing.LexBuffer&lt;char&gt;.FromString(text)
+                let ast = Parser.start Lexer.tokenize lexbuf
+
+                let keywords = getKeywordCompletions()
+                let symbols = getSymbolCompletions ast pos
+
+                return Some {
+                    IsIncomplete = false
+                    Items = (keywords @ symbols) |&gt; Array.ofList
+                    ItemDefaults = None
+                }
+            with _ -&gt;
+                // On parse error, return only keywords (graceful degradation)
+                return Some {
+                    IsIncomplete = false
+                    Items = getKeywordCompletions() |&gt; Array.ofList
+                    ItemDefaults = None
+                }
+    }
+</code></pre>
+<h3 id="주요-설계-결정"><a class="header" href="#주요-설계-결정">주요 설계 결정</a></h3>
+<p><strong>1. Graceful Degradation (우아한 성능 저하)</strong></p>
+<p>파싱 에러가 발생해도 키워드는 제공합니다.</p>
+<pre><code class="language-fsharp">with _ -&gt;
+    // AST 없어도 키워드는 사용 가능
+    return Some {
+        IsIncomplete = false
+        Items = getKeywordCompletions() |&gt; Array.ofList
+        ItemDefaults = None
+    }
+</code></pre>
+<p><strong>사용자 시나리오:</strong></p>
+<pre><code class="language-fsharp">let x = 1 i█    // 사용자가 'in'을 타이핑 중 (아직 불완전)
+</code></pre>
+<ul>
+<li>파싱 실패 (불완전한 구문)</li>
+<li>하지만 <code>in</code> 키워드는 여전히 제안됨</li>
+<li>사용자 경험 향상</li>
+</ul>
+<p><strong>2. IsIncomplete = false</strong></p>
+<p>Phase 3에서는 모든 후보를 한 번에 반환합니다.</p>
+<pre><code class="language-fsharp">IsIncomplete = false  // 추가 후보 없음
+</code></pre>
+<p><code>IsIncomplete = true</code>는 언제 사용?</p>
+<ul>
+<li>심볼 테이블이 매우 큰 경우 (수천 개 이상)</li>
+<li>스트리밍 방식으로 점진적 로딩</li>
+<li>FunLang은 단일 파일이라 필요 없음</li>
+</ul>
+<p><strong>3. 트리거 문자 없음</strong></p>
+<p>Phase 3에서는 사용자가 명시적으로 완성을 호출합니다 (Ctrl+Space).</p>
+<pre><code class="language-fsharp">// Server.fs
+CompletionProvider = Some {
+    ResolveProvider = Some false
+    TriggerCharacters = None  // Phase 3: 트리거 문자 없음
+    AllCommitCharacters = None
+    WorkDoneProgress = None
+}
+</code></pre>
+<p>트리거 문자 (<code>.</code>, <code>::</code> 등)는 Phase 4에서 추가 가능.</p>
+<h3 id="serverfs-등록"><a class="header" href="#serverfs-등록">Server.fs 등록</a></h3>
+<pre><code class="language-fsharp">// Server.fs
+module LangLSP.Server.Server
+
+open Ionide.LanguageServerProtocol.Server
+open Ionide.LanguageServerProtocol.Types
+
+type FunLangLspServer() =
+    inherit LspServer()
+
+    override this.Initialize(p: InitializeParams) =
+        async {
+            return {
+                Capabilities = {
+                    TextDocumentSync = Some {
+                        OpenClose = Some true
+                        Change = Some TextDocumentSyncKind.Full
+                        WillSave = None
+                        WillSaveWaitUntil = None
+                        Save = None
+                    }
+                    DefinitionProvider = Some (U2.C1 true)
+                    HoverProvider = Some (U2.C1 true)
+                    CompletionProvider = Some {
+                        ResolveProvider = Some false
+                        TriggerCharacters = None
+                        AllCommitCharacters = None
+                        WorkDoneProgress = None
+                    }
+                    // ... 다른 capabilities
+                }
+            }
+        }
+
+    override this.TextDocumentCompletion(p: CompletionParams) =
+        async {
+            let! result = Completion.handleCompletion p
+            return result
+        }
+</code></pre>
+<hr>
+<h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
+<h3 id="테스트-헬퍼-함수"><a class="header" href="#테스트-헬퍼-함수">테스트 헬퍼 함수</a></h3>
+<pre><code class="language-fsharp">// CompletionTests.fs
+module LangLSP.Tests.CompletionTests
+
+open Expecto
+open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.Completion
+open LangLSP.Server.DocumentSync
+
+/// CompletionParams 생성 헬퍼
+let makeCompletionParams uri line char : CompletionParams =
+    {
+        TextDocument = { Uri = uri }
+        Position = { Line = uint32 line; Character = uint32 char }
+        Context = None  // 트리거 컨텍스트 없음
+        WorkDoneToken = None
+        PartialResultToken = None
+    }
+
+/// 문서 설정 후 completion 수행
+let setupAndComplete uri text line char =
+    clearAll()  // 문서 저장소 초기화
+    handleDidOpen (makeDidOpenParams uri text)
+    handleCompletion (makeCompletionParams uri line char) |&gt; Async.RunSynchronously
+
+/// CompletionList에서 label 추출
+let getCompletionLabels (result: CompletionList option) : string list =
+    result
+    |&gt; Option.map (fun list -&gt; list.Items |&gt; Array.map (fun item -&gt; item.Label) |&gt; Array.toList)
+    |&gt; Option.defaultValue []
+</code></pre>
+<h3 id="키워드-완성-테스트"><a class="header" href="#키워드-완성-테스트">키워드 완성 테스트</a></h3>
+<pre><code class="language-fsharp">[&lt;Tests&gt;]
+let completionTests = testList "Completion" [
+    testList "Keyword completion" [
+        testCase "includes all FunLang keywords" &lt;| fun _ -&gt;
+            let result = setupAndComplete "file:///test.fun" "" 0 0
+            let labels = getCompletionLabels result
+
+            Expect.contains labels "let" "Should include 'let'"
+            Expect.contains labels "in" "Should include 'in'"
+            Expect.contains labels "if" "Should include 'if'"
+            Expect.contains labels "fun" "Should include 'fun'"
+            Expect.contains labels "match" "Should include 'match'"
+
+        testCase "keywords have Keyword kind" &lt;| fun _ -&gt;
+            let result = setupAndComplete "file:///test.fun" "" 0 0
+            match result with
+            | Some list -&gt;
+                let letItem = list.Items |&gt; Array.find (fun item -&gt; item.Label = "let")
+                Expect.equal letItem.Kind (Some CompletionItemKind.Keyword) "Should be Keyword kind"
+            | None -&gt; failtest "Expected completion result"
+
+        testCase "keywords returned on parse error" &lt;| fun _ -&gt;
+            // 불완전한 코드에서도 키워드는 제공됨
+            let result = setupAndComplete "file:///test.fun" "let x =" 0 7
+            let labels = getCompletionLabels result
+            Expect.contains labels "let" "Should include keywords even on parse error"
+    ]
+]
+</code></pre>
+<h3 id="심볼-완성-테스트"><a class="header" href="#심볼-완성-테스트">심볼 완성 테스트</a></h3>
+<pre><code class="language-fsharp">    testList "Symbol completion" [
+        testCase "includes variable in scope" &lt;| fun _ -&gt;
+            let text = "let x = 42 in x"
+            let result = setupAndComplete "file:///test.fun" text 0 14
+            let labels = getCompletionLabels result
+            Expect.contains labels "x" "Should include variable x"
+
+        testCase "includes function in scope" &lt;| fun _ -&gt;
+            let text = "let double = fun x -&gt; x * 2 in double 5"
+            let result = setupAndComplete "file:///test.fun" text 0 31
+            let labels = getCompletionLabels result
+            Expect.contains labels "double" "Should include function double"
+
+        testCase "symbols have Variable kind" &lt;| fun _ -&gt;
+            let text = "let x = 42 in x"
+            let result = setupAndComplete "file:///test.fun" text 0 14
+            match result with
+            | Some list -&gt;
+                let xItem = list.Items |&gt; Array.tryFind (fun item -&gt; item.Label = "x")
+                match xItem with
+                | Some item -&gt;
+                    Expect.equal item.Kind (Some CompletionItemKind.Variable) "Should be Variable kind"
+                | None -&gt; failtest "Expected x in completion items"
+            | None -&gt; failtest "Expected completion result"
+    ]
+</code></pre>
+<h3 id="스코프-필터링-테스트"><a class="header" href="#스코프-필터링-테스트">스코프 필터링 테스트</a></h3>
+<pre><code class="language-fsharp">    testList "Scope filtering" [
+        testCase "excludes variable defined after cursor" &lt;| fun _ -&gt;
+            let text = "let x = (let y = 1 in y) in x"
+            // 커서가 let y 전 (괄호 다음)
+            let result = setupAndComplete "file:///test.fun" text 0 9
+            let labels = getCompletionLabels result
+            Expect.isFalse (labels |&gt; List.contains "y") "Should not include y (not in scope yet)"
+
+        testCase "includes variable defined before cursor" &lt;| fun _ -&gt;
+            let text = "let x = 42 in let y = x + 1 in y"
+            // 커서가 y 정의 내부 (x + 1 부분)
+            let result = setupAndComplete "file:///test.fun" text 0 24
+            let labels = getCompletionLabels result
+            Expect.contains labels "x" "Should include x (defined before)"
+
+        testCase "shadowing: uses most recent definition" &lt;| fun _ -&gt;
+            let text = "let x = 1 in let x = 2 in x"
+            let result = setupAndComplete "file:///test.fun" text 0 26
+            let labels = getCompletionLabels result
+            // x는 한 번만 나타나야 함 (섀도잉)
+            let xCount = labels |&gt; List.filter ((=) "x") |&gt; List.length
+            Expect.equal xCount 1 "Should have only one x in completion"
+    ]
+</code></pre>
+<h3 id="타입-정보-테스트"><a class="header" href="#타입-정보-테스트">타입 정보 테스트</a></h3>
+<pre><code class="language-fsharp">    testList "Type information" [
+        testCase "shows type for integer variable" &lt;| fun _ -&gt;
+            let text = "let x = 42 in x"
+            let result = setupAndComplete "file:///test.fun" text 0 14
+            match result with
+            | Some list -&gt;
+                let xItem = list.Items |&gt; Array.tryFind (fun item -&gt; item.Label = "x")
+                match xItem with
+                | Some item -&gt;
+                    match item.Detail with
+                    | Some detail -&gt;
+                        Expect.stringContains detail "int" "Should show int type"
+                    | None -&gt; failtest "Expected detail with type"
+                | None -&gt; failtest "Expected x in completion items"
+            | None -&gt; failtest "Expected completion result"
+
+        testCase "shows type for function" &lt;| fun _ -&gt;
+            let text = "let double = fun x -&gt; x * 2 in double 5"
+            let result = setupAndComplete "file:///test.fun" text 0 31
+            match result with
+            | Some list -&gt;
+                let doubleItem = list.Items |&gt; Array.tryFind (fun item -&gt; item.Label = "double")
+                match doubleItem with
+                | Some item -&gt;
+                    match item.Detail with
+                    | Some detail -&gt;
+                        Expect.stringContains detail "int -&gt; int" "Should show function type"
+                    | None -&gt; failtest "Expected detail with type"
+                | None -&gt; failtest "Expected double in completion items"
+            | None -&gt; failtest "Expected completion result"
+
+        testCase "shows polymorphic type" &lt;| fun _ -&gt;
+            let text = "let id = fun x -&gt; x in id"
+            let result = setupAndComplete "file:///test.fun" text 0 23
+            match result with
+            | Some list -&gt;
+                let idItem = list.Items |&gt; Array.tryFind (fun item -&gt; item.Label = "id")
+                match idItem with
+                | Some item -&gt;
+                    match item.Detail with
+                    | Some detail -&gt;
+                        Expect.stringContains detail "'a" "Should show polymorphic type"
+                    | None -&gt; failtest "Expected detail with type"
+                | None -&gt; failtest "Expected id in completion items"
+            | None -&gt; failtest "Expected completion result"
+    ]
+] |&gt; testSequenced  // 공유 상태로 인해 순차 실행
+</code></pre>
+<h3 id="테스트-실행"><a class="header" href="#테스트-실행">테스트 실행</a></h3>
+<pre><code class="language-bash">dotnet test src/LangLSP.Tests
+
+# 결과:
+# [Completion/Keyword completion] includes all FunLang keywords - Passed
+# [Completion/Keyword completion] keywords have Keyword kind - Passed
+# [Completion/Keyword completion] keywords returned on parse error - Passed
+# [Completion/Symbol completion] includes variable in scope - Passed
+# [Completion/Symbol completion] includes function in scope - Passed
+# [Completion/Symbol completion] symbols have Variable kind - Passed
+# [Completion/Scope filtering] excludes variable defined after cursor - Passed
+# [Completion/Scope filtering] includes variable defined before cursor - Passed
+# [Completion/Scope filtering] shadowing: uses most recent definition - Passed
+# [Completion/Type information] shows type for integer variable - Passed
+# [Completion/Type information] shows type for function - Passed
+# [Completion/Type information] shows polymorphic type - Passed
+</code></pre>
+<hr>
+<h2 id="흔한-실수와-해결책"><a class="header" href="#흔한-실수와-해결책">흔한 실수와 해결책</a></h2>
+<h3 id="1-completionlist-vs-completionitem-혼동"><a class="header" href="#1-completionlist-vs-completionitem-혼동">1. CompletionList vs CompletionItem[] 혼동</a></h3>
+<p><strong>증상:</strong> 완성 목록이 VS Code에 표시되지 않음</p>
+<p><strong>원인:</strong> LSP 스펙은 두 가지 반환 타입을 허용하지만, Ionide는 <code>CompletionList option</code> 사용</p>
+<pre><code class="language-fsharp">// ❌ 잘못된 방법 (배열 반환)
+let handleCompletion (p: CompletionParams) : Async&lt;CompletionItem[] option&gt; =
+    async {
+        let items = getKeywordCompletions() |&gt; Array.ofList
+        return Some items  // 타입 불일치!
+    }
+
+// ✅ 올바른 방법 (CompletionList 반환)
+let handleCompletion (p: CompletionParams) : Async&lt;CompletionList option&gt; =
+    async {
+        return Some {
+            IsIncomplete = false
+            Items = getKeywordCompletions() |&gt; Array.ofList
+            ItemDefaults = None
+        }
+    }
+</code></pre>
+<h3 id="2-0-based-vs-1-based-좌표-혼동"><a class="header" href="#2-0-based-vs-1-based-좌표-혼동">2. 0-based vs 1-based 좌표 혼동</a></h3>
+<p><strong>증상:</strong> 완성 목록에 스코프 외 변수가 포함되거나 스코프 내 변수가 누락됨</p>
+<p><strong>원인:</strong> FsLexYacc 문서는 1-based라고 하지만 <code>LexBuffer.FromString</code>은 0-based!</p>
+<pre><code class="language-fsharp">// ❌ 잘못된 방법 (1-based로 가정)
+span.StartLine &lt; int pos.Line - 1  // 불필요한 -1
+
+// ✅ 올바른 방법 (0-based 직접 사용)
+span.StartLine &lt; int pos.Line  // LSP와 FunLang 모두 0-based
+</code></pre>
+<p><strong>검증 방법:</strong></p>
+<pre><code class="language-fsharp">// 첫 줄, 첫 문자는 (0, 0)
+let text = "let x = 42"
+let pos = { Line = 0u; Character = 0u }  // 첫 위치
+</code></pre>
+<h3 id="3-스코프-외-심볼-포함"><a class="header" href="#3-스코프-외-심볼-포함">3. 스코프 외 심볼 포함</a></h3>
+<p><strong>증상:</strong> 아직 정의되지 않은 변수가 완성 목록에 나타남</p>
+<p><strong>원인:</strong> 스코프 필터링 누락</p>
+<pre><code class="language-fsharp">// ❌ 잘못된 방법 (모든 심볼 반환)
+let getSymbolCompletions (ast: Expr) (pos: Position) =
+    Definition.collectDefinitions ast  // 위치 필터링 없음
+    |&gt; List.map createCompletionItem
+
+// ✅ 올바른 방법 (커서 이전 정의만)
+let getSymbolCompletions (ast: Expr) (pos: Position) =
+    Definition.collectDefinitions ast
+    |&gt; List.filter (fun (_, span) -&gt;
+        span.StartLine &lt; int pos.Line ||
+        (span.StartLine = int pos.Line &amp;&amp; span.StartColumn &lt; int pos.Character))
+    |&gt; List.map createCompletionItem
+</code></pre>
+<h3 id="4-타입-정보-누락"><a class="header" href="#4-타입-정보-누락">4. 타입 정보 누락</a></h3>
+<p><strong>증상:</strong> 완성 항목에 타입이 표시되지 않음</p>
+<p><strong>원인:</strong> <code>findVarTypeInAst</code> 호출 누락</p>
+<pre><code class="language-fsharp">// ❌ 잘못된 방법 (타입 정보 없음)
+let detail = Some name  // 이름만 표시
+
+// ✅ 올바른 방법 (타입 정보 추가)
+let typeInfo = Hover.findVarTypeInAst name ast
+let detail =
+    match typeInfo with
+    | Some ty -&gt; Some (sprintf "%s: %s" name (Type.formatTypeNormalized ty))
+    | None -&gt; Some name
+</code></pre>
+<p><strong>주의:</strong> 타입 추론 실패는 정상적인 상황입니다 (람다 매개변수 등). None을 반환해도 문제없습니다.</p>
+<h3 id="5-트리거-문자-설정-문제"><a class="header" href="#5-트리거-문자-설정-문제">5. 트리거 문자 설정 문제</a></h3>
+<p><strong>증상:</strong> 자동 완성이 <code>.</code> 입력 시 작동하지 않거나 너무 자주 트리거됨</p>
+<p><strong>원인:</strong> Phase 3은 트리거 문자를 지원하지 않음</p>
+<pre><code class="language-fsharp">// ❌ Phase 3에서 트리거 문자 추가 (권장하지 않음)
+CompletionProvider = Some {
+    ResolveProvider = Some false
+    TriggerCharacters = Some [| "." |]  // 추가 필터링 로직 필요
+    // ...
+}
+
+// ✅ Phase 3에서는 수동 호출만
+CompletionProvider = Some {
+    ResolveProvider = Some false
+    TriggerCharacters = None  // 명시적으로 None
+    // ...
+}
+</code></pre>
+<p>트리거 문자는 컨텍스트에 따른 필터링이 필요합니다:</p>
+<ul>
+<li><code>.</code> 입력 후 → 레코드/모듈 멤버만 표시</li>
+<li><code>::</code> 입력 후 → 리스트 관련 심볼만 표시</li>
+</ul>
+<p>Phase 4에서 추가 가능.</p>
+<h3 id="6-섀도잉-처리-누락"><a class="header" href="#6-섀도잉-처리-누락">6. 섀도잉 처리 누락</a></h3>
+<p><strong>증상:</strong> 같은 변수 이름이 여러 번 완성 목록에 나타남</p>
+<p><strong>원인:</strong> <code>List.distinctBy</code> 누락</p>
+<pre><code class="language-fsharp">// ❌ 잘못된 방법 (중복 포함)
+definitions
+|&gt; List.filter (fun (_, span) -&gt; (* 스코프 체크 *))
+|&gt; List.map createCompletionItem
+
+// ✅ 올바른 방법 (중복 제거)
+definitions
+|&gt; List.filter (fun (_, span) -&gt; (* 스코프 체크 *))
+|&gt; List.rev
+|&gt; List.distinctBy fst  // 마지막 정의만 유지
+|&gt; List.rev
+|&gt; List.map createCompletionItem
+</code></pre>
+<h3 id="7-파싱-에러-시-빈-목록-반환"><a class="header" href="#7-파싱-에러-시-빈-목록-반환">7. 파싱 에러 시 빈 목록 반환</a></h3>
+<p><strong>증상:</strong> 불완전한 코드 입력 시 아무 완성도 표시되지 않음</p>
+<p><strong>원인:</strong> 예외 처리에서 None 반환</p>
+<pre><code class="language-fsharp">// ❌ 잘못된 방법 (파싱 실패 시 빈 결과)
+try
+    let ast = Parser.start Lexer.tokenize lexbuf
+    // ...
+with _ -&gt;
+    return None  // 아무것도 안 보임!
+
+// ✅ 올바른 방법 (키워드라도 제공)
+try
+    let ast = Parser.start Lexer.tokenize lexbuf
+    // ...
+with _ -&gt;
+    // Graceful degradation: 키워드는 항상 유효
+    return Some {
+        IsIncomplete = false
+        Items = getKeywordCompletions() |&gt; Array.ofList
+        ItemDefaults = None
+    }
+</code></pre>
+<hr>
+<h2 id="정리"><a class="header" href="#정리">정리</a></h2>
+<p>Completion 구현의 핵심 포인트:</p>
+<ol>
+<li><strong>두 가지 소스</strong>: 키워드 (정적 리스트) + 심볼 (AST에서 수집)</li>
+<li><strong>기존 인프라 재사용</strong>:
+<ul>
+<li><code>Definition.collectDefinitions</code>로 심볼 수집</li>
+<li><code>Hover.findVarTypeInAst</code>로 타입 정보 추가</li>
+</ul>
+</li>
+<li><strong>스코프 필터링</strong>: 커서 이전에 정의된 심볼만 포함</li>
+<li><strong>섀도잉 처리</strong>: <code>List.distinctBy</code>로 중복 제거</li>
+<li><strong>Graceful Degradation</strong>: 파싱 실패 시 키워드만 반환</li>
+<li><strong>클라이언트 필터링</strong>: 서버는 모든 후보 반환, 클라이언트가 퍼지 매칭</li>
+</ol>
+<hr>
+<h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
+<p>Completion 구현으로 Phase 3이 완료됩니다!</p>
+<p>Phase 4에서는:</p>
+<ul>
+<li><strong>Find References</strong>: 심볼이 사용된 모든 위치 찾기</li>
+<li><strong>Rename</strong>: 심볼 이름을 프로젝트 전체에서 일괄 변경</li>
+<li><strong>Code Actions</strong>: Quick Fix 제안 (예: 타입 어노테이션 추가)</li>
+</ul>
+<p>고급 Completion 기능:</p>
+<ul>
+<li><strong>트리거 문자</strong>: <code>.</code>, <code>::</code> 입력 시 컨텍스트 기반 완성</li>
+<li><strong>CompletionItem/resolve</strong>: 지연 로딩으로 상세 정보 제공</li>
+<li><strong>Snippet 지원</strong>: <code>fun $1 -&gt; $0</code> 같은 플레이스홀더</li>
+</ul>
+<hr>
+<h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
+<ul>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion">LSP Specification - textDocument/completion</a></li>
+<li><a href="https://github.com/ionide/LanguageServerProtocol">Ionide.LanguageServerProtocol - CompletionParams/CompletionList</a></li>
+<li><a href="https://github.com/ionide/FsAutoComplete/blob/main/test/FsAutoComplete.Tests.Lsp/CompletionTests.fs">FsAutoComplete - CompletionTests.fs</a></li>
+<li><a href="https://thunderseethe.dev/posts/lsp-base/">Making an LSP for great good - Completion</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="06-hover.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="08-definition.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="06-hover.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="08-definition.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

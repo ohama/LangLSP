@@ -1,0 +1,1227 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Find References 구현하기 - FunLang LSP 튜토리얼</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="F#으로 만드는 Language Server — LSP 입문자를 위한 단계별 한국어 튜토리얼">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-29f6f4ed.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-b67c2577.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">FunLang LSP 튜토리얼</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="find-references-구현하기"><a class="header" href="#find-references-구현하기">Find References 구현하기</a></h1>
+<p>이 문서는 LSP 서버에서 <strong>Find References</strong> 기능을 구현하는 방법을 설명합니다. 변수나 함수를 선택하고 “Find References“를 실행하면 해당 심볼이 사용된 모든 위치를 찾아줍니다. 이 기능은 코드 리팩토링과 영향 분석(Impact Analysis)에 필수적입니다.</p>
+<h2 id="목차"><a class="header" href="#목차">목차</a></h2>
+<ol>
+<li><a href="#find-references란">Find References란</a></li>
+<li><a href="#lsp-프로토콜">LSP 프로토콜</a></li>
+<li><a href="#definition과의-관계">Definition과의 관계</a></li>
+<li><a href="#레퍼런스-수집-구현">레퍼런스 수집 구현</a></li>
+<li><a href="#스코프-인식-레퍼런스-수집">스코프 인식 레퍼런스 수집</a></li>
+<li><a href="#변수-섀도잉-처리">변수 섀도잉 처리</a></li>
+<li><a href="#핸들러-구현">핸들러 구현</a></li>
+<li><a href="#serverfs-통합">Server.fs 통합</a></li>
+<li><a href="#테스트-작성">테스트 작성</a></li>
+<li><a href="#definition-vs-references-비교">Definition vs References 비교</a></li>
+</ol>
+<hr>
+<h2 id="find-references란"><a class="header" href="#find-references란">Find References란</a></h2>
+<p><strong>Find References</strong>는 선택한 심볼의 모든 사용처를 찾는 기능입니다. Go to Definition이 “정의 위치” 하나를 찾는다면, Find References는 “사용 위치” 여러 개를 찾습니다.</p>
+<h3 id="vs-code에서의-사용"><a class="header" href="#vs-code에서의-사용">VS Code에서의 사용</a></h3>
+<pre><code>test.fun
+────────
+1 | let add = fun x -&gt; fun y -&gt; x + y in
+2 | let result = add 1 2 in
+3 | let result2 = add 3 4 in
+        ^^^
+        [Shift+F12] 또는 우클릭 → Find All References
+        → add가 사용된 모든 위치 표시 (2번, 3번 라인)
+</code></pre>
+<p><strong>트리거 방법:</strong></p>
+<ul>
+<li><code>Shift+F12</code> 키</li>
+<li>우클릭 → “Find All References”</li>
+<li>좌측 패널에 결과 목록 표시</li>
+</ul>
+<h3 id="핵심-동작"><a class="header" href="#핵심-동작">핵심 동작</a></h3>
+<ol>
+<li>사용자가 커서를 심볼 위에 놓음</li>
+<li>클라이언트가 <code>textDocument/references</code> 요청 전송</li>
+<li>서버가 해당 심볼의 <strong>모든 사용 위치</strong> 반환 (배열)</li>
+<li>클라이언트가 결과 패널에 위치 목록 표시</li>
+</ol>
+<h3 id="활용-사례"><a class="header" href="#활용-사례">활용 사례</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>시나리오</th><th>사용 예시</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>리팩토링 전 영향 분석</strong></td><td>함수명을 바꾸기 전에 사용처 확인</td></tr>
+<tr><td><strong>사용하지 않는 코드 찾기</strong></td><td>레퍼런스가 0개면 미사용 함수</td></tr>
+<tr><td><strong>의존성 파악</strong></td><td>특정 변수가 어디서 사용되는지 추적</td></tr>
+<tr><td><strong>버그 추적</strong></td><td>잘못된 값이 어디로 전파되는지 확인</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="lsp-프로토콜"><a class="header" href="#lsp-프로토콜">LSP 프로토콜</a></h2>
+<h3 id="textdocumentreferences-요청"><a class="header" href="#textdocumentreferences-요청">textDocument/references 요청</a></h3>
+<pre><code class="language-typescript">interface ReferenceParams {
+    textDocument: TextDocumentIdentifier  // { uri: "file:///test.fun" }
+    position: Position                     // { line: 0, character: 4 }
+    context: ReferenceContext             // { includeDeclaration: true }
+}
+
+interface ReferenceContext {
+    includeDeclaration: boolean  // 정의 위치도 결과에 포함할지 여부
+}
+</code></pre>
+<p><strong>요청 예시:</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 7,
+    "method": "textDocument/references",
+    "params": {
+        "textDocument": { "uri": "file:///test.fun" },
+        "position": { "line": 0, "character": 4 },
+        "context": { "includeDeclaration": true }
+    }
+}
+</code></pre>
+<h3 id="includedeclaration의-의미"><a class="header" href="#includedeclaration의-의미">includeDeclaration의 의미</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>값</th><th>동작</th><th>예시</th></tr>
+</thead>
+<tbody>
+<tr><td><code>true</code></td><td>정의 + 사용처 모두 반환</td><td><code>let x = 1</code> 포함</td></tr>
+<tr><td><code>false</code></td><td>사용처만 반환</td><td><code>x + 1</code>만 포함, 정의는 제외</td></tr>
+</tbody>
+</table>
+</div>
+<p>대부분의 경우 <code>true</code>가 유용합니다 (전체 영향 범위 파악).</p>
+<h3 id="응답-형식"><a class="header" href="#응답-형식">응답 형식</a></h3>
+<pre><code class="language-typescript">// Location 배열 반환
+type ReferenceResponse = Location[] | null
+
+interface Location {
+    uri: string
+    range: Range
+}
+</code></pre>
+<p><strong>응답 예시:</strong></p>
+<pre><code class="language-json">{
+    "jsonrpc": "2.0",
+    "id": 7,
+    "result": [
+        {
+            "uri": "file:///test.fun",
+            "range": {
+                "start": { "line": 0, "character": 4 },
+                "end": { "line": 0, "character": 7 }
+            }
+        },
+        {
+            "uri": "file:///test.fun",
+            "range": {
+                "start": { "line": 1, "character": 13 },
+                "end": { "line": 1, "character": 16 }
+            }
+        }
+    ]
+}
+</code></pre>
+<h3 id="definition과의-차이점"><a class="header" href="#definition과의-차이점">Definition과의 차이점</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>기능</th><th>Definition</th><th>References</th></tr>
+</thead>
+<tbody>
+<tr><td>반환값</td><td><code>Location</code> (단일)</td><td><code>Location[]</code> (배열)</td></tr>
+<tr><td>의미</td><td>심볼이 <strong>정의된</strong> 곳</td><td>심볼이 <strong>사용된</strong> 곳</td></tr>
+<tr><td>개수</td><td>최대 1개</td><td>0개 이상 여러 개</td></tr>
+<tr><td>포함 범위</td><td>정의 위치만</td><td>정의 위치는 context에 따라 선택적</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="definition과의-관계"><a class="header" href="#definition과의-관계">Definition과의 관계</a></h2>
+<p>Find References는 Go to Definition의 <strong>역방향</strong> 동작입니다.</p>
+<h3 id="상호-관계"><a class="header" href="#상호-관계">상호 관계</a></h3>
+<pre><code>┌─────────────────────────────────────────┐
+│  let add = fun x -&gt; fun y -&gt; x + y in   │  ← 정의 위치 (Definition)
+│      ^^^                                 │
+│       │                                  │
+│       │ Go to Definition (F12)           │
+│       │                                  │
+│  let result = add 1 2 in                 │  ← 사용 위치 1 (Reference)
+│               ^^^                        │
+│                │                         │
+│                ↑                         │
+│  let result2 = add 3 4 in                │  ← 사용 위치 2 (Reference)
+│                ^^^                       │
+│                 └─────────────────────┐  │
+│                   Find References (Shift+F12)
+└─────────────────────────────────────────┘
+</code></pre>
+<h3 id="definition과-references의-데이터-흐름"><a class="header" href="#definition과-references의-데이터-흐름">Definition과 References의 데이터 흐름</a></h3>
+<pre><code>┌──────────────────────────────────────────────┐
+│ 1. 정의 찾기 (Go to Definition)              │
+│    커서 위치 → 정의 위치 (1개)               │
+└──────────────────────────────────────────────┘
+                    ↓
+┌──────────────────────────────────────────────┐
+│ 2. 레퍼런스 찾기 (Find References)            │
+│    커서 위치 → 정의 확인 → 사용 위치 (N개)   │
+└──────────────────────────────────────────────┘
+</code></pre>
+<p>Find References 구현 시 <strong>Definition 모듈을 재사용</strong>합니다:</p>
+<ol>
+<li>커서 위치에서 심볼의 정의를 먼저 찾음 (<code>findDefinitionForVar</code>)</li>
+<li>그 정의를 참조하는 모든 Var 노드를 수집</li>
+<li>섀도잉을 고려하여 올바른 레퍼런스만 필터링</li>
+</ol>
+<hr>
+<h2 id="레퍼런스-수집-구현"><a class="header" href="#레퍼런스-수집-구현">레퍼런스 수집 구현</a></h2>
+<h3 id="collectreferences-함수-기본-버전"><a class="header" href="#collectreferences-함수-기본-버전">collectReferences 함수 (기본 버전)</a></h3>
+<p>먼저 <strong>섀도잉 미고려</strong> 버전을 구현합니다. 단순히 이름이 일치하는 모든 Var 노드를 수집합니다.</p>
+<pre><code class="language-fsharp">// References.fs
+module LangLSP.Server.References
+
+open Ast
+
+/// Collect all variable references (Var nodes) matching a symbol name
+/// Traverses entire AST and returns list of spans for all Var nodes with matching name
+let collectReferences (varName: string) (ast: Expr) : Span list =
+    let refs = ResizeArray&lt;Span&gt;()
+
+    let rec traverse expr =
+        match expr with
+        | Var(name, span) when name = varName -&gt;
+            // 이름이 일치하는 변수 사용 발견
+            refs.Add(span)
+
+        | Let(_, value, body, _) -&gt;
+            traverse value
+            traverse body
+
+        | LetRec(_, _, fnBody, inExpr, _) -&gt;
+            traverse fnBody
+            traverse inExpr
+
+        | Lambda(_, body, _) -&gt;
+            traverse body
+
+        | LambdaAnnot(_, _, body, _) -&gt;
+            traverse body
+
+        | LetPat(_, value, body, _) -&gt;
+            traverse value
+            traverse body
+
+        | Match(scrutinee, clauses, _) -&gt;
+            traverse scrutinee
+            for (_, clauseBody) in clauses do
+                traverse clauseBody
+
+        | App(fn, arg, _) -&gt;
+            traverse fn
+            traverse arg
+
+        | If(cond, thenExpr, elseExpr, _) -&gt;
+            traverse cond
+            traverse thenExpr
+            traverse elseExpr
+
+        | Add(l, r, _) | Subtract(l, r, _) | Multiply(l, r, _) | Divide(l, r, _)
+        | Equal(l, r, _) | NotEqual(l, r, _) | LessThan(l, r, _) | GreaterThan(l, r, _)
+        | LessEqual(l, r, _) | GreaterEqual(l, r, _) | And(l, r, _) | Or(l, r, _)
+        | Cons(l, r, _) -&gt;
+            traverse l
+            traverse r
+
+        | Negate(e, _) | Annot(e, _, _) -&gt;
+            traverse e
+
+        | Tuple(exprs, _) | List(exprs, _) -&gt;
+            exprs |&gt; List.iter traverse
+
+        | Number _ | Bool _ | String _ | EmptyList _ | Var _ -&gt; ()
+
+    traverse ast
+    refs |&gt; Seq.toList
+</code></pre>
+<h3 id="동작-원리"><a class="header" href="#동작-원리">동작 원리</a></h3>
+<ol>
+<li><strong>ResizeArray 사용</strong>: 효율적인 append를 위해 mutable 리스트 사용</li>
+<li><strong>재귀 순회</strong>: 모든 하위 표현식 탐색</li>
+<li><strong>Var 노드 매칭</strong>: <code>Var(name, span) when name = varName</code> 패턴으로 이름 일치 검사</li>
+<li><strong>Span 수집</strong>: 일치하는 Var 노드의 위치 정보 저장</li>
+</ol>
+<h3 id="예시"><a class="header" href="#예시">예시</a></h3>
+<pre><code class="language-funlang">let x = 1 in
+  let y = x + 2 in
+    x + y
+</code></pre>
+<p><code>collectReferences "x" ast</code> 호출 시:</p>
+<ul>
+<li>결과: <code>[Span(1, 10, 1, 11), Span(2, 4, 2, 5)]</code></li>
+<li>2번 라인의 <code>x + 2</code>와 3번 라인의 <code>x + y</code>에서 발견</li>
+</ul>
+<hr>
+<h2 id="스코프-인식-레퍼런스-수집"><a class="header" href="#스코프-인식-레퍼런스-수집">스코프 인식 레퍼런스 수집</a></h2>
+<h3 id="섀도잉-문제"><a class="header" href="#섀도잉-문제">섀도잉 문제</a></h3>
+<p>기본 <code>collectReferences</code>는 <strong>이름만</strong> 체크하므로 섀도잉 처리가 안 됩니다.</p>
+<pre><code class="language-funlang">let x = 1 in           (* 정의 A *)
+  let x = 2 in         (* 정의 B - A를 shadow *)
+    x + 1              (* 이 x는 B를 참조 *)
+</code></pre>
+<p>사용자가 정의 A에서 “Find References“를 실행하면:</p>
+<ul>
+<li><strong>원하는 결과</strong>: 빈 배열 (정의 A는 shadowed되어 사용되지 않음)</li>
+<li><strong>기본 구현 결과</strong>: 3번 라인의 <code>x</code> 포함 (잘못됨!)</li>
+</ul>
+<h3 id="collectreferencesforbinding-함수"><a class="header" href="#collectreferencesforbinding-함수">collectReferencesForBinding 함수</a></h3>
+<p><strong>특정 정의</strong>를 참조하는 Var 노드만 찾는 함수입니다.</p>
+<pre><code class="language-fsharp">// References.fs
+open LangLSP.Server.Definition
+
+/// Collect references to a SPECIFIC binding (shadowing-aware)
+/// Only returns Var nodes that resolve to the definition at defSpan
+let collectReferencesForBinding (varName: string) (defSpan: Span) (ast: Expr) : Span list =
+    // 1. 이름이 일치하는 모든 Var 노드 찾기
+    let allRefs = collectReferences varName ast
+
+    // 2. 각 Var 노드가 우리의 정의를 참조하는지 확인
+    allRefs
+    |&gt; List.filter (fun refSpan -&gt;
+        // Var 노드의 위치로 Position 생성
+        let pos : Position = {
+            Line = uint32 refSpan.StartLine
+            Character = uint32 refSpan.StartColumn
+        }
+        // 이 Var 노드가 실제로 우리의 정의를 참조하는지 확인
+        match findDefinitionForVar varName ast pos with
+        | Some foundDefSpan -&gt;
+            // 찾은 정의가 우리가 찾는 정의와 같은지 비교
+            foundDefSpan.StartLine = defSpan.StartLine &amp;&amp;
+            foundDefSpan.StartColumn = defSpan.StartColumn
+        | None -&gt; false
+    )
+</code></pre>
+<h3 id="알고리즘-설명"><a class="header" href="#알고리즘-설명">알고리즘 설명</a></h3>
+<pre><code>┌─────────────────────────────────────────────┐
+│ 1. collectReferences로 후보 수집            │
+│    "x"라는 이름의 모든 Var 노드              │
+└─────────────────────────────────────────────┘
+                 ↓
+┌─────────────────────────────────────────────┐
+│ 2. 각 Var 노드마다 정의 검색                 │
+│    findDefinitionForVar 호출                 │
+└─────────────────────────────────────────────┘
+                 ↓
+┌─────────────────────────────────────────────┐
+│ 3. 정의 위치 비교                            │
+│    찾은 정의 == 타겟 정의?                   │
+└─────────────────────────────────────────────┘
+                 ↓
+┌─────────────────────────────────────────────┐
+│ 4. 일치하는 것만 반환                        │
+│    필터링된 Span 리스트                      │
+└─────────────────────────────────────────────┘
+</code></pre>
+<h3 id="왜-definition-모듈을-재사용하는가"><a class="header" href="#왜-definition-모듈을-재사용하는가">왜 Definition 모듈을 재사용하는가?</a></h3>
+<p><code>findDefinitionForVar</code>는 <strong>섀도잉 해결 로직</strong>을 이미 구현했습니다:</p>
+<ul>
+<li>사용 위치 이전의 정의만 고려</li>
+<li>가장 가까운 (내부) 정의 선택</li>
+<li>렉시컬 스코핑 규칙 적용</li>
+</ul>
+<p>Find References는 이 로직을 <strong>여러 번 호출</strong>하여 각 Var 노드가 올바른 정의를 참조하는지 검증합니다.</p>
+<hr>
+<h2 id="변수-섀도잉-처리"><a class="header" href="#변수-섀도잉-처리">변수 섀도잉 처리</a></h2>
+<h3 id="구체적-예시"><a class="header" href="#구체적-예시">구체적 예시</a></h3>
+<pre><code class="language-funlang">let x = 1 in           (* 정의 A: (0, 4) *)
+  let x = 2 in         (* 정의 B: (1, 6) *)
+    x                  (* 사용 1: (2, 4) *)
+  in x                 (* 사용 2: (3, 5) *)
+</code></pre>
+<p><strong>정의 A에서 “Find References” 실행:</strong></p>
+<ol>
+<li>
+<p><code>collectReferences "x"</code> 호출:</p>
+<ul>
+<li>결과: <code>[Span(2,4), Span(3,5)]</code> (사용 1, 사용 2)</li>
+</ul>
+</li>
+<li>
+<p>사용 1 검증 (<code>Span(2,4)</code>):</p>
+<ul>
+<li><code>findDefinitionForVar "x" ast (2,4)</code> 호출</li>
+<li>결과: <code>Span(1,6)</code> (정의 B)</li>
+<li><code>(1,6) != (0,4)</code> → <strong>필터 아웃</strong></li>
+</ul>
+</li>
+<li>
+<p>사용 2 검증 (<code>Span(3,5)</code>):</p>
+<ul>
+<li><code>findDefinitionForVar "x" ast (3,5)</code> 호출</li>
+<li>결과: <code>Span(0,4)</code> (정의 A)</li>
+<li><code>(0,4) == (0,4)</code> → <strong>포함</strong></li>
+</ul>
+</li>
+<li>
+<p>최종 결과: <code>[Span(3,5)]</code> (사용 2만 해당)</p>
+</li>
+</ol>
+<p><strong>정의 B에서 “Find References” 실행:</strong></p>
+<ol>
+<li>
+<p><code>collectReferences "x"</code> 호출:</p>
+<ul>
+<li>결과: <code>[Span(2,4), Span(3,5)]</code></li>
+</ul>
+</li>
+<li>
+<p>사용 1 검증:</p>
+<ul>
+<li>정의: <code>Span(1,6)</code> (정의 B)</li>
+<li><code>(1,6) == (1,6)</code> → <strong>포함</strong></li>
+</ul>
+</li>
+<li>
+<p>사용 2 검증:</p>
+<ul>
+<li>정의: <code>Span(0,4)</code> (정의 A)</li>
+<li><code>(0,4) != (1,6)</code> → <strong>필터 아웃</strong></li>
+</ul>
+</li>
+<li>
+<p>최종 결과: <code>[Span(2,4)]</code> (사용 1만 해당)</p>
+</li>
+</ol>
+<h3 id="복잡한-중첩-예시"><a class="header" href="#복잡한-중첩-예시">복잡한 중첩 예시</a></h3>
+<pre><code class="language-funlang">let x = 1 in                    (* 정의 A: (0, 4) *)
+  (let x = 2 in x) +            (* 정의 B: (1, 7), 사용 1: (1, 17) *)
+  (let x = 3 in x) +            (* 정의 C: (2, 7), 사용 2: (2, 17) *)
+  x                             (* 사용 3: (3, 2) *)
+</code></pre>
+<p><strong>정의 A에서 Find References:</strong></p>
+<ul>
+<li>사용 1: B를 참조 → 제외</li>
+<li>사용 2: C를 참조 → 제외</li>
+<li>사용 3: A를 참조 → <strong>포함</strong></li>
+<li>결과: <code>[Span(3,2)]</code></li>
+</ul>
+<p><strong>정의 B에서 Find References:</strong></p>
+<ul>
+<li>사용 1: B를 참조 → <strong>포함</strong></li>
+<li>사용 2: C를 참조 → 제외</li>
+<li>사용 3: A를 참조 → 제외</li>
+<li>결과: <code>[Span(1,17)]</code></li>
+</ul>
+<hr>
+<h2 id="핸들러-구현"><a class="header" href="#핸들러-구현">핸들러 구현</a></h2>
+<h3 id="handlereferences-함수"><a class="header" href="#handlereferences-함수">handleReferences 함수</a></h3>
+<pre><code class="language-fsharp">// References.fs
+open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.AstLookup
+open LangLSP.Server.DocumentSync
+open LangLSP.Server.Protocol
+
+/// Handle textDocument/references request
+/// Returns all locations where a symbol is referenced
+let handleReferences (p: ReferenceParams) : Async&lt;Location[] option&gt; =
+    async {
+        let uri = p.TextDocument.Uri
+        let pos = p.Position
+
+        match getDocument uri with
+        | None -&gt; return None
+        | Some text -&gt;
+            try
+                // 1. 파싱
+                let lexbuf = FSharp.Text.Lexing.LexBuffer&lt;char&gt;.FromString(text)
+                let ast = Parser.start Lexer.tokenize lexbuf
+
+                // 2. 커서 위치의 노드 찾기
+                match findNodeAtPosition pos ast with
+                | None -&gt; return None
+                | Some node -&gt;
+                    // 3. 노드에서 심볼 이름과 정의 위치 추출
+                    let identOpt, defSpanOpt =
+                        match node with
+                        | Var(name, _) -&gt;
+                            // 변수 사용처 - 정의 찾기
+                            let def = findDefinitionForVar name ast pos
+                            (Some name, def)
+                        | Let(name, _, _, span) -&gt;
+                            // Let 바인딩 자체
+                            (Some name, Some span)
+                        | Lambda(param, _, span) -&gt;
+                            // 람다 파라미터
+                            (Some param, Some span)
+                        | LambdaAnnot(param, _, _, span) -&gt;
+                            // 타입 어노테이션이 있는 람다
+                            (Some param, Some span)
+                        | LetRec(name, _, _, _, span) -&gt;
+                            // 재귀 함수
+                            (Some name, Some span)
+                        | _ -&gt;
+                            // 레퍼런스를 찾을 수 없는 노드
+                            (None, None)
+
+                    match identOpt, defSpanOpt with
+                    | Some varName, Some defSpan -&gt;
+                        // 4. 섀도잉 인식 레퍼런스 수집
+                        let refSpans = collectReferencesForBinding varName defSpan ast
+
+                        // 5. includeDeclaration 처리
+                        let allSpans =
+                            if p.Context.IncludeDeclaration then
+                                defSpan :: refSpans
+                            else
+                                refSpans
+
+                        // 6. Location[] 변환
+                        let locations =
+                            allSpans
+                            |&gt; List.map (fun span -&gt;
+                                {
+                                    Uri = uri
+                                    Range = spanToLspRange span
+                                })
+                            |&gt; Array.ofList
+
+                        return Some locations
+
+                    | Some varName, None -&gt;
+                        // 정의를 찾지 못한 경우 (드물지만 가능)
+                        // 섀도잉 무시하고 이름만으로 수집
+                        let refSpans = collectReferences varName ast
+
+                        let locations =
+                            refSpans
+                            |&gt; List.map (fun span -&gt;
+                                {
+                                    Uri = uri
+                                    Range = spanToLspRange span
+                                })
+                            |&gt; Array.ofList
+
+                        return Some locations
+
+                    | _ -&gt;
+                        // 심볼을 찾을 수 없음
+                        return None
+
+            with _ -&gt;
+                // 파싱 실패
+                return None
+    }
+</code></pre>
+<h3 id="동작-흐름"><a class="header" href="#동작-흐름">동작 흐름</a></h3>
+<pre><code>사용자 Shift+F12 키
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 1. getDocument로 소스 텍스트 획득   │
+└─────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 2. Parser로 AST 생성                │
+└─────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 3. findNodeAtPosition               │
+│    커서 위치의 AST 노드 찾기        │
+└─────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 4. 노드 타입에 따라 처리            │
+│    - Var: 정의 찾기                 │
+│    - Let/Lambda: 직접 정의          │
+└─────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 5. collectReferencesForBinding      │
+│    섀도잉 인식 레퍼런스 수집        │
+└─────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 6. includeDeclaration 처리          │
+│    정의 위치 포함 여부 결정         │
+└─────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ 7. Location[] 반환                  │
+│    URI + Range 배열                 │
+└─────────────────────────────────────┘
+</code></pre>
+<h3 id="노드-타입별-처리"><a class="header" href="#노드-타입별-처리">노드 타입별 처리</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>노드 타입</th><th>의미</th><th>정의 위치 추출</th></tr>
+</thead>
+<tbody>
+<tr><td><code>Var(name, span)</code></td><td>변수 사용</td><td><code>findDefinitionForVar</code> 호출</td></tr>
+<tr><td><code>Let(name, _, _, span)</code></td><td>let 바인딩</td><td><code>span</code> 직접 사용</td></tr>
+<tr><td><code>Lambda(param, _, span)</code></td><td>람다 파라미터</td><td><code>span</code> 직접 사용</td></tr>
+<tr><td><code>LambdaAnnot(param, _, _, span)</code></td><td>타입 어노테이션 람다</td><td><code>span</code> 직접 사용</td></tr>
+<tr><td><code>LetRec(name, _, _, _, span)</code></td><td>재귀 함수</td><td><code>span</code> 직접 사용</td></tr>
+<tr><td>기타</td><td>연산자, 리터럴 등</td><td>None (레퍼런스 없음)</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="includedeclaration-처리"><a class="header" href="#includedeclaration-처리">includeDeclaration 처리</a></h3>
+<pre><code class="language-fsharp">let allSpans =
+    if p.Context.IncludeDeclaration then
+        defSpan :: refSpans  // 정의 위치를 리스트 앞에 추가
+    else
+        refSpans             // 사용처만
+</code></pre>
+<p><strong>VS Code 동작:</strong></p>
+<ul>
+<li>일반적으로 <code>includeDeclaration: true</code>로 요청</li>
+<li>결과 패널에서 정의 위치가 첫 번째 항목으로 표시됨</li>
+</ul>
+<hr>
+<h2 id="serverfs-통합"><a class="header" href="#serverfs-통합">Server.fs 통합</a></h2>
+<h3 id="서버-기능-등록"><a class="header" href="#서버-기능-등록">서버 기능 등록</a></h3>
+<pre><code class="language-fsharp">// Server.fs
+let serverCapabilities : ServerCapabilities =
+    { ServerCapabilities.Default with
+        TextDocumentSync = ...
+        HoverProvider = Some (U2.C1 true)
+        DefinitionProvider = Some (U2.C1 true)
+        ReferencesProvider = Some (U2.C1 true)  // 추가!
+    }
+</code></pre>
+<h3 id="핸들러-등록"><a class="header" href="#핸들러-등록">핸들러 등록</a></h3>
+<pre><code class="language-fsharp">// Server.fs
+module Handlers =
+    /// Handle textDocument/references request
+    let textDocumentReferences (p: ReferenceParams) : Async&lt;Location[] option&gt; =
+        handleReferences p
+</code></pre>
+<h3 id="전체-연결"><a class="header" href="#전체-연결">전체 연결</a></h3>
+<p>클라이언트가 <code>initialize</code> 요청을 보내면:</p>
+<ol>
+<li>서버가 <code>ReferencesProvider = true</code> 응답</li>
+<li>클라이언트는 이제 References 기능 사용 가능</li>
+</ol>
+<p>클라이언트가 <code>textDocument/references</code> 요청을 보내면:</p>
+<ol>
+<li>서버가 <code>Handlers.textDocumentReferences</code> 호출</li>
+<li>References.fs의 <code>handleReferences</code> 실행</li>
+<li><code>Location[]</code> 또는 <code>null</code> 반환</li>
+</ol>
+<hr>
+<h2 id="테스트-작성"><a class="header" href="#테스트-작성">테스트 작성</a></h2>
+<h3 id="기본-테스트-구조"><a class="header" href="#기본-테스트-구조">기본 테스트 구조</a></h3>
+<pre><code class="language-fsharp">// ReferencesTests.fs
+module LangLSP.Tests.ReferencesTests
+
+open Expecto
+open Ionide.LanguageServerProtocol.Types
+open LangLSP.Server.References
+open LangLSP.Server.DocumentSync
+
+let makeReferenceParams uri line char includeDecl : ReferenceParams =
+    {
+        TextDocument = { Uri = uri }
+        Position = { Line = uint32 line; Character = uint32 char }
+        Context = { IncludeDeclaration = includeDecl }
+    }
+</code></pre>
+<h3 id="핵심-테스트-케이스들"><a class="header" href="#핵심-테스트-케이스들">핵심 테스트 케이스들</a></h3>
+<pre><code class="language-fsharp">[&lt;Tests&gt;]
+let referencesTests =
+    testSequenced &lt;| testList "References" [
+
+        testCase "let binding: finds all uses" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-let.fun"
+            let text = "let x = 1 in x + x"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // x 정의 위치 (col 4)에서 references 요청
+            let result = handleReferences (makeReferenceParams uri 0 4 false) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should find references"
+            let locations = result.Value
+            Expect.equal locations.Length 2 "Should find 2 references"
+
+        testCase "includeDeclaration: includes definition" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-incldecl.fun"
+            let text = "let x = 1 in x + x"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // includeDeclaration = true
+            let result = handleReferences (makeReferenceParams uri 0 4 true) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should find references"
+            let locations = result.Value
+            Expect.equal locations.Length 3 "Should find 2 refs + 1 definition"
+
+        testCase "shadowed variable: only finds inner scope uses" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-shadow.fun"
+            let text = "let x = 1 in let x = 2 in x"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // 외부 x (col 4)에서 references 요청
+            let result = handleReferences (makeReferenceParams uri 0 4 false) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should find references"
+            let locations = result.Value
+            Expect.equal locations.Length 0 "Outer x is shadowed, no uses"
+
+        testCase "shadowed variable: inner definition has uses" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-shadow2.fun"
+            let text = "let x = 1 in let x = 2 in x"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // 내부 x (col 21)에서 references 요청
+            let result = handleReferences (makeReferenceParams uri 0 21 false) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should find references"
+            let locations = result.Value
+            Expect.equal locations.Length 1 "Inner x is used once"
+
+        testCase "lambda parameter: finds all uses in body" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-lambda.fun"
+            let text = "fun x -&gt; x + x"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // x 파라미터 (col 4)에서 references 요청
+            let result = handleReferences (makeReferenceParams uri 0 4 false) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should find references"
+            let locations = result.Value
+            Expect.equal locations.Length 2 "Parameter x used twice"
+
+        testCase "let rec: finds recursive calls" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-letrec.fun"
+            let text = "let rec f n = if n = 0 then 1 else n * f (n - 1) in f 5"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // f 정의 (col 8)에서 references 요청
+            let result = handleReferences (makeReferenceParams uri 0 8 false) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should find references"
+            let locations = result.Value
+            Expect.equal locations.Length 2 "f used in recursive call + final use"
+
+        testCase "unused variable: zero references" &lt;| fun _ -&gt;
+            clearAll()
+            let uri = "file:///test-ref-unused.fun"
+            let text = "let x = 1 in 42"
+            handleDidOpen { TextDocument = { Uri = uri; LanguageId = "funlang"; Version = 1; Text = text } }
+
+            // x 정의에서 references 요청
+            let result = handleReferences (makeReferenceParams uri 0 4 false) |&gt; Async.RunSynchronously
+            Expect.isSome result "Should return empty array"
+            let locations = result.Value
+            Expect.equal locations.Length 0 "No references to unused variable"
+    ]
+</code></pre>
+<h3 id="테스트-요점"><a class="header" href="#테스트-요점">테스트 요점</a></h3>
+<ol>
+<li><strong>testSequenced</strong>: 공유 DocumentSync 상태로 인한 간섭 방지</li>
+<li><strong>clearAll()</strong>: 각 테스트 전에 문서 저장소 초기화</li>
+<li><strong>includeDeclaration 테스트</strong>: true/false 동작 차이 검증</li>
+<li><strong>섀도잉 테스트</strong>: 외부/내부 정의 각각의 레퍼런스 정확도 확인</li>
+<li><strong>미사용 변수 테스트</strong>: 레퍼런스 0개 케이스 검증</li>
+</ol>
+<h3 id="테스트-실행"><a class="header" href="#테스트-실행">테스트 실행</a></h3>
+<pre><code class="language-bash">dotnet run --project src/LangLSP.Tests
+
+# 출력:
+# [References] let binding: finds all uses - Passed
+# [References] includeDeclaration: includes definition - Passed
+# [References] shadowed variable: only finds inner scope uses - Passed
+# [References] shadowed variable: inner definition has uses - Passed
+# [References] lambda parameter: finds all uses in body - Passed
+# [References] let rec: finds recursive calls - Passed
+# [References] unused variable: zero references - Passed
+</code></pre>
+<hr>
+<h2 id="definition-vs-references-비교"><a class="header" href="#definition-vs-references-비교">Definition vs References 비교</a></h2>
+<h3 id="기능-비교-표"><a class="header" href="#기능-비교-표">기능 비교 표</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>측면</th><th>Go to Definition</th><th>Find References</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>LSP 메서드</strong></td><td><code>textDocument/definition</code></td><td><code>textDocument/references</code></td></tr>
+<tr><td><strong>반환 타입</strong></td><td><code>Location</code> (단일)</td><td><code>Location[]</code> (배열)</td></tr>
+<tr><td><strong>의미</strong></td><td>“어디서 정의되었나?”</td><td>“어디서 사용되나?”</td></tr>
+<tr><td><strong>개수</strong></td><td>최대 1개</td><td>0개 이상</td></tr>
+<tr><td><strong>방향</strong></td><td>사용처 → 정의</td><td>정의 → 사용처</td></tr>
+<tr><td><strong>트리거</strong></td><td>F12, Ctrl+클릭</td><td>Shift+F12</td></tr>
+<tr><td><strong>includeDeclaration</strong></td><td>없음</td><td><code>context.includeDeclaration</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="구현-복잡도-비교"><a class="header" href="#구현-복잡도-비교">구현 복잡도 비교</a></h3>
+<pre><code>┌─────────────────────────────────────────────┐
+│ Go to Definition                            │
+│ - 난이도: 중                                 │
+│ - 핵심: collectDefinitions + 섀도잉 해결    │
+│ - 반환: 단일 Location                        │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│ Find References                             │
+│ - 난이도: 중상                               │
+│ - 핵심: collectReferences + Definition 재사용│
+│ - 반환: Location 배열                        │
+│ - 추가 고려: includeDeclaration             │
+└─────────────────────────────────────────────┘
+</code></pre>
+<h3 id="코드-재사용"><a class="header" href="#코드-재사용">코드 재사용</a></h3>
+<p>Find References는 Definition 모듈을 <strong>필수적으로</strong> 재사용합니다:</p>
+<pre><code class="language-fsharp">// References.fs에서 Definition 함수 사용
+open LangLSP.Server.Definition
+
+// 1. 각 Var 노드가 어느 정의를 참조하는지 확인
+match findDefinitionForVar varName ast pos with
+| Some foundDefSpan -&gt; ...
+
+// 2. 정의 위치 비교로 섀도잉 처리
+foundDefSpan.StartLine = defSpan.StartLine &amp;&amp;
+foundDefSpan.StartColumn = defSpan.StartColumn
+</code></pre>
+<p><strong>왜 재사용이 중요한가?</strong></p>
+<ul>
+<li>섀도잉 로직 중복 방지</li>
+<li>정의 검색 알고리즘 일관성 보장</li>
+<li>유지보수 용이 (Definition 로직 변경 시 References도 자동 반영)</li>
+</ul>
+<h3 id="사용자-워크플로우"><a class="header" href="#사용자-워크플로우">사용자 워크플로우</a></h3>
+<pre><code>┌─────────────────────────────────────────────┐
+│ 1. 변수 위에서 Ctrl+클릭 (Go to Definition) │
+│    → 정의 위치로 이동                        │
+└─────────────────────────────────────────────┘
+           ↓
+┌─────────────────────────────────────────────┐
+│ 2. 정의 위치에서 Shift+F12 (Find References)│
+│    → 모든 사용처 확인                        │
+└─────────────────────────────────────────────┘
+           ↓
+┌─────────────────────────────────────────────┐
+│ 3. 결과 목록에서 항목 클릭                   │
+│    → 해당 사용처로 이동                      │
+└─────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2 id="흔한-실수"><a class="header" href="#흔한-실수">흔한 실수</a></h2>
+<h3 id="1-섀도잉-무시"><a class="header" href="#1-섀도잉-무시">1. 섀도잉 무시</a></h3>
+<p><strong>잘못된 구현:</strong></p>
+<pre><code class="language-fsharp">// 이름만 체크
+let refs = collectReferences varName ast
+return refs  // 섀도잉 고려 안 함!
+</code></pre>
+<p><strong>올바른 구현:</strong></p>
+<pre><code class="language-fsharp">// 정의를 먼저 찾고, 해당 정의를 참조하는 것만 필터링
+let refSpans = collectReferencesForBinding varName defSpan ast
+</code></pre>
+<h3 id="2-includedeclaration-무시"><a class="header" href="#2-includedeclaration-무시">2. includeDeclaration 무시</a></h3>
+<p><strong>잘못된 구현:</strong></p>
+<pre><code class="language-fsharp">// 항상 정의 포함
+let allSpans = defSpan :: refSpans
+</code></pre>
+<p><strong>올바른 구현:</strong></p>
+<pre><code class="language-fsharp">// context에 따라 조건부 포함
+let allSpans =
+    if p.Context.IncludeDeclaration then
+        defSpan :: refSpans
+    else
+        refSpans
+</code></pre>
+<h3 id="3-var-노드만-처리하지-않음"><a class="header" href="#3-var-노드만-처리하지-않음">3. Var 노드만 처리하지 않음</a></h3>
+<p><strong>잘못된 구현:</strong></p>
+<pre><code class="language-fsharp">let rec traverse expr =
+    match expr with
+    | Number(_, span) -&gt;
+        refs.Add(span)  // 숫자도 레퍼런스로 수집?!
+</code></pre>
+<p><strong>올바른 구현:</strong></p>
+<pre><code class="language-fsharp">let rec traverse expr =
+    match expr with
+    | Var(name, span) when name = varName -&gt;
+        refs.Add(span)  // Var 노드만!
+    | Number _ -&gt; ()    // 리터럴은 레퍼런스 아님
+</code></pre>
+<h3 id="4-정의-위치를-var로-착각"><a class="header" href="#4-정의-위치를-var로-착각">4. 정의 위치를 Var로 착각</a></h3>
+<p><strong>문제 상황:</strong></p>
+<pre><code class="language-funlang">let x = 1 in x
+    ^        ^
+    정의     사용
+</code></pre>
+<p><code>collectReferences</code>는 <strong>사용처만</strong> 찾아야 하므로:</p>
+<ul>
+<li>정의 위치의 <code>x</code>는 <code>Let(name, ...)</code> 노드의 일부</li>
+<li><code>Var(name, span)</code> 노드는 사용처에서만 등장</li>
+</ul>
+<p><strong>검증:</strong></p>
+<pre><code class="language-fsharp">// collectReferences는 Var 노드만 수집
+| Var(name, span) when name = varName -&gt;
+    refs.Add(span)
+
+// Let 노드는 순회만 하고 수집하지 않음
+| Let(name, value, body, _) -&gt;
+    traverse value   // value와 body만 순회
+    traverse body
+</code></pre>
+<h3 id="5-재귀-함수의-파라미터-누락"><a class="header" href="#5-재귀-함수의-파라미터-누락">5. 재귀 함수의 파라미터 누락</a></h3>
+<p><strong>잘못된 구현:</strong></p>
+<pre><code class="language-fsharp">| LetRec(name, _, fnBody, inExpr, span) -&gt;
+    // name만 처리, param 무시
+    if name = varName then refs.Add(span)
+</code></pre>
+<p><strong>올바른 구현:</strong></p>
+<pre><code class="language-fsharp">// let rec은 함수명과 파라미터 모두 확인 필요
+// 하지만 collectReferences는 Var만 수집하므로
+// fnBody와 inExpr 순회만 하면 자동으로 파라미터 사용처 수집됨
+| LetRec(_, _, fnBody, inExpr, _) -&gt;
+    traverse fnBody
+    traverse inExpr
+</code></pre>
+<hr>
+<h2 id="최적화-고려사항"><a class="header" href="#최적화-고려사항">최적화 고려사항</a></h2>
+<h3 id="성능-분석"><a class="header" href="#성능-분석">성능 분석</a></h3>
+<pre><code class="language-fsharp">// collectReferencesForBinding의 복잡도
+O(N * M)
+  N = 전체 Var 노드 개수
+  M = 각 Var마다 findDefinitionForVar 호출 (O(D), D = 정의 개수)
+</code></pre>
+<p><strong>대규모 파일에서의 문제:</strong></p>
+<ul>
+<li>파일이 크면 Var 노드가 많음</li>
+<li>각 Var마다 정의 검색 수행</li>
+<li>섀도잉이 많으면 정의 비교 횟수 증가</li>
+</ul>
+<h3 id="최적화-전략-미래-개선"><a class="header" href="#최적화-전략-미래-개선">최적화 전략 (미래 개선)</a></h3>
+<ol>
+<li>
+<p><strong>정의 인덱스 캐싱</strong></p>
+<pre><code class="language-fsharp">// 파일별 정의 맵 저장
+type DefinitionIndex = Map&lt;string, Span list&gt;
+let buildIndex ast : DefinitionIndex = ...
+</code></pre>
+</li>
+<li>
+<p><strong>스코프 트리 구축</strong></p>
+<pre><code class="language-fsharp">// 각 정의의 유효 범위 사전 계산
+type ScopeTree = {
+    Name: string
+    Span: Span
+    ValidRange: Range
+    Children: ScopeTree list
+}
+</code></pre>
+</li>
+<li>
+<p><strong>증분 업데이트</strong></p>
+<pre><code class="language-fsharp">// 문서 변경 시 영향받는 스코프만 재계산
+let updateReferences (edit: TextEdit) (oldIndex: DefinitionIndex) : DefinitionIndex
+</code></pre>
+</li>
+</ol>
+<p><strong>현재 구현은 단순성 우선:</strong></p>
+<ul>
+<li>FunLang 파일은 일반적으로 작음 (&lt; 1000 lines)</li>
+<li>성능 문제 없음</li>
+<li>코드 이해와 유지보수 용이</li>
+</ul>
+<hr>
+<h2 id="정리"><a class="header" href="#정리">정리</a></h2>
+<p>Find References 구현의 핵심:</p>
+<ol>
+<li>
+<p><strong>레퍼런스 수집</strong> - AST 순회로 모든 Var 노드 수집</p>
+<ul>
+<li><code>collectReferences</code>: 이름 일치만 체크 (기본)</li>
+</ul>
+</li>
+<li>
+<p><strong>섀도잉 처리</strong> - Definition 모듈 재사용</p>
+<ul>
+<li><code>collectReferencesForBinding</code>: 특정 정의의 레퍼런스만 필터링</li>
+<li>각 Var가 올바른 정의를 참조하는지 검증</li>
+</ul>
+</li>
+<li>
+<p><strong>includeDeclaration</strong> - 컨텍스트에 따라 정의 포함</p>
+<ul>
+<li>true: 정의 + 사용처 모두</li>
+<li>false: 사용처만</li>
+</ul>
+</li>
+<li>
+<p><strong>Location[] 반환</strong> - 배열로 여러 위치 전달</p>
+<ul>
+<li>각 위치는 URI + Range</li>
+</ul>
+</li>
+<li>
+<p><strong>Definition과의 관계</strong> - 역방향 검색</p>
+<ul>
+<li>Definition: 사용처 → 정의</li>
+<li>References: 정의 → 사용처들</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="다음-단계"><a class="header" href="#다음-단계">다음 단계</a></h2>
+<p>Find References를 완성했습니다! 이제 사용자가 심볼의 영향 범위를 파악할 수 있습니다.</p>
+<p>다음 Phase에서 구현할 기능들:</p>
+<ul>
+<li><strong>Rename</strong>: Find References 활용하여 모든 사용처 일괄 변경</li>
+<li><strong>Code Actions</strong>: 미사용 변수 제거 등 자동 수정 제안</li>
+<li><strong>Document Symbols</strong>: 파일 내 모든 심볼 목록</li>
+</ul>
+<hr>
+<h2 id="참고-자료"><a class="header" href="#참고-자료">참고 자료</a></h2>
+<ul>
+<li><a href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_references">LSP Specification - textDocument/references</a></li>
+<li><a href="https://code.visualstudio.com/docs/editor/editingevolved#_reference-information">Find All References in VS Code</a></li>
+<li><a href="https://langserver.org/implementing-find-references/">Implementing Find References - LSP Guide</a></li>
+<li><a href="https://github.com/kodu-ai/LangTutorial/blob/main/FunLang/Ast.fs">FunLang AST (Ast.fs)</a></li>
+</ul>
+<hr>
+<p><strong>-&gt; 다음: Rename 구현</strong></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="08-definition.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="10-rename.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="08-definition.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="10-rename.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
